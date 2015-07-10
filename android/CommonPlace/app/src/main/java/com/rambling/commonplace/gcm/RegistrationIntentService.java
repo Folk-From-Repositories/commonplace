@@ -47,10 +47,13 @@ public class RegistrationIntentService extends IntentService {
                 // Instance ID에 해당하는 토큰을 생성하여 가져온다.
                 token = instanceID.getToken(default_senderId, scope, null);
 
-                Log.i(TAG, "GCM Registration Token: " + token);
+                Log.i(TAG, "GCM Registration Token (instanceID.getToken()): " + token);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            token = intent.getStringExtra("registration_id");
+
+            Log.d(TAG, "GCM Registration Token (intend.getStringExtra()): " + token);
         }
 
         // GCM Instance ID에 해당하는 토큰을 획득하면 LocalBoardcast에 COMPLETE 액션을 알린다.
