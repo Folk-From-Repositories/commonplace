@@ -11,7 +11,7 @@ module.exports = function(app) {
 	// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
 			res.render('login', { title: 'Hello - Please Login To Your Account' });
-		}	else{
+		} else {
 	// attempt automatic login //
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
@@ -64,6 +64,7 @@ module.exports = function(app) {
 				country : req.body['country']
 			}, function(e, o){
 				if (e){
+					console.log(e);
 					res.status(400).send('error-updating-account');
 				}	else{
 					req.session.user = o;
@@ -164,7 +165,7 @@ module.exports = function(app) {
 	});
 	
 	app.post('/delete', function(req, res){
-		AM.deleteAccount(req.body.id, function(e, obj){
+		AM.deleteAccount(req.session.user, function(e, obj){
 			if (!e){
 				res.clearCookie('user');
 				res.clearCookie('pass');
@@ -175,12 +176,5 @@ module.exports = function(app) {
 	    });
 	});
 	
-	app.get('/reset', function(req, res) {
-		AM.delAllRecords(function(){
-			res.redirect('/print');	
-		});
-	});
-	
 	app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found'}); });
-
 };

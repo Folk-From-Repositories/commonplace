@@ -1,33 +1,27 @@
 
 var crypto 		= require('crypto');
-var MongoDB 	= require('mongodb').Db;
-var Server 		= require('mongodb').Server;
 var moment 		= require('moment');
-
-var dbPort 		= 27017;
-var dbHost 		= 'localhost';
-var dbName 		= 'node-login';
+var mysql 		= require('mysql');
+var dbInfo 		= require(__dirname + '/../conf/database.json');
 
 /* establish the database connection */
-
-var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
-	db.open(function(e, d){
-	if (e) {
-		console.log(e);
-	}	else{
-		console.log('connected to database :: ' + dbName);
-	}
-});
-var accounts = db.collection('accounts');
+var connection = mysql.createConnection(dbInfo);
 
 /* login validation methods */
 
 exports.autoLogin = function(user, pass, callback)
 {
-	accounts.findOne({user:user}, function(e, o) {
-		if (o){
-			o.pass == pass ? callback(o) : callback(null);
-		}	else{
+	var sql = "SELECT * FROM `commonplace`.`user` WHERE user = ? AND pass = ?";
+
+	connection.query({
+		sql: sql,
+		values: [user, pass]
+	}, function(err, rows, fields) {
+		if (err) throw err;
+
+		if (rows && typeof rows[0] === 'object') {
+			callback(rows[0]);
+		} else {
 			callback(null);
 		}
 	});
@@ -35,10 +29,12 @@ exports.autoLogin = function(user, pass, callback)
 
 exports.manualLogin = function(user, pass, callback)
 {
-	accounts.findOne({user:user}, function(e, o) {
-		if (o == null){
-			callback('user-not-found');
-		}	else{
+	findByUserId(user, function(err, o) {
+		if (err) {
+			throw err;
+		} else if (typeof o !== 'object') {
+			callback('invalid-user');
+		} else {
 			validatePassword(pass, o.pass, function(err, res) {
 				if (res){
 					callback(null, o);
@@ -54,19 +50,29 @@ exports.manualLogin = function(user, pass, callback)
 
 exports.addNewAccount = function(newData, callback)
 {
-	accounts.findOne({user:newData.user}, function(e, o) {
-		if (o){
+	var sql = 'INSERT INTO `commonplace`.`user` SET ?';
+
+	findByUserId(newData.user, function(err, o) {
+		if (err) {
+			throw err;
+		} else if (typeof o === 'object') {
 			callback('username-taken');
-		}	else{
-			accounts.findOne({email:newData.email}, function(e, o) {
-				if (o){
+		} else {
+			findByEmail(newData.email, function(err, o) {
+				if (err) {
+					throw err;
+				} else if (typeof o === 'object') {
 					callback('email-taken');
-				}	else{
+				} else {
 					saltAndHash(newData.pass, function(hash){
 						newData.pass = hash;
-					// append date stamp when record was created //
-						newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-						accounts.insert(newData, {safe: true}, callback);
+						connection.query(sql, newData, function(err, result) {
+							if (err) {
+								callback('server error');
+							} else {
+								callback();
+							}
+						});
 					});
 				}
 			});
@@ -76,73 +82,132 @@ exports.addNewAccount = function(newData, callback)
 
 exports.updateAccount = function(newData, callback)
 {
-	accounts.findOne({user:newData.user}, function(e, o){
-		o.name 		= newData.name;
-		o.email 	= newData.email;
-		o.country 	= newData.country;
-		if (newData.pass == ''){
-			accounts.save(o, {safe: true}, function(err) {
-				if (err) callback(err);
-				else callback(null, o);
-			});
-		}	else{
-			saltAndHash(newData.pass, function(hash){
-				o.pass = hash;
-				accounts.save(o, {safe: true}, function(err) {
-					if (err) callback(err);
-					else callback(null, o);
+	var sql = 'UPDATE `commonplace`.`user`' +
+				'SET' +
+				'`name` = ?,' +
+				'`email` = ?,' +
+				'`pass` = ?,' +
+				'`country` = ?,' +
+				'`updated_dttm` = NOW()' +
+				'WHERE `user` = ?';
+
+	findByUserId(newData.user, function(e, o) {
+		if (e || typeof o !== 'object') {
+			callback(e);
+		} else {
+			o.name = newData.name;
+			o.email = newData.email;
+			o.country = newData.country;
+
+			if (typeof newData.pass === 'string'){
+				saltAndHash(newData.pass, function(hash) {
+					o.pass = hash;
+					connection.query(sql, [o.name, o.email, hash, o.country, o.user], function(err, result) {
+						if (err) {
+							console.log(err);
+							callback('server error');
+						} else {
+							callback(null, o);
+						}
+					});
 				});
-			});
+			} else {
+				connection.query(sql, [o.name, o.email, o.pass, o.country, o.user], function(err, result) {
+					if (err) {
+						console.log(err);
+						callback('server error');
+					} else {
+						callback(null, o);
+					}
+				});
+			}
 		}
 	});
 }
 
 exports.updatePassword = function(email, newPass, callback)
 {
-	accounts.findOne({email:email}, function(e, o){
-		if (e){
-			callback(e, null);
-		}	else{
+	var sql = 'UPDATE `commonplace`.`user`' +
+				'SET' +
+				'`pass` = ?,' +
+				'`updated_dttm` = NOW()' +
+				'WHERE `user` = ?';
+	findByEmail(email, function(e, o) {
+		if (e || typeof o !== 'object') {
+			callback(e);
+		} else {
 			saltAndHash(newPass, function(hash){
 		        o.pass = hash;
-		        accounts.save(o, {safe: true}, callback);
+				connection.query(sql, [o.pass, o.user], function(err, result) {
+					if (err) {
+						console.log(err);
+						callback('server error');
+					} else {
+						callback(null, o);
+					}
+				});
 			});
 		}
 	});
 }
 
-/* account lookup methods */
+// /* account lookup methods */
 
-exports.deleteAccount = function(id, callback)
+exports.deleteAccount = function(sessionUser, callback)
 {
-	accounts.remove({_id: getObjectId(id)}, callback);
+	console.log('deleteAccount : ' + sessionUser.user + ' / ' + sessionUser.pass);
+
+	var sql = 'DELETE FROM `commonplace`.`user` WHERE `user` = ? AND `pass` = ?';
+
+	connection.query(sql, [sessionUser.user, sessionUser.pass], function(err, result) {
+		console.dir(err,result);
+
+		if (err || result.affectedRows != 1) {
+			console.log(err);
+			callback('server error');
+		} else {
+			callback(null);
+		}
+	});
 }
 
 exports.getAccountByEmail = function(email, callback)
 {
-	accounts.findOne({email:email}, function(e, o){ callback(o); });
+	findByEmail(email, function(e, o){ callback(o); });
 }
 
 exports.validateResetLink = function(email, passHash, callback)
 {
-	accounts.find({ $and: [{email:email, pass:passHash}] }, function(e, o){
-		callback(o ? 'ok' : null);
+	var sql = "SELECT * FROM `commonplace`.`user` WHERE email = ? AND pass = ?";
+
+	connection.query({
+		sql: sql,
+		values: [email, passHash]
+	}, function(err, rows, fields) {
+		if (err) throw err;
+
+		if (rows && typeof rows[0] === 'object') {
+			callback('ok');
+		} else {
+			callback(null);
+		}
 	});
 }
 
 exports.getAllRecords = function(callback)
 {
-	accounts.find().toArray(
-		function(e, res) {
-		if (e) callback(e)
-		else callback(null, res)
+	var sql = 'SELECT ?? FROM `commonplace`.`user`';
+	var columns = ['user', 'name', 'email', 'country', 'group_cd', 'os', 'gcm_token', 'phone_number', 'updated_dttm', 'creation_dttm'];
+
+	connection.query(sql, [columns], function(err, result) {
+		callback(err, result);
 	});
 };
 
-exports.delAllRecords = function(callback)
-{
-	accounts.remove({}, callback); // reset accounts collection for testing //
-}
+// exports.delAllRecords = function(callback)
+// {
+// 	accounts.remove({}, callback); // reset accounts collection for testing //
+// }
 
 /* private encryption & validation methods */
 
@@ -176,27 +241,29 @@ var validatePassword = function(plainPass, hashedPass, callback)
 
 /* auxiliary methods */
 
-var getObjectId = function(id)
+var findByUserId = function(user, callback)
 {
-	return new require('mongodb').ObjectID(id);
-}
+	var sql = "SELECT * FROM `commonplace`.`user` WHERE user = ?";
 
-var findById = function(id, callback)
+	connection.query({
+		sql : sql,
+  		values: [user]
+	}, function(err, rows, fields) {
+		callback(err, rows[0]);
+	});
+};
+
+var findByEmail = function(email, callback)
 {
-	accounts.findOne({_id: getObjectId(id)},
-		function(e, res) {
-		if (e) callback(e)
-		else callback(null, res)
+	var sql = "SELECT * FROM `commonplace`.`user` WHERE email = ?";
+
+	connection.query({
+		sql : sql,
+  		values: [email]
+	}, function(err, rows, fields) {
+		callback(err, rows[0]);
 	});
 };
 
 
-var findByMultipleFields = function(a, callback)
-{
-// this takes an array of name/val pairs to search against {fieldName : 'value'} //
-	accounts.find( { $or : a } ).toArray(
-		function(e, results) {
-		if (e) callback(e)
-		else callback(null, results)
-	});
-}
+saltAndHash('111111', function(hash) {console.log(hash)});

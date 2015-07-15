@@ -1,8 +1,7 @@
 
 /**
-	* Node.js Login Boilerplate
-	* More Info : http://bit.ly/LsODY8
-	* Copyright (c) 2013-2015 Stephen Braitsch
+	* Common Place Web Service
+	* Copyright (c) 2015 CommonPlace
 **/
 
 var http = require('http');
@@ -11,7 +10,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
 var cookieParser = require('cookie-parser');
-var MongoStore = require('connect-mongo')(session);
+var FileStore = require('session-file-store')(session);
 
 var app = express();
 
@@ -24,7 +23,7 @@ app.use(session({
 	proxy: true,
 	resave: true,
 	saveUninitialized: true,
-	store: new MongoStore({ host: 'localhost', port: 27017, db: 'node-login'})
+	store: new FileStore
 	})
 );
 app.use(bodyParser.json());
