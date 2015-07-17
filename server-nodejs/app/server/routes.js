@@ -175,6 +175,36 @@ module.exports = function(app) {
 			}
 	    });
 	});
-	
+
+// gcm accounts //
+
+	app.post('/gcm/regist', function(req, res) {
+		AM.registDeviceInfo({
+			phoneNumber: req.body['phoneNumber'],
+			token: req.body['token']
+		}, function(e) {
+			if (e){
+				res.status(400).send(e);
+			}	else{
+				res.status(200).send('ok');
+			}
+		});
+	});
+
+	app.post('/gcm/list', function(req, res) {
+
+
+		console.dir(req.body['phoneNumbers']);
+
+
+		AM.getGcmTokens(req.body['phoneNumbers'], function(e, o) {
+			if (e){
+				res.status(400).send(e);
+			}	else{
+				res.status(200).send(o);
+			}
+		});
+	});
+
 	app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found'}); });
 };

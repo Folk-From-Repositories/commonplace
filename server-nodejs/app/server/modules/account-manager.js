@@ -176,6 +176,79 @@ exports.updatePassword = function(email, newPass, callback)
 	});
 }
 
+exports.registDeviceInfo = function(data, callback) {
+	var phoneNumber = phoneNumberToDbFormat(data.phoneNumber);
+	var token = data.token;
+
+	// validate data
+	if (!phoneNumber) { callback('error-phone-number'); return; }
+
+	if (!token) { callback('needed-gcm-token'); return;	}
+
+	function isOnlyNumber(str) {
+		var isNumber = true;
+		for (var i=0; i < str.length; i++) {
+			if (isNaN(str[i])) {
+				isNumber = false;
+				break;
+			}
+		}
+		return isNumber;
+	}
+
+	if (!isOnlyNumber(phoneNumber)) { callback('invalid-phone-number-format'); return; }
+
+	// find with phone number
+	var selectSql = 'SELECT * FROM `commonplace`.`user` WHERE phone_number = ?';
+	var insertSql = 'INSERT INTO `commonplace`.`user` (gcm_token, phone_number) VALUES (?, ?)';
+	var updateSql = 'UPDATE `commonplace`.`user` SET gcm_token = ?, updated_dttm = NOW() WHERE phone_number = ?';
+
+	connection.query({
+		sql : selectSql,
+  		values: [phoneNumber]
+	}, function(err, rows, fields) {
+		if (err) { callback(err); return; }
+
+		var sql;
+
+		if (rows[0]) {
+			// existing phone number. Do token update
+			connection.query(updateSql, [token, phoneNumber], function(err, result) {
+				if (err) {
+					console.log(err);
+					callback('server error');
+				} else {
+					callback(null, result);
+				}
+			});
+		} else {
+			// add new account with phone number
+			connection.query(insertSql, [token, phoneNumber], function(err, result) {
+				if (err) {
+					console.log(err);
+					callback('server error');
+				} else {
+					callback(null, result);
+				}
+			});
+		}
+
+
+	});
+}
+
+exports.getGcmTokens = function(phoneNumbers, callback) {
+	// TODO validation
+	var sql = 'SELECT phone_number, gcm_token FROM `commonplace`.`user` WHERE phone_number IN ??';
+
+	connection.query(sql, [phoneNumbers], function(err, result) {
+		
+		console.dir(err);
+		
+		callback(err, result);
+	});
+}
+
 // /* account lookup methods */
 
 exports.deleteAccount = function(sessionUser, callback)
@@ -272,7 +345,7 @@ var findByUserId = function(user, callback)
 
 	connection.query({
 		sql : sql,
-  		values: [user]
+		values: [user]
 	}, function(err, rows, fields) {
 		callback(err, rows[0]);
 	});
@@ -290,5 +363,11 @@ var findByEmail = function(email, callback)
 	});
 };
 
+var phoneNumberToDbFormat = function(phone) {
 
-saltAndHash('111111', function(hash) {console.log(hash)});
+	if (phone) {
+		phone = phone.replace(/[-_\W]/g, "");
+	}
+
+	return phone;
+};
