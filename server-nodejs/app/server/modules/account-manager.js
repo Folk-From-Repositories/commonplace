@@ -6,21 +6,22 @@ var dbInfo 		= require(__dirname + '/../conf/database.json');
 
 /* establish the database connection */
 var connection;
+var tag = '[account-manager.js] ';
 
 function makeConnection() {
 	connection = mysql.createConnection(dbInfo);
 
 	connection.connect(function(err) {
 		if (err) {
-			console.error('Error when connecting to db:', err);
+			console.error(tag + 'Error when connecting to db:', err);
 			setTimeout(makeConnection, 3000);
 		} else {
-			console.log('Establish db connection.')
+			console.log(tag + 'Establish db connection.')
 		}
 	});
 
 	connection.on('error', function(err) {
-		console.error('Database error', err);
+		console.error(tag + 'Database error', err);
 
 		if (err.code === 'PROTOCOL_CONNECTION_LOST') {
 			makeConnection();
@@ -75,34 +76,50 @@ exports.manualLogin = function(user, pass, callback)
 
 exports.addNewAccount = function(newData, callback)
 {
+
+	console.log(tag + 'add new account from Web', newData.user);
+
+	if (!newData.user || !newData.phone || !newData.email || !newData.pass) {
+		callback('insufficient-params'); return;
+	}
+
 	var sql = 'INSERT INTO `commonplace`.`user` SET ?';
 
-	findByUserId(newData.user, function(err, o) {
+	findByphone(newData.phone, function(err, o) {
 		if (err) {
-			throw err;
+			callback('server-error'); return;
 		} else if (typeof o === 'object') {
-			callback('username-taken');
-		} else {
-			findByEmail(newData.email, function(err, o) {
-				if (err) {
-					throw err;
-				} else if (typeof o === 'object') {
-					callback('email-taken');
-				} else {
-					saltAndHash(newData.pass, function(hash){
-						newData.pass = hash;
-						newData.creation_dttm = moment().format('YYYY-MM-DD HH:mm:ss');
-						connection.query(sql, newData, function(err, result) {
-							if (err) {
-								callback('server error');
-							} else {
-								callback();
-							}
-						});
-					});
-				}
-			});
+			callback('phone-number-taken'); return;
 		}
+
+		findByUserId(newData.user, function(err, o) {
+			if (err) {
+				callback(err); return;
+			} else if (typeof o === 'object') {
+				callback('username-taken'); return;
+			} else {
+				findByEmail(newData.email, function(err, o) {
+					if (err) {
+						throw err;
+					} else if (typeof o === 'object') {
+						callback('email-taken');
+					} else {
+						saltAndHash(newData.pass, function(hash){
+							newData.pass = hash;
+							newData.create = moment().format('YYYY-MM-DD HH:mm:ss');
+							connection.query(sql, newData, function(err, result) {
+								if (err) {
+									callback('server-error');
+								} else {
+									callback();
+								}
+							});
+						});
+					}
+				});
+			}
+		});
+
 	});
 }
 
@@ -113,25 +130,29 @@ exports.updateAccount = function(newData, callback)
 				'`name` = ?,' +
 				'`email` = ?,' +
 				'`pass` = ?,' +
+				'`token` = ?,' +
 				'`country` = ?,' +
-				'`updated_dttm` = NOW()' +
+				'`update` = NOW()' +
 				'WHERE `user` = ?';
+
+	console.log(tag + 'update account', newData.user);
 
 	findByUserId(newData.user, function(e, o) {
 		if (e || typeof o !== 'object') {
-			callback(e);
+			callback(e); return;
 		} else {
 			o.name = newData.name;
 			o.email = newData.email;
 			o.country = newData.country;
+			o.token = newData.token;
 
 			if (typeof newData.pass === 'string'){
 				saltAndHash(newData.pass, function(hash) {
 					o.pass = hash;
-					connection.query(sql, [o.name, o.email, hash, o.country, o.user], function(err, result) {
+					connection.query(sql, [o.name, o.email, hash, o.token, o.country, o.user], function(err, result) {
 						if (err) {
-							console.log(err);
-							callback('server error');
+							console.error(err);
+							callback('server-error');
 						} else {
 							callback(null, o);
 						}
@@ -140,8 +161,8 @@ exports.updateAccount = function(newData, callback)
 			} else {
 				connection.query(sql, [o.name, o.email, o.pass, o.country, o.user], function(err, result) {
 					if (err) {
-						console.log(err);
-						callback('server error');
+						console.error(err);
+						callback('server-error');
 					} else {
 						callback(null, o);
 					}
@@ -156,7 +177,7 @@ exports.updatePassword = function(email, newPass, callback)
 	var sql = 'UPDATE `commonplace`.`user`' +
 				'SET' +
 				'`pass` = ?,' +
-				'`updated_dttm` = NOW()' +
+				'`update` = NOW()' +
 				'WHERE `user` = ?';
 	findByEmail(email, function(e, o) {
 		if (e || typeof o !== 'object') {
@@ -166,7 +187,7 @@ exports.updatePassword = function(email, newPass, callback)
 		        o.pass = hash;
 				connection.query(sql, [o.pass, o.user], function(err, result) {
 					if (err) {
-						console.log(err);
+						console.error(err);
 						callback('server error');
 					} else {
 						callback(null, o);
@@ -178,36 +199,30 @@ exports.updatePassword = function(email, newPass, callback)
 }
 
 exports.registDeviceInfo = function(data, callback) {
-	var phoneNumber = phoneNumberToDbFormat(data.phoneNumber);
+	var phone = phoneToDbFormat(data.phone);
 	var token = data.token;
 
 	// validate data
-	if (!phoneNumber) { callback('error-phone-number'); return; }
+	if (!phone) { callback('error-phone-number'); return; }
 
 	if (!token) { callback('needed-gcm-token'); return;	}
 
-
-
-	if (!isOnlyNumber(phoneNumber)) { callback('invalid-phone-number-format'); return; }
+	if (!isOnlyNumber(phone)) { callback('invalid-phone-number-format'); return; }
 
 	// find with phone number
-	var selectSql = 'SELECT * FROM `commonplace`.`user` WHERE phone_number = ?';
-	var insertSql = 'INSERT INTO `commonplace`.`user` (gcm_token, phone_number) VALUES (?, ?)';
-	var updateSql = 'UPDATE `commonplace`.`user` SET gcm_token = ?, updated_dttm = NOW() WHERE phone_number = ?';
+	var insertSql = 'INSERT INTO `commonplace`.`user` (gcm_token, phone) VALUES (?, ?)';
+	var updateSql = 'UPDATE `commonplace`.`user` SET token = ?, update = NOW() WHERE phone = ?';
 
-	connection.query({
-		sql : selectSql,
-  		values: [phoneNumber]
-	}, function(err, rows, fields) {
+	findByphone(phone, function(err, o) {
 		if (err) { callback(err); return; }
 
 		var sql;
 
-		if (rows[0]) {
+		if (o) {
 			// existing phone number. Do token update
-			connection.query(updateSql, [token, phoneNumber], function(err, result) {
+			connection.query(updateSql, [token, phone], function(err, result) {
 				if (err) {
-					console.log(err);
+					console.error(err);
 					callback('server error');
 				} else {
 					callback(null, result);
@@ -215,9 +230,9 @@ exports.registDeviceInfo = function(data, callback) {
 			});
 		} else {
 			// add new account with phone number
-			connection.query(insertSql, [token, phoneNumber], function(err, result) {
+			connection.query(insertSql, [token, phone], function(err, result) {
 				if (err) {
-					console.log(err);
+					console.error(err);
 					callback('server error');
 				} else {
 					callback(null, result);
@@ -227,24 +242,24 @@ exports.registDeviceInfo = function(data, callback) {
 	});
 }
 
-exports.getGcmTokens = function(phoneNumbers, callback) {
+exports.getGcmTokens = function(phones, callback) {
 	// validate data
-	if (!phoneNumbers) { callback('error-phone-number'); return; }
+	if (!phones) { callback('error-phone-number'); return; }
 
 	// Make Array if there is only one number.
-	if (Object.prototype.toString.call( phoneNumbers ) !== '[object Array]' ) {
-		phoneNumbers = [phoneNumbers];
+	if (Object.prototype.toString.call( phones ) !== '[object Array]' ) {
+		phones = [phones];
 	}
 
-	for (var index in phoneNumbers) {
-		phoneNumbers[index] = phoneNumberToDbFormat(phoneNumbers[index]);
+	for (var index in phones) {
+		phones[index] = phoneToDbFormat(phones[index]);
 
-		if (!isOnlyNumber(phoneNumbers[index])) {
+		if (!isOnlyNumber(phones[index])) {
 			callback('invalid-phone-number-format'); return;
 		}
 	}
 
-	var sql = 'SELECT phone_number, gcm_token FROM `commonplace`.`user` WHERE phone_number IN (' + connection.escape(phoneNumbers) + ')';
+	var sql = 'SELECT phone_number, gcm_token FROM `commonplace`.`user` WHERE phone_number IN (' + connection.escape(phones) + ')';
 
 	connection.query(sql, function(err, result) {
 		callback(err, result);
@@ -255,15 +270,14 @@ exports.getGcmTokens = function(phoneNumbers, callback) {
 
 exports.deleteAccount = function(sessionUser, callback)
 {
-	console.log('deleteAccount : ' + sessionUser.user + ' / ' + sessionUser.pass);
+	console.log(tag + 'deleteAccount : ' + sessionUser.user);
 
 	var sql = 'DELETE FROM `commonplace`.`user` WHERE `user` = ? AND `pass` = ?';
 
 	connection.query(sql, [sessionUser.user, sessionUser.pass], function(err, result) {
-		console.dir(err,result);
 
 		if (err || result.affectedRows != 1) {
-			console.log(err);
+			console.error(err);
 			callback('server error');
 		} else {
 			callback(null);
@@ -297,17 +311,13 @@ exports.validateResetLink = function(email, passHash, callback)
 exports.getAllRecords = function(callback)
 {
 	var sql = 'SELECT ?? FROM `commonplace`.`user`';
-	var columns = ['user', 'name', 'email', 'country', 'group_cd', 'os', 'gcm_token', 'phone_number', 'updated_dttm', 'creation_dttm'];
+	var columns = ['user', 'name', 'email', 'country', 'group', 'os', 'token', 'phone', 'update', 'create'];
 
 	connection.query(sql, [columns], function(err, result) {
 		callback(err, result);
 	});
 };
 
-// exports.delAllRecords = function(callback)
-// {
-// 	accounts.remove({}, callback); // reset accounts collection for testing //
-// }
 
 /* private encryption & validation methods */
 
@@ -365,7 +375,20 @@ var findByEmail = function(email, callback)
 	});
 };
 
-var phoneNumberToDbFormat = function(phone) {
+var findByphone = function(phone, callback)
+{
+	var sql = "SELECT * FROM `commonplace`.`user` WHERE phone = ?";
+
+	connection.query({
+		sql : sql,
+  		values: [phone]
+	}, function(err, rows, fields) {
+		callback(err, rows[0]);
+	});
+};
+
+
+var phoneToDbFormat = function(phone) {
 
 	if (phone) {
 		phone = phone.replace(/[-_\W]/g, "");

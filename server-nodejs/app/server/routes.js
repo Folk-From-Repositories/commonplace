@@ -3,6 +3,7 @@ var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
 var GCM = require('./modules/gcm-sender');
+var tag = '[routes.js] ';
 
 module.exports = function(app) {
 
@@ -71,17 +72,16 @@ module.exports = function(app) {
 	app.post('/user/update', function(req, res){
 		if (req.body['user'] != undefined) {
 
-			console.log('[routes.js] Update user info - ' + req.body['user']);
-
 			AM.updateAccount({
 				user 	: req.body['user'],
 				name 	: req.body['name'],
 				email 	: req.body['email'],
+				token 	: req.body['token'],
+				phone 	: req.body['phone'],
 				pass	: req.body['pass'],
 				country : req.body['country']
 			}, function(e, o){
 				if (e){
-					console.log(e);
 					res.status(400).send('error-updating-account');
 				} else {
 					req.session.user = o;
@@ -107,14 +107,13 @@ module.exports = function(app) {
 	});
 	
 	app.post('/user/signup', function(req, res){
-
-		console.log('[routes.js] Create user - ' + req.body['user']);
-
 		AM.addNewAccount({
 			name 	: req.body['name'],
 			email 	: req.body['email'],
 			user 	: req.body['user'],
-			pass	: req.body['pass'],
+			pass 	: req.body['pass'],
+			phone 	: req.body['phone'],
+			token 	: req.body['token'],
 			country : req.body['country']
 		}, function(e){
 			if (e){
@@ -186,9 +185,6 @@ module.exports = function(app) {
 	
 	app.post('/user/delete', function(req, res){
 		AM.deleteAccount(req.session.user, function(e, obj){
-
-			console.log('[routes.js] Delete user - ' + req.session.user.user);
-
 			if (!e){
 				res.clearCookie('user');
 				res.clearCookie('pass');
@@ -202,11 +198,8 @@ module.exports = function(app) {
 // gcm accounts //
 
 	app.post('/gcm/regist', function(req, res) {
-
-		console.log('[routes.js] GCM Regist - ' + req.body['phoneNumber'] + ' / ' + req.body['token']);
-
 		AM.registDeviceInfo({
-			phoneNumber: req.body['phoneNumber'],
+			phone: req.body['phone'],
 			token: req.body['token']
 		}, function(e) {
 			if (e){
@@ -218,7 +211,7 @@ module.exports = function(app) {
 	});
 
 	app.post('/gcm/list', function(req, res) {
-		AM.getGcmTokens(req.body['phoneNumbers'], function(e, o) {
+		AM.getGcmTokens(req.body['phones'], function(e, o) {
 			if (e){
 				res.status(400).send(e);
 			} else {
@@ -243,11 +236,6 @@ module.exports = function(app) {
 			title: req.body['title'],
 			message: req.body['message']
 		};
-
-		console.dir({
-			'api' : '/commonplace/gcmtest',
-			'reqParams': data
-		});
 
 		GCM.gcmtest(data, function(e, o) {
 			if (e){

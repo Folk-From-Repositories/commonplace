@@ -11,6 +11,7 @@ $(document).ready(function(){
 			} 	else{
 			// push the disabled username field onto the form data array //
 				formData.push({name:'user', value:$('#user-tf').val()})
+				formData.push({name:'phone', value:$('#phone-tf').val()})
 				return true;
 			}
 		},
@@ -33,6 +34,7 @@ $(document).ready(function(){
 	$('#account-form h1').text('Account Settings');
 	$('#account-form #sub1').text('Here are the current settings for your account.');
 	$('#user-tf').attr('disabled', 'disabled');
+	$('#phone-tf').attr('disabled', 'disabled');
 	$('#account-form-btn1').html('Delete');
 	$('#account-form-btn1').addClass('btn-danger');
 	$('#account-form-btn2').html('Update');

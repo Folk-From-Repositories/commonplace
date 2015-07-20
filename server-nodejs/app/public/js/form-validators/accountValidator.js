@@ -3,8 +3,8 @@ function AccountValidator(){
 
 // build array maps of the form inputs & control groups //
 
-	this.formFields = [$('#name-tf'), $('#email-tf'), $('#user-tf'), $('#pass-tf')];
-	this.controlGroups = [$('#name-cg'), $('#email-cg'), $('#user-cg'), $('#pass-cg')];
+	this.formFields = [$('#name-tf'), $('#email-tf'), $('#user-tf'), $('#pass-tf'), $('#phone-tf'), $('#token-tf')];
+	this.controlGroups = [$('#name-cg'), $('#email-cg'), $('#user-cg'), $('#pass-cg'), $('#phone-cg'), $('#token-cg')];
 	
 // bind the form-error modal window to this controller to display any errors //
 	
@@ -22,7 +22,7 @@ function AccountValidator(){
 		if ($('#userId').val() && s===''){
 			return true;
 		}	else{
-			return s.length >= 6;
+			return s.length >= 4;
 		}
 	}
 	
@@ -31,7 +31,13 @@ function AccountValidator(){
 		var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		return re.test(e);
 	}
-	
+
+	this.validatePhone = function(s)
+	{
+		var re = /^[0-9]{11}$/;
+		return re.test(s);
+	}
+
 	this.showErrors = function(a)
 	{
 		$('.modal-form-errors .modal-body p').text('Please correct the following problems :');
@@ -73,8 +79,10 @@ AccountValidator.prototype.validateForm = function()
 		this.controlGroups[3].addClass('error');
 		e.push('Password Should Be At Least 6 Characters');
 	}
+	if (this.validatePhone(this.formFields[4].val()) == false) {
+		this.controlGroups[4].addClass('error');
+		e.push('Phone Number Should Be Contain Only Number');	
+	}
 	if (e.length) this.showErrors(e);
 	return e.length === 0;
 }
-
-	

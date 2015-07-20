@@ -30,6 +30,15 @@ input(type='hidden', value= user._id)#userId
 				label.control-label(for='user-tf') Username
 				.controls
 					input#user-tf.disabled(type='text', name='user', value= user.user)
+
+			#phone-cg.control-group
+				label.control-label(for='phone-tf') Phone
+				.controls
+					input#phone-tf.disabled(type='text', name='phone', value= user.phone)
+			#token-cg.control-group
+				label.control-label(for='token-tf') GCM Token
+				.controls
+					input#token-tf.disabled(type='text', name='token', value= user.token)
 			#pass-cg.control-group
 				label.control-label(for='pass-tf') Password
 				.controls

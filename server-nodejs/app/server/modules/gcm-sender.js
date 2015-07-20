@@ -15,14 +15,14 @@ exports.gcmtest = function(data, callback)
 	// validate data
 	if (!data) { callback('error-request-parameter'); return; }
 
-	var phoneNumbers = data.to;
+	var phones = data.to;
 
 	// Make Array if there is only one object.
-	if (Object.prototype.toString.call( phoneNumbers ) !== '[object Array]' ) {
-		phoneNumbers = [phoneNumbers];
+	if (Object.prototype.toString.call( phones ) !== '[object Array]' ) {
+		phones = [phones];
 	}
 
-	AM.getGcmTokens(phoneNumbers, function(err, res) {
+	AM.getGcmTokens(phones, function(err, res) {
 
 		if (err) { callback(err); return; }
 
