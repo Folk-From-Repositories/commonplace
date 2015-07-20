@@ -16,6 +16,7 @@ module.exports = function(app) {
 	// attempt automatic login //
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
+					console.log('[routes.js] Auto Login - ' + user.user);
 					req.session.user = o;
 
 					if (o.group_cd === 9) {
@@ -40,6 +41,8 @@ module.exports = function(app) {
 					res.cookie('user', o.user, { maxAge: 900000 });
 					res.cookie('pass', o.pass, { maxAge: 900000 });
 				}
+
+				console.log('[routes.js] Manual Login - ' + user.user);
 
 				if (o.group_cd === 9) {
 					res.redirect('/user/print');
@@ -67,6 +70,9 @@ module.exports = function(app) {
 	
 	app.post('/user/update', function(req, res){
 		if (req.body['user'] != undefined) {
+
+			console.log('[routes.js] Update user info - ' + req.body['user']);
+
 			AM.updateAccount({
 				user 	: req.body['user'],
 				name 	: req.body['name'],
@@ -101,6 +107,9 @@ module.exports = function(app) {
 	});
 	
 	app.post('/user/signup', function(req, res){
+
+		console.log('[routes.js] Create user - ' + req.body['user']);
+
 		AM.addNewAccount({
 			name 	: req.body['name'],
 			email 	: req.body['email'],
@@ -177,6 +186,9 @@ module.exports = function(app) {
 	
 	app.post('/user/delete', function(req, res){
 		AM.deleteAccount(req.session.user, function(e, obj){
+
+			console.log('[routes.js] Delete user - ' + req.body['user']);
+
 			if (!e){
 				res.clearCookie('user');
 				res.clearCookie('pass');
@@ -190,6 +202,9 @@ module.exports = function(app) {
 // gcm accounts //
 
 	app.post('/gcm/regist', function(req, res) {
+
+		console.log('[routes.js] GCM Regist - ' + req.body['phoneNumber'] + ' / ' + req.body['token']);
+
 		AM.registDeviceInfo({
 			phoneNumber: req.body['phoneNumber'],
 			token: req.body['token']
@@ -228,6 +243,11 @@ module.exports = function(app) {
 			title: req.body['title'],
 			message: req.body['message']
 		};
+
+		console.dir({
+			'api' : '/commonplace/gcmtest',
+			'reqParams': data
+		});
 
 		GCM.gcmtest(data, function(e, o) {
 			if (e){

@@ -12,8 +12,6 @@ var sender = new gcm.Sender(server_api_key);
 // test api
 exports.gcmtest = function(data, callback)
 {
-	console.dir(data);
-
 	// validate data
 	if (!data) { callback('error-request-parameter'); return; }
 
