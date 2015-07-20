@@ -16,7 +16,7 @@ module.exports = function(app) {
 	// attempt automatic login //
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
-					console.log('[routes.js] Auto Login - ' + user.user);
+					console.log('[routes.js] Auto Login - ' + req.cookies.user);
 					req.session.user = o;
 
 					if (o.group_cd === 9) {
@@ -42,7 +42,7 @@ module.exports = function(app) {
 					res.cookie('pass', o.pass, { maxAge: 900000 });
 				}
 
-				console.log('[routes.js] Manual Login - ' + user.user);
+				console.log('[routes.js] Manual Login - ' + req.body['user']);
 
 				if (o.group_cd === 9) {
 					res.redirect('/user/print');
@@ -187,7 +187,7 @@ module.exports = function(app) {
 	app.post('/user/delete', function(req, res){
 		AM.deleteAccount(req.session.user, function(e, obj){
 
-			console.log('[routes.js] Delete user - ' + req.body['user']);
+			console.log('[routes.js] Delete user - ' + req.session.user.user);
 
 			if (!e){
 				res.clearCookie('user');
