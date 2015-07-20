@@ -192,11 +192,6 @@ module.exports = function(app) {
 	});
 
 	app.post('/gcm/list', function(req, res) {
-
-
-		console.dir(req.body['phoneNumbers']);
-
-
 		AM.getGcmTokens(req.body['phoneNumbers'], function(e, o) {
 			if (e){
 				res.status(400).send(e);

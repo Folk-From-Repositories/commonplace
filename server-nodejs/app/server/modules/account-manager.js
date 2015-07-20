@@ -185,16 +185,7 @@ exports.registDeviceInfo = function(data, callback) {
 
 	if (!token) { callback('needed-gcm-token'); return;	}
 
-	function isOnlyNumber(str) {
-		var isNumber = true;
-		for (var i=0; i < str.length; i++) {
-			if (isNaN(str[i])) {
-				isNumber = false;
-				break;
-			}
-		}
-		return isNumber;
-	}
+
 
 	if (!isOnlyNumber(phoneNumber)) { callback('invalid-phone-number-format'); return; }
 
@@ -232,19 +223,29 @@ exports.registDeviceInfo = function(data, callback) {
 				}
 			});
 		}
-
-
 	});
 }
 
 exports.getGcmTokens = function(phoneNumbers, callback) {
-	// TODO validation
-	var sql = 'SELECT phone_number, gcm_token FROM `commonplace`.`user` WHERE phone_number IN ??';
+	// validate data
+	if (!phoneNumbers) { callback('error-phone-number'); return; }
 
-	connection.query(sql, [phoneNumbers], function(err, result) {
-		
-		console.dir(err);
-		
+	// Make Array if there is only one number.
+	if (Object.prototype.toString.call( phoneNumbers ) !== '[object Array]' ) {
+		phoneNumbers = [phoneNumbers];
+	}
+
+	for (var index in phoneNumbers) {
+		phoneNumbers[index] = phoneNumberToDbFormat(phoneNumbers[index]);
+
+		if (!isOnlyNumber(phoneNumbers[index])) {
+			callback('invalid-phone-number-format'); return;
+		}
+	}
+
+	var sql = 'SELECT phone_number, gcm_token FROM `commonplace`.`user` WHERE phone_number IN (' + connection.escape(phoneNumbers) + ')';
+
+	connection.query(sql, function(err, result) {
 		callback(err, result);
 	});
 }
@@ -371,3 +372,14 @@ var phoneNumberToDbFormat = function(phone) {
 
 	return phone;
 };
+
+var isOnlyNumber = function(str) {
+	var isNumber = true;
+	for (var i=0; i < str.length; i++) {
+		if (isNaN(str[i])) {
+			isNumber = false;
+			break;
+		}
+	}
+	return isNumber;
+}
