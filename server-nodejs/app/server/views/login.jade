@@ -4,7 +4,7 @@ extends layout
 block content
 	#login-container
 		form( method="post")#login-form.well.span4
-			h1 Hello!
+			h1 Common Place!
 			p.subheading Please Login To Your Account
 			label Username 
 			input(type="text", name="user", id='user-tf').span4.required
@@ -19,7 +19,7 @@ block content
 			hr
 			div.btm-links
 				a(href='#')#forgot-password Forgot Your Password?
-				a(href='/signup')#create-account Create An Account
+				a(href='/user/signup')#create-account Create An Account
 
 	include modals/alert
 	include modals/lost-password

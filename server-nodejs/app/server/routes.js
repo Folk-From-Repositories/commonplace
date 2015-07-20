@@ -10,15 +10,20 @@ module.exports = function(app) {
 	app.get('/', function(req, res){
 	// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
-			res.render('login', { title: 'Hello - Please Login To Your Account' });
+			res.render('login', { title: 'Common Place - Please Login To Your Account' });
 		} else {
 	// attempt automatic login //
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
-				    req.session.user = o;
-					res.redirect('/home');
-				}	else{
-					res.render('login', { title: 'Hello - Please Login To Your Account' });
+					req.session.user = o;
+
+					if (o.group_cd === 9) {
+						res.redirect('/user/print');
+					} else {
+						res.redirect('/user/update');
+					}
+				} else {
+					res.render('login', { title: 'Common Place - Please Login To Your Account' });
 				}
 			});
 		}
@@ -28,25 +33,30 @@ module.exports = function(app) {
 		AM.manualLogin(req.body['user'], req.body['pass'], function(e, o){
 			if (!o){
 				res.status(400).send(e);
-			}	else{
+			} else {
 				req.session.user = o;
 				if (req.body['remember-me'] == 'true'){
 					res.cookie('user', o.user, { maxAge: 900000 });
 					res.cookie('pass', o.pass, { maxAge: 900000 });
 				}
-				res.status(200).send(o);
+
+				if (o.group_cd === 9) {
+					res.redirect('/user/print');
+				} else {
+					res.redirect('/user/update');
+				}
 			}
 		});
 	});
 	
 // logged-in user homepage //
 	
-	app.get('/home', function(req, res) {
+	app.get('/user/update', function(req, res) {
 		if (req.session.user == null){
 	// if user is not logged-in redirect back to login page //
 			res.redirect('/');
-		}	else{
-			res.render('home', {
+		} else {
+			res.render('user', {
 				title : 'Control Panel',
 				countries : CT,
 				udata : req.session.user
@@ -54,7 +64,7 @@ module.exports = function(app) {
 		}
 	});
 	
-	app.post('/home', function(req, res){
+	app.post('/user/update', function(req, res){
 		if (req.body['user'] != undefined) {
 			AM.updateAccount({
 				user 	: req.body['user'],
@@ -66,7 +76,7 @@ module.exports = function(app) {
 				if (e){
 					console.log(e);
 					res.status(400).send('error-updating-account');
-				}	else{
+				} else {
 					req.session.user = o;
 			// update the user's login cookies if they exists //
 					if (req.cookies.user != undefined && req.cookies.pass != undefined){
@@ -76,7 +86,7 @@ module.exports = function(app) {
 					res.status(200).send('ok');
 				}
 			});
-		}	else if (req.body['logout'] == 'true'){
+		} else if (req.body['logout'] == 'true'){
 			res.clearCookie('user');
 			res.clearCookie('pass');
 			req.session.destroy(function(e){ res.status(200).send('ok'); });
@@ -85,11 +95,11 @@ module.exports = function(app) {
 	
 // creating new accounts //
 	
-	app.get('/signup', function(req, res) {
+	app.get('/user/signup', function(req, res) {
 		res.render('signup', {  title: 'Signup', countries : CT });
 	});
 	
-	app.post('/signup', function(req, res){
+	app.post('/user/signup', function(req, res){
 		AM.addNewAccount({
 			name 	: req.body['name'],
 			email 	: req.body['email'],
@@ -99,7 +109,7 @@ module.exports = function(app) {
 		}, function(e){
 			if (e){
 				res.status(400).send(e);
-			}	else{
+			} else {
 				res.status(200).send('ok');
 			}
 		});
@@ -107,7 +117,7 @@ module.exports = function(app) {
 
 // password reset //
 
-	app.post('/lost-password', function(req, res){
+	app.post('/user/lost-password', function(req, res){
 	// look up the user's account via their email //
 		AM.getAccountByEmail(req.body['email'], function(o){
 			if (o){
@@ -116,24 +126,24 @@ module.exports = function(app) {
 				// TODO add an ajax loader to give user feedback //
 					if (!e){
 						res.status(200).send('ok');
-					}	else{
+					} else {
 						for (k in e) console.log('ERROR : ', k, e[k]);
 						res.status(400).send('unable to dispatch password reset');
 					}
 				});
-			}	else{
+			} else {
 				res.status(400).send('email-not-found');
 			}
 		});
 	});
 
-	app.get('/reset-password', function(req, res) {
+	app.get('/user/reset-password', function(req, res) {
 		var email = req.query["e"];
 		var passH = req.query["p"];
 		AM.validateResetLink(email, passH, function(e){
 			if (e != 'ok'){
 				res.redirect('/');
-			} else{
+			} else {
 	// save the user's email in a session instead of sending to the client //
 				req.session.reset = { email:email, passHash:passH };
 				res.render('reset', { title : 'Reset Password' });
@@ -141,7 +151,7 @@ module.exports = function(app) {
 		})
 	});
 	
-	app.post('/reset-password', function(req, res) {
+	app.post('/user/reset-password', function(req, res) {
 		var nPass = req.body['pass'];
 	// retrieve the user's email from the session to lookup their account and reset password //
 		var email = req.session.reset.email;
@@ -150,7 +160,7 @@ module.exports = function(app) {
 		AM.updatePassword(email, nPass, function(e, o){
 			if (o){
 				res.status(200).send('ok');
-			}	else{
+			} else {
 				res.status(400).send('unable to update password');
 			}
 		})
@@ -158,22 +168,22 @@ module.exports = function(app) {
 	
 // view & delete accounts //
 	
-	app.get('/print', function(req, res) {
+	app.get('/user/print', function(req, res) {
 		AM.getAllRecords( function(e, accounts){
 			res.render('print', { title : 'Account List', accts : accounts });
 		})
 	});
 	
-	app.post('/delete', function(req, res){
+	app.post('/user/delete', function(req, res){
 		AM.deleteAccount(req.session.user, function(e, obj){
 			if (!e){
 				res.clearCookie('user');
 				res.clearCookie('pass');
 				req.session.destroy(function(e){ res.status(200).send('ok'); });
-			}	else{
+			} else {
 				res.status(400).send('record not found');
 			}
-	    });
+		});
 	});
 
 // gcm accounts //
@@ -185,7 +195,7 @@ module.exports = function(app) {
 		}, function(e) {
 			if (e){
 				res.status(400).send(e);
-			}	else{
+			} else {
 				res.status(200).send('ok');
 			}
 		});
@@ -195,7 +205,7 @@ module.exports = function(app) {
 		AM.getGcmTokens(req.body['phoneNumbers'], function(e, o) {
 			if (e){
 				res.status(400).send(e);
-			}	else{
+			} else {
 				res.status(200).send(o);
 			}
 		});
