@@ -24,7 +24,8 @@
     "express-session": "1.11.3",
     "jade": "1.11.0",
     "moment": "2.10.3",
-    "mysql": "^2.7.0",
+    "mysql": "2.7.0",
+    "node-gcm": "0.11.0",
     "session-file-store": "0.0.14",
     "stylus": "0.51.1"
   },

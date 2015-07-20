@@ -2,6 +2,7 @@
 var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
+var GCM = require('./modules/gcm-sender');
 
 module.exports = function(app) {
 
@@ -203,6 +204,32 @@ module.exports = function(app) {
 
 	app.post('/gcm/list', function(req, res) {
 		AM.getGcmTokens(req.body['phoneNumbers'], function(e, o) {
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send(o);
+			}
+		});
+	});
+
+// common place api //
+
+	// Only for testing //
+	/*
+		req_params = {
+				'to': ['010xxxxxxx'],
+				'title': 'Hello',
+				'message': 'hello world.'
+		};
+	 */
+	app.post('/commonplace/gcmtest', function(req, res) {
+		var data = {
+			to: req.body['to'],
+			title: req.body['title'],
+			message: req.body['message']
+		};
+
+		GCM.gcmtest(data, function(e, o) {
 			if (e){
 				res.status(400).send(e);
 			} else {

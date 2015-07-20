@@ -28,4 +28,5 @@ node_modules
 
 # Non-disclosure files
 app/server/conf/database.json
+gcm-server-key
 sessions
