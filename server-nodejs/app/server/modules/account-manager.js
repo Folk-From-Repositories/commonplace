@@ -91,6 +91,7 @@ exports.addNewAccount = function(newData, callback)
 				} else {
 					saltAndHash(newData.pass, function(hash){
 						newData.pass = hash;
+						newData.creation_dttm = moment().format('YYYY-MM-DD HH:mm:ss');
 						connection.query(sql, newData, function(err, result) {
 							if (err) {
 								callback('server error');
