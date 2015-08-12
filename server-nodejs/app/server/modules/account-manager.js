@@ -210,7 +210,7 @@ exports.registDeviceInfo = function(data, callback) {
 	if (!isOnlyNumber(phone)) { callback('invalid-phone-number-format'); return; }
 
 	// find with phone number
-	var insertSql = 'INSERT INTO `commonplace`.`user` (gcm_token, phone) VALUES (?, ?)';
+	var insertSql = 'INSERT INTO `commonplace`.`user` (token, phone) VALUES (?, ?)';
 	var updateSql = 'UPDATE `commonplace`.`user` SET token = ?, update = NOW() WHERE phone = ?';
 
 	findByphone(phone, function(err, o) {
@@ -259,7 +259,7 @@ exports.getGcmTokens = function(phones, callback) {
 		}
 	}
 
-	var sql = 'SELECT phone_number, gcm_token FROM `commonplace`.`user` WHERE phone_number IN (' + connection.escape(phones) + ')';
+	var sql = 'SELECT phone, token FROM `commonplace`.`user` WHERE phone IN (' + connection.escape(phones) + ')';
 
 	connection.query(sql, function(err, result) {
 		callback(err, result);

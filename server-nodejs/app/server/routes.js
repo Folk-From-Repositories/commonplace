@@ -195,9 +195,12 @@ module.exports = function(app) {
 		});
 	});
 
-// gcm accounts //
 
-	app.post('/gcm/regist', function(req, res) {
+
+// common place api //
+
+	// regist gcm token //
+	app.post('/commonplace/gcm/regist', function(req, res) {
 		AM.registDeviceInfo({
 			phone: req.body['phone'],
 			token: req.body['token']
@@ -210,7 +213,8 @@ module.exports = function(app) {
 		});
 	});
 
-	app.post('/gcm/list', function(req, res) {
+	// TODO deletion //
+	app.post('/commonplace/gcm/list', function(req, res) {
 		AM.getGcmTokens(req.body['phones'], function(e, o) {
 			if (e){
 				res.status(400).send(e);
@@ -219,8 +223,6 @@ module.exports = function(app) {
 			}
 		});
 	});
-
-// common place api //
 
 	// Only for testing //
 	/*
