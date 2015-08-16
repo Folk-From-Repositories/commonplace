@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 		startActivity(new Intent(this, InitManager.class));
 		startActivity(new Intent(this, GetPhoneNumberList.class));
 		
-		Log.d("KMC","1");
+		  Log.d("KMC","1");
 		
 		
 		
