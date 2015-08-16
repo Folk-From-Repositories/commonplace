@@ -1,5 +1,6 @@
-package com.example.commonplace;
+package com.rambling.commonplace;
 
+import com.example.commonplace.R;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.IntentService;

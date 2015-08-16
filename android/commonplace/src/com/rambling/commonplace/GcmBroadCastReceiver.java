@@ -1,4 +1,4 @@
-package com.example.commonplace;
+package com.rambling.commonplace;
 
 import java.net.URLDecoder;
 import java.util.Iterator;

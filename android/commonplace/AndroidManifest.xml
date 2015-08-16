@@ -34,7 +34,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="com.rambling.commonplace.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateMapView"
+            android:name="com.rambling.commonplace.CreateMapView"
             android:label="@string/title_activity_map" >
         </activity>
 
@@ -55,12 +55,12 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".InitManager"
+            android:name="com.rambling.commonplace.InitManager"
             android:label="@string/title_activity_gcmhandler" >
         </activity>
 
         <receiver
-            android:name=".GcmBroadCastReceiver"
+            android:name="com.rambling.commonplace.GcmBroadCastReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -72,12 +72,12 @@
         </receiver>
 
         <service
-            android:name=".GcmIntentService"
+            android:name="com.rambling.commonplace.GcmIntentService"
             android:exported="false" >
         </service>
 
         <activity
-            android:name=".GetPhoneNumberList"
+            android:name="com.rambling.commonplace.GetPhoneNumberList"
             android:label="@string/title_activity_get_phone_number_list" >
         </activity>
     </application>

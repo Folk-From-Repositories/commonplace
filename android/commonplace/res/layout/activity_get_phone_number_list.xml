@@ -7,7 +7,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@drawable/commonplace_background"
-    tools:context="com.example.commonplace.GetPhoneNumberList" >
+    tools:context="com.rambling.commonplace.GetPhoneNumberList" >
 
 
 </RelativeLayout>

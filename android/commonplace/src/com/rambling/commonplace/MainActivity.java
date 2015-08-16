@@ -1,8 +1,10 @@
-package com.example.commonplace;
+package com.rambling.commonplace;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Vector;
+
+import com.example.commonplace.R;
 
 import android.app.Activity;
 import android.content.Context;
