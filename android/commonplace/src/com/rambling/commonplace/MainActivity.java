@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
 		startActivity(new Intent(this, GetPhoneNumberList.class));
 		
 		  Log.d("KMC","1");
+		  Log.d("jonghun", "11111");
 		
 		
 		
