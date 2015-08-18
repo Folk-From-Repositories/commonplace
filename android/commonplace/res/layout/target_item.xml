@@ -16,7 +16,6 @@
          android:layout_marginTop="5dp"
          android:layout_marginBottom="5dp"
          android:background="@drawable/photo_frame"
-         android:src="@drawable/abc_ab_share_pack_mtrl_alpha"
          />
  
     <!-- title -->
