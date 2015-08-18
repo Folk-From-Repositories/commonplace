@@ -32,3 +32,53 @@ exports.test_send_with_token = function(token, title, message, callback)
 
 	sender.send(gcmMsg, token, 4, callback);
 }
+
+/**
+ * Send Google Cloud Message using phone numbers.
+ *
+ * @public
+ * @param {array} phones 전송 대상 전화번호 리스트
+ * @param {string} title GCM 메시지 타이틀
+ * @param {string} message GCM 메시지 내용
+ * @return {json} 전송 결과
+ */
+exports.sendMessage = function(phones, title, message, callback)
+{
+	// validate data
+	if (!phones) { callback('error-request-parameter(phones)'); return; }
+	if (Object.prototype.toString.call( phones ) !== '[object Array]' ) { callback('error-request-parameter(phones is not array.)'); return; }
+	if (!title) { callback('error-request-parameter(title)'); return; }
+	if (!message) { callback('error-request-parameter(message)'); return; }
+
+	AM.getGcmTokens(phones, function(err, res) {
+
+		if (err) { callback(err); return; }
+
+		var tokens = [];
+
+		for(var idx in res) {
+			tokens.push(res[idx].token);
+		}
+
+		console.dir({
+			where: 'gcm-sender.js -> sendMessage()',
+			what: 'phone number에 대한 gcm token 조회 결과 (from database)',
+			data: {
+				requestPhones: phones,
+				queryResults: tokens
+			}
+		});
+
+		var gcmMsg = new gcm.Message({
+			collapseKey: 'CommonPlace Notification',
+			delayWhileIdle: true,
+			timeToLive: 3,
+			data: {
+				title: title,
+				message: message
+			}
+		});
+
+		sender.send(gcmMsg, tokens, 4, callback);
+	});
+}

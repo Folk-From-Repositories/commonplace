@@ -205,10 +205,31 @@ module.exports = function(app) {
 			phone: req.body['phone'],
 			token: req.body['token']
 		}, function(e) {
+			//TODO 에러 메시지 처리
 			if (e){
 				res.status(400).send(e);
 			} else {
 				res.status(200).send('ok');
+			}
+		});
+	});
+
+	app.post('/commonplace/gcm/send', function(req, res) {
+		var phones = req.body['phones'];
+		var title = req.body['title'];
+		var message = req.body['message'];
+
+		// Make Array if there is only one object.
+		if (Object.prototype.toString.call( phones ) !== '[object Array]' ) {
+			phones = [phones];
+		}
+
+		GCM.sendMessage(phones, title, message, function(e, o) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send(o);
 			}
 		});
 	});
