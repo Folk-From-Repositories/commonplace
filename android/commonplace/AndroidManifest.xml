@@ -89,6 +89,13 @@
             android:name=".RestaurantListView"
             android:label="@string/title_activity_restaurant_list_view" >
         </activity>
+        <activity
+            android:name=".MemberActivity"
+            android:label="@string/title_activity_restaurant_list_view" >
+        </activity>
+        
+        <provider android:name="com.common.place.db.Provider"
+			android:authorities="com.common.place.db" />
     </application>
 
 </manifest>

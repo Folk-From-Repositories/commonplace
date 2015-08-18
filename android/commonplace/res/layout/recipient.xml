@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+>
+	<LinearLayout 
+	android:id="@+id/footer"
+	android:layout_alignParentBottom="true"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	>
+		<Button
+		android:id="@+id/btn_confirm"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:text="@string/confirm"/>
+	</LinearLayout>
+	<RelativeLayout 
+	android:id="@+id/search_area"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+    	<Button
+    	android:id="@+id/btn_select_all"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentRight="true"
+    	android:text="Add all"
+    	android:drawableLeft="@drawable/all"
+    	/>
+    	<EditText
+    	android:id="@+id/search_text"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="1dp"
+    	android:layout_toLeftOf="@id/btn_select_all"
+    	
+    	android:hint="@string/search_hint"/>
+    	
+   	</RelativeLayout>
+	<LinearLayout 
+	android:layout_above="@id/footer"
+	android:layout_below="@id/search_area"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="3px"
+	>
+	    <LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="5"
+	    android:paddingLeft="3px"
+	    android:paddingRight="5px"
+	    >
+	    	<TextView
+	    	android:id="@+id/howmany"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:gravity="right"
+	    	android:text="@string/recipient_selected" />
+	    	<ListView
+	    	android:id="@+id/recipient_list"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent"/>
+	    </LinearLayout>
+	    <TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="fill_parent"
+	    android:background="@drawable/arrow"/>
+	    <LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="3"
+	    android:paddingLeft="5px"
+	    >
+	    	
+	    	<ListView
+	    	android:id="@+id/contact_list"
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="fill_parent"/>
+	    </LinearLayout>
+	</LinearLayout>
+	
+</RelativeLayout>

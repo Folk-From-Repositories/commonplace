@@ -10,5 +10,15 @@
     <string name="title_activity_group_main_view">모임 그룹</string>
     <string name="title_activity_regist_group">그룹 등록</string>
     <string name="title_activity_restaurant_list_view">회식 장소 추천</string>
+    
+    <!-- 주소록 화면 -->
+    <string name="title_activity_member_activity">주소록에서 가져오</string>
+    <string name="confirm">선택완료</string>
+    <string name="recipient_selected">0 명 선택됨</string>
+    <string name="search_hint">검색어 입력</string>
+    <string name="recipient_selected_string">선택됨</string>
+    <string name="insert_to">목록에 넣는 중..</string>
+    <string name="loading">잠시만 기다려 주세요..</string>
+    <string name="multiinsert">수신자가 목록에 입력되었습니다.</string>
 
 </resources>
