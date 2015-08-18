@@ -40,10 +40,10 @@ public class InitManager extends Activity {
 
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    // SharedPreferences�� ������ �� key ������ ����.
+    // SharedPreferences占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙 key 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙.
     public static final String PROPERTY_REG_ID = "registration_id";
 
-    // SharedPreferences�� ������ �� key ������ ����.
+    // SharedPreferences占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙 key 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙.
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String TAG = "KMC";
 
@@ -87,19 +87,7 @@ public class InitManager extends Activity {
 	
 	private void splahView(){
 		Log.d(TAG, "4444444444444444444444444444444444444444444");
-		
-//		Intent intent=new Intent();  
-//        setResult(0,intent);
-//        finish();
-//		Handler handler = new Handler() {
-//            @Override
-//            public void handleMessage(Message msg) {
-//                finish();
-//            }
-//        };
-//        
-//        handler.sendEmptyMessageDelayed(0, 3000);
-		
+			
         hd.postDelayed(new Runnable() {
  
             @Override
@@ -140,8 +128,6 @@ public class InitManager extends Activity {
             return "";
         }
         
-        // ���� ������Ʈ �Ǿ����� Ȯ���ϰ�, ������Ʈ �Ǿ��ٸ� ���� ��� ���̵� �����Ѵ�.
-        // ���ο� ���������� ���� ��� ���̵� ���������� �����ϴ����� ������ �� ���� �����̴�.
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
@@ -181,8 +167,7 @@ public class InitManager extends Activity {
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
                     Log.d(TAG, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-                    // ������ �߱޹��� ��� ���̵� �����Ѵ�.
-                    // ��� ���̵�� �������� �ۿ� Ǫ�� �޽����� ������ �� ���ȴ�.
+
                     sendRegistrationIdToBackend();
                     
                 } catch (IOException ex) {
@@ -193,11 +178,6 @@ public class InitManager extends Activity {
                 }
                 return msg;
             }
-
-//            @Override
-//            protected void onPostExecute(String msg) {
-//                mDisplay.append(msg + "\n");
-//            }
 
         }.execute(null, null, null);
     }
@@ -244,7 +224,7 @@ public class InitManager extends Activity {
 
                     Log.d(TAG, "SERVER RESPONE: "+responseString);
                     Log.d(TAG, "regid: "+regid);
-                 // ��� ���̵� ������ ��� ���̵� �Ź� ���� �ʵ��� �Ѵ�.
+
                     storeRegistrationId(context, regid);
                     
                     Log.d(TAG, "6666666666666666666666666666666666666666666");

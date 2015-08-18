@@ -55,9 +55,9 @@
 
         <activity
             android:name="com.common.place.InitManager"
-            android:label="@string/title_activity_gcmhandler" >
+             >
         </activity>
-
+<!-- android:label="@string/title_activity_gcmhandler" -->
         <receiver
             android:name="com.common.place.gcm.GcmBroadCastReceiver"
             android:enabled="true"
@@ -66,7 +66,7 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-                <category android:name="com.example.commonplace" />
+                <category android:name="com.common.place" />
             </intent-filter>
         </receiver>
 
@@ -78,6 +78,11 @@
         <activity
             android:name="com.common.place.GetPhoneNumberList"
             android:label="@string/title_activity_get_phone_number_list" >
+        </activity>
+        
+        <activity
+            android:name=".GroupMainView"
+            android:label="@string/title_activity_group_main_view" >
         </activity>
     </application>
 
