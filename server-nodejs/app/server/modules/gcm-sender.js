@@ -9,39 +9,26 @@ if (typeof server_api_key !== 'string') {
 
 var sender = new gcm.Sender(server_api_key);
 
-// test api
-exports.gcmtest = function(data, callback)
+// ONLY FOR TEST //
+exports.test_send_with_token = function(token, title, message, callback)
 {
 	// validate data
-	if (!data) { callback('error-request-parameter'); return; }
+	if (!token) { callback('error-request-parameter(token)'); return; }
+	if (!title) { callback('error-request-parameter(title)'); return; }
+	if (!message) { callback('error-request-parameter(message)'); return; }
 
-	var phones = data.to;
+	// update message with current time
+	var current = new Date().toString();
 
-	// Make Array if there is only one object.
-	if (Object.prototype.toString.call( phones ) !== '[object Array]' ) {
-		phones = [phones];
-	}
-
-	AM.getGcmTokens(phones, function(err, res) {
-
-		if (err) { callback(err); return; }
-
-		var tokens = [];
-
-		for(var idx in res) {
-			tokens.push(res[idx].gcm_token);
+	var gcmMsg = new gcm.Message({
+		collapseKey: 'test',
+		delayWhileIdle: true,
+		timeToLive: 3,
+		data: {
+			title: title,
+			message: message + '(' + current + ')'
 		}
-
-		var message = new gcm.Message({
-			collapseKey: 'test',
-			delayWhileIdle: true,
-			timeToLive: 3,
-			data: {
-				title: data.title,
-				message: data.message
-			}
-		});
-
-		sender.send(message, tokens, 4, callback);
 	});
+
+	sender.send(gcmMsg, token, 4, callback);
 }

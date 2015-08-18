@@ -227,19 +227,17 @@ module.exports = function(app) {
 	// Only for testing //
 	/*
 		req_params = {
-				'to': ['010xxxxxxx'],
+				'token': '___GCM_TOKEN_SHA___',
 				'title': 'Hello',
 				'message': 'hello world.'
 		};
 	 */
-	app.post('/commonplace/gcmtest', function(req, res) {
-		var data = {
-			to: req.body['to'],
-			title: req.body['title'],
-			message: req.body['message']
-		};
+	app.post('/test/gcm-send-with-token', function(req, res) {
+		var token = req.body['token'];
+		var title = req.body['title'];
+		var message = req.body['message'];
 
-		GCM.gcmtest(data, function(e, o) {
+		GCM.test_send_with_token(token, title, message, function(e, o) {
 			if (e){
 				res.status(400).send(e);
 			} else {
