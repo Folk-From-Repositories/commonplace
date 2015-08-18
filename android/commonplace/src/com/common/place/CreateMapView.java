@@ -70,16 +70,13 @@ public class CreateMapView extends FragmentActivity   {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.restaurantSearch:
-				Log.d("KMC", "REGISTER GROUP");
+				Log.d("KMC", "Search Restaurant");
 				//initGroup();
-				startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
+				startActivityForResult(new Intent(getApplicationContext(), RestaurantListView.class),0);
 				break;
 			}	
 		}
 	};
-    
-
-	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

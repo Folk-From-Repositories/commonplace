@@ -85,6 +85,10 @@
             android:name=".RegistGroup"
             android:label="@string/title_activity_regist_group" >
         </activity>
+        <activity
+            android:name=".RestaurantListView"
+            android:label="@string/title_activity_restaurant_list_view" >
+        </activity>
     </application>
 
 </manifest>

@@ -9,5 +9,6 @@
     <string name="title_activity_get_phone_number_list">GetPhoneNumberList</string>
     <string name="title_activity_group_main_view">모임 그룹</string>
     <string name="title_activity_regist_group">그룹 등록</string>
+    <string name="title_activity_restaurant_list_view">회식 장소 추천</string>
 
 </resources>
