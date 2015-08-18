@@ -33,7 +33,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name="com.common.place.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,24 +42,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.common.place.CreateMapView"
+            android:name=".CreateMapView"
             android:label="@string/title_activity_map" >
         </activity>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDeQC6SV7DizLtrg9FaSUiGCZWqm6vPDG0" />
+            android:value="AIzaSyCAQcHuXsWVl_NthiXyS9lCgcKUzAqr4Xg" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name="com.common.place.InitManager"
-             >
+        <activity android:name=".InitManager" >
         </activity>
-<!-- android:label="@string/title_activity_gcmhandler" -->
+        <!-- android:label="@string/title_activity_gcmhandler" -->
         <receiver
-            android:name="com.common.place.gcm.GcmBroadCastReceiver"
+            android:name=".gcm.GcmBroadCastReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -71,18 +69,21 @@
         </receiver>
 
         <service
-            android:name="com.common.place.gcm.GcmIntentService"
+            android:name=".gcm.GcmIntentService"
             android:exported="false" >
         </service>
 
         <activity
-            android:name="com.common.place.GetPhoneNumberList"
+            android:name=".GetPhoneNumberList"
             android:label="@string/title_activity_get_phone_number_list" >
         </activity>
-        
         <activity
             android:name=".GroupMainView"
             android:label="@string/title_activity_group_main_view" >
+        </activity>
+        <activity
+            android:name=".RegistGroup"
+            android:label="@string/title_activity_regist_group" >
         </activity>
     </application>
 

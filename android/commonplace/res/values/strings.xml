@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">commonplace</string>
+    <string name="app_name">모두의 회식</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_map">지도에서 장소 검색</string>
     <string name="title_activity_gcmhandler">GCMHandler</string>
     <string name="title_activity_get_phone_number_list">GetPhoneNumberList</string>
-    <string name="title_activity_group_main_view">회식 그룹</string>
+    <string name="title_activity_group_main_view">모임 그룹</string>
+    <string name="title_activity_regist_group">그룹 등록</string>
 
 </resources>

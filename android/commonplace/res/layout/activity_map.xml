@@ -7,8 +7,16 @@
 
     <fragment
         android:id="@+id/map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="9"
         class="com.google.android.gms.maps.SupportMapFragment" />
+    
+    <Button
+        android:id="@+id/restaurantSearch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="선택한 위치에서 장소 검색"/>
 
 </LinearLayout>

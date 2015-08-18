@@ -14,9 +14,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class CreateMapView extends FragmentActivity   {
 	
@@ -28,18 +31,21 @@ public class CreateMapView extends FragmentActivity   {
 		setContentView(R.layout.activity_map);
 		Log.d("KMC", "TEST 01");
 
-		//final GoogleMap gmap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+		findViewById(R.id.restaurantSearch).setOnClickListener(mClickListener);
 		
 		try {
             if (gmap == null) {
+            	LatLng cameraLatLng = new LatLng(37.541, 126.986);
+            	
             	gmap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+            	gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng,12));
             }
         } catch (Exception e) {
         	Log.d("KMC", "TEST EXCEPTION: " + e.getMessage());
             e.printStackTrace();
         }
 		
-		Log.d("KMC", "TEST 02");
+		Log.d("KMC", "TEST 02: " + gmap);
 		
 		gmap.setOnMapClickListener(new OnMapClickListener() {
 			
@@ -52,12 +58,26 @@ public class CreateMapView extends FragmentActivity   {
 				markerOptions.position(latLng); //��Ŀ��ġ����
 				Log.d("KMC", "TEST 04");
 
-				gmap.animateCamera(CameraUpdateFactory.newLatLng(latLng));   // ��Ŀ������ġ�� �̵�
+				gmap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 				//gmap.animateCamera(CameraUpdateFactory.zoomTo(10.0f));   // ��Ŀ������ġ�� �̵�
-				gmap.addMarker(markerOptions); //��Ŀ ����
+				gmap.clear();
+				gmap.addMarker(markerOptions); 
 			}
 		});
 	}
+	
+    Button.OnClickListener mClickListener = new View.OnClickListener() {
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case R.id.restaurantSearch:
+				Log.d("KMC", "REGISTER GROUP");
+				//initGroup();
+				startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
+				break;
+			}	
+		}
+	};
+    
 
 	
 	

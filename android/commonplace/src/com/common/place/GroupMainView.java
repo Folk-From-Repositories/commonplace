@@ -3,6 +3,8 @@ package com.common.place;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -47,21 +49,31 @@ public class GroupMainView extends Activity {
 			switch (v.getId()) {
 			case R.id.nextBtn2:
 				removeAllGroup();
+				setGridViewAndText();
 				Log.d("KMC", "REMOVE ALL GROUP");
 				break;
 			case R.id.nextBtn3:
 				Log.d("KMC", "REGISTER GROUP");
-				initGroup();
+				//initGroup();
+				startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
 				break;
-			}
-			
-			if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("등록된 회식 그룹이 없습니다.");
-			
-			CustomGrid adapter = new CustomGrid(GroupMainView.this, groupNameList, groupIdList);
-	        grid.setAdapter(adapter);
+			}	
 		}
 	};
     
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    Log.d("KMC","GrouopMainView's onActivityResult: " + resultCode);
+	    setGridViewAndText();
+	}
+	
+	public void setGridViewAndText(){
+    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("등록된 회식 그룹이 없습니다.");
+		
+		CustomGrid adapter = new CustomGrid(GroupMainView.this, groupNameList, groupIdList);
+        grid.setAdapter(adapter);
+    }
+	
     /* Add Dummy Data */
     public void initGroup(){
     	groupNameList.add("회식모임_" + count++); groupIdList.add(R.drawable.soju);
