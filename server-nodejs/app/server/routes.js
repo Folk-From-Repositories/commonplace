@@ -157,7 +157,7 @@ module.exports = function(app) {
 				req.session.reset = { email:email, passHash:passH };
 				res.render('reset', { title : 'Reset Password' });
 			}
-		})
+		})	
 	});
 	
 	app.post('/user/reset-password', function(req, res) {
@@ -201,10 +201,13 @@ module.exports = function(app) {
 
 	// regist gcm token //
 	app.post('/commonplace/gcm/regist', function(req, res) {
-		AM.registDeviceInfo({
-			phone: req.body['phone'],
-			token: req.body['token']
-		}, function(e) {
+		var data = {
+			phone : req.body['phone'],
+			token : req.body['token'],
+			name  : req.body['name']
+		};
+
+		AM.registDeviceInfo(data, function(e) {
 			//TODO 에러 메시지 처리
 			if (e){
 				res.status(400).send(e);

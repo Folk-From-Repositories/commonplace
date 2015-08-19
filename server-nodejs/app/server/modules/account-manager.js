@@ -201,17 +201,21 @@ exports.updatePassword = function(email, newPass, callback)
 exports.registDeviceInfo = function(data, callback) {
 	var phone = phoneToDbFormat(data.phone);
 	var token = data.token;
+	var name = data.name;
 
 	// validate data
-	if (!phone) { callback('error-phone-number'); return; }
-
-	if (!token) { callback('needed-gcm-token'); return;	}
+	if (!phone || !token || !name) { callback('insufficiency-form-data'); return; }
 
 	if (!isOnlyNumber(phone)) { callback('invalid-phone-number-format'); return; }
 
+	if(typeof phone !== 'string' || typeof token !== 'string' || typeof name !== 'string') {
+		callback('invalid-form-data');
+		return;
+	}
+
 	// find with phone number
-	var insertSql = 'INSERT INTO `commonplace`.`user` (token, phone) VALUES (?, ?)';
-	var updateSql = 'UPDATE `commonplace`.`user` SET token = ?, update = NOW() WHERE phone = ?';
+	var insertSql = 'INSERT INTO `commonplace`.`user` (`token`, `phone`, `name`, `create`) VALUES (?, ?, ?, NOW())';
+	var updateSql = 'UPDATE `commonplace`.`user` SET `token` = ?, `update` = NOW() WHERE `phone` = ?';
 
 	findByphone(phone, function(err, o) {
 		if (err) { callback(err); return; }
@@ -230,7 +234,7 @@ exports.registDeviceInfo = function(data, callback) {
 			});
 		} else {
 			// add new account with phone number
-			connection.query(insertSql, [token, phone], function(err, result) {
+			connection.query(insertSql, [token, phone, name], function(err, result) {
 				if (err) {
 					console.error(err);
 					callback('server error');
