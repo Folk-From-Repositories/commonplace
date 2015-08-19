@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
  
@@ -16,6 +17,7 @@ public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
  
         private final Context context;
         private final ArrayList<Model> modelsArrayList;
+        public int selected_position = -1;
  
         public RestaurantArrayAdapter(Context context, ArrayList<Model> modelsArrayList) {
  
@@ -33,7 +35,7 @@ public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
  
             // 2. Get rowView from inflater
- 
+            
             View rowView = null;
             if(!modelsArrayList.get(position).isGroupHeader()){
                 rowView = inflater.inflate(R.layout.target_item, parent, false);
@@ -41,12 +43,29 @@ public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
                 // 3. Get icon,title & counter views from the rowView
                 ImageView imgView = (ImageView) rowView.findViewById(R.id.item_icon); 
                 TextView titleView = (TextView) rowView.findViewById(R.id.item_title);
-                //TextView counterView = (TextView) rowView.findViewById(R.id.item_counter);
- 
+                CheckBox checkbox = (CheckBox) rowView.findViewById(R.id.cb_checkbox);
                 // 4. Set the text for textView 
                 imgView.setImageResource(modelsArrayList.get(position).getIcon());
                 titleView.setText(modelsArrayList.get(position).getTitle());
+                
+                checkbox.setChecked(position == selected_position);
+                checkbox.setTag(position);
+                checkbox.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+
+                	   selected_position = (Integer) view.getTag();
+
+                       notifyDataSetInvalidated();
+                       notifyDataSetChanged();
+                   }
+               });
+
+                
                 //counterView.setText(modelsArrayList.get(position).getCounter());
+                
+                
+                
             }
             else{
                     rowView = inflater.inflate(R.layout.group_header_item, parent, false);

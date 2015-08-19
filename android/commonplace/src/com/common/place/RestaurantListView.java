@@ -5,17 +5,19 @@ import java.util.ArrayList;
 import com.common.place.model.Model;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class RestaurantListView extends Activity  {
 
+	public RestaurantArrayAdapter adapter;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,24 +26,42 @@ public class RestaurantListView extends Activity  {
 		Log.d("KMC", "INIT RestaurantListView");
 		
 		 // 1. pass context and data to the custom adapter
-		RestaurantArrayAdapter adapter = new RestaurantArrayAdapter(this, generateData());
+		adapter = new RestaurantArrayAdapter(this, generateData());
 		Log.d("KMC", "INIT RestaurantListView 2");
         // if extending Activity 2. Get ListView from activity_main.xml
 		ListView listView = (ListView) findViewById(R.id.restaurantList);
- 
+		findViewById(R.id.btn_selectRestaurant).setOnClickListener(mClickListener);
+
+		Log.d("KMC", "INIT RestaurantListView 3");
+		
         // 3. setListAdapter
+		
         listView.setAdapter(adapter);// if extending Activity
-        //setListAdapter(adapter);
-        Log.d("KMC", "INIT RestaurantListView 3");
         
-//        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//	    	@Override
-//	    	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-//	    		Toast.makeText(GroupMainView.this, "You Clicked at " +groupNameList.get(position), Toast.LENGTH_SHORT).show();
-//            }
-//    	});
+        Log.d("KMC", "INIT RestaurantListView 4");
+        
+        
 	}
 
+	Button.OnClickListener mClickListener = new View.OnClickListener() {
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case R.id.btn_selectRestaurant:
+				Log.d("KMC", "Select Restaurant");
+				//initGroup();
+				Intent intent = new Intent(getApplicationContext(), RegistGroup.class);
+				intent.putExtra("icon",adapter.getItem(adapter.selected_position).getIcon());
+				intent.putExtra("title",adapter.getItem(adapter.selected_position).getTitle());
+				
+				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getIcon());
+				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getTitle());
+				startActivity(intent);
+				finish();
+				break;
+			}	
+		}
+	};
+	
 	private ArrayList<Model> generateData(){
         ArrayList<Model> models = new ArrayList<Model>();
         //models.add(new Model("¸ÀÁý Á¤º¸"));

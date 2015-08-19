@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:orientation="horizontal"
-    android:background="#E0E0E0">
+    android:orientation="horizontal">
  
      <!-- icon -->
      <ImageView
@@ -27,7 +26,8 @@
          android:layout_alignBaseline="@+id/item_counter"
          android:textSize="18dp"
          android:layout_weight="1"
-         android:textColor="#330000" />
+         android:layout_gravity="center"
+         android:textColor="#E0E0E0" />
  
         <!-- counter -->
 <!--         <TextView
@@ -47,8 +47,9 @@
         android:id="@+id/cb_checkbox"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginRight="10dp"
-    	android:background="@drawable/checkbox_frame"
+        android:layout_marginRight="20dp"
+		android:scaleX="2.5"
+		android:scaleY="2.5"
         android:focusable="false"
         android:layout_gravity="center"
         android:clickable="true"/>

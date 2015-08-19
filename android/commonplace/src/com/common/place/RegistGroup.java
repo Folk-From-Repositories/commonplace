@@ -4,6 +4,7 @@ import com.common.place.db.Provider;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class RegistGroup extends Activity implements OnClickListener{
@@ -33,11 +35,31 @@ public class RegistGroup extends Activity implements OnClickListener{
 		EditText groupName=(EditText)findViewById(R.id.name_edit);
 		EditText meetTime=(EditText)findViewById(R.id.time_edit);
 		
+		ImageView retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
+		TextView retaurant_description= (TextView)findViewById(R.id.retaurant_description);
+
 		findViewById(R.id.seachAddr).setOnClickListener(this);
 		findViewById(R.id.searchMap).setOnClickListener(this);
 		findViewById(R.id.btn_contacts).setOnClickListener(this);
 		
 		deleteAllMemberListInDB();
+		
+		Intent intent = getIntent();
+
+		if(intent != null && intent.getExtras() != null){
+			int icon = intent.getExtras().getInt("icon");
+			String title = intent.getStringExtra("title");
+			
+			retaurant_image.setImageResource(icon);
+			retaurant_description.setText(title);
+			retaurant_image.setVisibility(1);
+			retaurant_image.getLayoutParams().width = 500;
+			
+		}else{
+			retaurant_image.setVisibility(0);
+			retaurant_image.getLayoutParams().width = 1;
+			retaurant_description.setText("등록된 장소가 없습니다.");
+		}
 	}
 
 	@Override
@@ -120,6 +142,5 @@ public class RegistGroup extends Activity implements OnClickListener{
 			startActivity(new Intent(getApplicationContext(), MemberActivity.class));
 			break;
 		}	
-		
 	}
 }
