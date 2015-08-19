@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Vector;
 
+import com.common.place.util.Logger;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -49,7 +51,7 @@ public class GetPhoneNumberList extends Activity {
 	public static Context getPhoneNumberContext;
 	
 	public GetPhoneNumberList(){
-		Log.d("KMC", "INIT getPhoneNumberContext");
+		Logger.d("INIT getPhoneNumberContext");
 		getPhoneNumberContext = this;
 	}
 	

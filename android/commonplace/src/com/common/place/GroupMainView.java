@@ -2,8 +2,9 @@ package com.common.place;
 
 import java.util.ArrayList;
 
+import com.common.place.util.Logger;
+
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +29,7 @@ public class GroupMainView extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_main_view);
         
-        Log.d("KMC", "INIT GROUP MAIN VIEW");
+        Logger.d("INIT GROUP MAIN VIEW");
         
         warningText=(TextView)findViewById(R.id.group_warning);
            
@@ -50,10 +51,10 @@ public class GroupMainView extends Activity {
 			case R.id.nextBtn2:
 				removeAllGroup();
 				setGridViewAndText();
-				Log.d("KMC", "REMOVE ALL GROUP");
+				Logger.d("REMOVE ALL GROUP");
 				break;
 			case R.id.nextBtn3:
-				Log.d("KMC", "REGISTER GROUP");
+				Logger.d("REGISTER GROUP");
 				//initGroup();
 				startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
 				break;

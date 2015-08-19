@@ -3,11 +3,12 @@ package com.common.place.gcm;
 import java.net.URLDecoder;
 import java.util.Iterator;
 
+import com.common.place.util.Logger;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 public class GcmBroadCastReceiver extends BroadcastReceiver {
 	public GcmBroadCastReceiver() {
@@ -18,13 +19,13 @@ public class GcmBroadCastReceiver extends BroadcastReceiver {
 		// TODO: This method is called when the BroadcastReceiver is receiving
 		// an Intent broadcast.
 		//throw new UnsupportedOperationException("Not yet implemented");
-		Log.d("KMC", "UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
+		Logger.d("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
 		Bundle bundle = intent.getExtras();
 		Iterator<String> iterator = bundle.keySet().iterator();
         while (iterator.hasNext()) {
             String key = iterator.next();
             String value = bundle.get(key).toString();
-            Log.d("KMC", "onMessage :: key = ^" + key 
+            Logger.d("onMessage :: key = ^" + key 
                     + "^, value = ^" + URLDecoder.decode(value) + "^");
         }
 		

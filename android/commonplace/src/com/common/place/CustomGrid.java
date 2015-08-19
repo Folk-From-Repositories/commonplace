@@ -2,8 +2,9 @@ package com.common.place;
 
 import java.util.ArrayList;
 
+import com.common.place.util.Logger;
+
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ public class CustomGrid extends BaseAdapter{
 //      private final int[] Imageid;
  
         public CustomGrid(Context c,ArrayList<String> web,ArrayList<Integer> Imageid ) {
-        	Log.d("KMC", "CUSTOM GRID VIEW");
+        	Logger.d("CUSTOM GRID VIEW");
             mContext = c;
             this.Imageid = Imageid;
             this.web = web;

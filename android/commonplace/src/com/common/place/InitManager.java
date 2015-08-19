@@ -17,6 +17,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import com.common.place.util.Constants;
+import com.common.place.util.Logger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -40,12 +41,12 @@ public class InitManager extends Activity {
 
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    // SharedPreferences占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙 key 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙.
+    // SharedPreferences�� ������ �� key ������ ����.
     public static final String PROPERTY_REG_ID = "registration_id";
 
-    // SharedPreferences占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙 key 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙.
+    // SharedPreferences�� ������ �� key ������ ����.
     private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final String TAG = "KMC";
+    //private static final String TAG = "KMC";
 
     
     //String SENDER_ID = "common-place";
@@ -70,36 +71,40 @@ public class InitManager extends Activity {
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
+            
+            Logger.d("########################################################");
+            Logger.d(regid);
+            Logger.d("########################################################");
 //            	regid = "APA91bEUcQobl4rngtc29JMzQdsW4KEvJ1eRVQFxnIsBjvfDoJ12cdkX9_NTz2tYWpJgTs5Z1e08AkWsFSXgoq1zNTRP3lX0FeBCFjZeQ2AF7iOIbKjJUBUYm7iC0AgUVWVIlceVkhmc";
             if (regid == null || regid == "") {
-            	Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            	Logger.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 registerInBackground();
-                Log.d(TAG, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+                Logger.d("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
             }else{
-            	Log.d(TAG, "REG ID: " + regid);
+            	Logger.d("REG ID: " + regid);
             	splahView();
             }
             
         } else {
-            Log.d(TAG, "No valid Google Play Services APK found.");
+            Logger.d("No valid Google Play Services APK found.");
         }
 	}
 	
 	private void splahView(){
-		Log.d(TAG, "4444444444444444444444444444444444444444444");
+		Logger.d("4444444444444444444444444444444444444444444");
 			
         hd.postDelayed(new Runnable() {
  
             @Override
             public void run() {
             	try{
-            		Log.d(TAG, "2222222222222222222222222222222222222");
+            		Logger.d("2222222222222222222222222222222222222");
             		Intent intent=new Intent();  
                     setResult(RESULT_OK,intent);
             		finish();
-                    Log.d(TAG, "33333333333333333333333333333333333333333333");
+                    Logger.d("33333333333333333333333333333333333333333333");
             	}catch(Exception e){
-            		Log.d(TAG, e.getMessage());
+            		Logger.d(e.getMessage());
             	}
             	
             }
@@ -113,7 +118,7 @@ public class InitManager extends Activity {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-                Log.d(TAG, "This device is not supported.");
+                Logger.d("This device is not supported.");
             }
             return false;
         }
@@ -124,14 +129,14 @@ public class InitManager extends Activity {
         final SharedPreferences prefs = getGCMPreferences(context);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId == null || registrationId == "") {
-        	Log.d(TAG, "Registration not found.");
+        	Logger.d("Registration not found.");
             return "";
         }
         
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
-            Log.d(TAG, "App version changed.");
+            Logger.d("App version changed.");
             return "";
         }
         return registrationId;
@@ -158,15 +163,15 @@ public class InitManager extends Activity {
             @Override
             protected String doInBackground(Void... params) {
                 String msg = "";
-                Log.d(TAG, "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
+                Logger.d("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
-                    Log.d(TAG, "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+                    Logger.d("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
-                    Log.d(TAG, "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+                    Logger.d("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 
                     sendRegistrationIdToBackend();
                     
@@ -185,7 +190,7 @@ public class InitManager extends Activity {
     private void storeRegistrationId(Context context, String regid) {
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);
-        Log.d(TAG, "Saving regId on app version " + appVersion);
+        Logger.d("Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regid);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
@@ -211,7 +216,7 @@ public class InitManager extends Activity {
                     TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE); 
                     String phoneNum = telManager.getLine1Number();
                     phoneNum = phoneNum.substring(2);
-                    Log.d(TAG, "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy: " + phoneNum);
+                    Logger.d("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy: " + phoneNum);
                     
                     nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
                     nameValuePairs.add(new BasicNameValuePair("token", regid));
@@ -222,25 +227,25 @@ public class InitManager extends Activity {
                     HttpResponse response = httpClient.execute(httpPost);
                     String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
 
-                    Log.d(TAG, "SERVER RESPONE: "+responseString);
-                    Log.d(TAG, "regid: "+regid);
+                    Logger.d("SERVER RESPONE: "+responseString);
+                    Logger.d("regid: "+regid);
 
                     storeRegistrationId(context, regid);
                     
-                    Log.d(TAG, "6666666666666666666666666666666666666666666");
+                    Logger.d("6666666666666666666666666666666666666666666");
                     
                     splahView();
 
-                    Log.d(TAG, "5555555555555555555555555555555555555555555555");
+                    Logger.d("5555555555555555555555555555555555555555555555");
                     
                 } catch (URISyntaxException e) {
-                    Log.e(TAG, e.getLocalizedMessage());
+                    Logger.e(e.getLocalizedMessage());
                     e.printStackTrace();
                 } catch (ClientProtocolException e) {
-                    Log.e(TAG, e.getLocalizedMessage());
+                    Logger.e(e.getLocalizedMessage());
                     e.printStackTrace();
                 } catch (IOException e) {
-                    Log.e(TAG, e.getLocalizedMessage());
+                    Logger.e(e.getLocalizedMessage());
                     e.printStackTrace();
                 }
                 
