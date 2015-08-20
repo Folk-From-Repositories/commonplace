@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.common.place.db.Provider;
+import com.common.place.model.ContactsModel;
+import com.common.place.util.Constants;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,6 +21,7 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -44,6 +47,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
     private Button confirm, selectAll;
     
     ArrayList<HashMap<String, String>> contactArrayList;
+    ArrayList<ContactsModel> personList = new ArrayList<ContactsModel>();
     SimpleAdapter adapter;
     ListAdapter recipientAdapter;
     Cursor recipientCursor;
@@ -110,7 +114,11 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         switch(v.getId()){
                 
             case R.id.btn_confirm:
-                
+            	Log.d("KMC", "Select Restaurant: " + recipientCursor);
+				//initGroup();
+				Intent intent = new Intent(getApplicationContext(), RegistGroup.class);
+				intent.putExtra("contactArrayList", personList);
+				MemberActivity.this.setResult(Constants.MEMBER_ACTIVITY_REQ_CODE, intent);
                 MemberActivity.this.finish();
                 
                 break;
@@ -288,6 +296,9 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         values.put(Provider.RECIPIENT, recipient);
         values.put(Provider.PHONE_NUMBER, phoneNumber);
         
+        ContactsModel model = new ContactsModel(recipient,phoneNumber);
+		personList.add(model);
+        
         Cursor cursor = getContentResolver().query(Provider.CONTENT_URI, null, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null, null);
         if(cursor.getCount() > 0){
             getContentResolver().delete(Provider.CONTENT_URI, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null);
@@ -308,7 +319,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
             recipientAdapter.notify();    
         }
         howmany.setText(""+recipientCursor.getCount()+" "+getText(R.string.recipient_selected_string));
-        
+
         if(recipientCursor.getCount()>0){
             confirm.setVisibility(View.VISIBLE);
         }else{

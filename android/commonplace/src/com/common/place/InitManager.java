@@ -41,15 +41,10 @@ public class InitManager extends Activity {
 
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    // SharedPreferences�� ������ �� key ������ ����.
     public static final String PROPERTY_REG_ID = "registration_id";
 
-    // SharedPreferences�� ������ �� key ������ ����.
     private static final String PROPERTY_APP_VERSION = "appVersion";
     //private static final String TAG = "KMC";
-
-    
-    //String SENDER_ID = "common-place";
 
     String SENDER_ID = "1073384423017";
     
@@ -72,14 +67,9 @@ public class InitManager extends Activity {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
             
-            Logger.d("########################################################");
             Logger.d(regid);
-            Logger.d("########################################################");
-//            	regid = "APA91bEUcQobl4rngtc29JMzQdsW4KEvJ1eRVQFxnIsBjvfDoJ12cdkX9_NTz2tYWpJgTs5Z1e08AkWsFSXgoq1zNTRP3lX0FeBCFjZeQ2AF7iOIbKjJUBUYm7iC0AgUVWVIlceVkhmc";
             if (regid == null || regid == "") {
-            	Logger.d("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
                 registerInBackground();
-                Logger.d("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
             }else{
             	Logger.d("REG ID: " + regid);
             	splahView();
@@ -91,18 +81,15 @@ public class InitManager extends Activity {
 	}
 	
 	private void splahView(){
-		Logger.d("4444444444444444444444444444444444444444444");
 			
         hd.postDelayed(new Runnable() {
  
             @Override
             public void run() {
             	try{
-            		Logger.d("2222222222222222222222222222222222222");
             		Intent intent=new Intent();  
                     setResult(RESULT_OK,intent);
             		finish();
-                    Logger.d("33333333333333333333333333333333333333333333");
             	}catch(Exception e){
             		Logger.d(e.getMessage());
             	}
@@ -163,15 +150,13 @@ public class InitManager extends Activity {
             @Override
             protected String doInBackground(Void... params) {
                 String msg = "";
-                Logger.d("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK");
+
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
-                    Logger.d("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
-                    Logger.d("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 
                     sendRegistrationIdToBackend();
                     
@@ -216,7 +201,6 @@ public class InitManager extends Activity {
                     TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE); 
                     String phoneNum = telManager.getLine1Number();
                     phoneNum = phoneNum.substring(2);
-                    Logger.d("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy: " + phoneNum);
                     
                     nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
                     nameValuePairs.add(new BasicNameValuePair("token", regid));
@@ -232,11 +216,7 @@ public class InitManager extends Activity {
 
                     storeRegistrationId(context, regid);
                     
-                    Logger.d("6666666666666666666666666666666666666666666");
-                    
                     splahView();
-
-                    Logger.d("5555555555555555555555555555555555555555555555");
                     
                 } catch (URISyntaxException e) {
                     Logger.e(e.getLocalizedMessage());

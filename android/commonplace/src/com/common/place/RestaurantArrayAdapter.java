@@ -59,13 +59,7 @@ public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
                        notifyDataSetInvalidated();
                        notifyDataSetChanged();
                    }
-               });
-
-                
-                //counterView.setText(modelsArrayList.get(position).getCounter());
-                
-                
-                
+               });     
             }
             else{
                     rowView = inflater.inflate(R.layout.group_header_item, parent, false);

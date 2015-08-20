@@ -85,7 +85,6 @@ public class GetPhoneNumberList extends Activity {
 					, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + strContactId, null, null );
 			while( clsPhoneCursor.moveToNext() )
 			{
-					// �̸��� ��ȭ ��ȣ�� ������ ����Ʈ�� �����Ѵ�.
 				arrNameList.add( clsCursor.getString( 1 ) );
 				arrPhoneList.add( clsPhoneCursor.getString( 0 ) );
 			}

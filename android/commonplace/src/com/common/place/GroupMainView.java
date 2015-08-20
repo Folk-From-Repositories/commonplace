@@ -2,6 +2,7 @@ package com.common.place;
 
 import java.util.ArrayList;
 
+import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 
 import android.app.Activity;
@@ -65,11 +66,17 @@ public class GroupMainView extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    Log.d("KMC","GrouopMainView's onActivityResult: " + resultCode);
+	    switch(resultCode){
+	    	case Constants.GROUP_MAIN_VIEW_REQ_CODE:
+	    		String groupName = data.getStringExtra("groupName");
+	    		addGroup(groupName,R.drawable.soju);
+	    		break;
+	    }
 	    setGridViewAndText();
 	}
 	
 	public void setGridViewAndText(){
-    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("µî·ÏµÈ È¸½Ä ±×·ìÀÌ ¾ø½À´Ï´Ù.");
+    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("ë“±ë¡ëœ ëª¨ì„ ê·¸ë£¹ì´ ì—†ìŠµë‹ˆë‹¤.");
 		
 		CustomGrid adapter = new CustomGrid(GroupMainView.this, groupNameList, groupIdList);
         grid.setAdapter(adapter);
@@ -77,7 +84,7 @@ public class GroupMainView extends Activity {
 	
     /* Add Dummy Data */
     public void initGroup(){
-    	groupNameList.add("È¸½Ä¸ğÀÓ_" + count++); groupIdList.add(R.drawable.soju);
+    	groupNameList.add("ëª¨ì„ê·¸ë£¹_" + count++); groupIdList.add(R.drawable.soju);
     }
     
     public void addGroup(String groupName, int imageId){

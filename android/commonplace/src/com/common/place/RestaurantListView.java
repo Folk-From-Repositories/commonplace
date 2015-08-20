@@ -3,6 +3,7 @@ package com.common.place;
 import java.util.ArrayList;
 
 import com.common.place.model.Model;
+import com.common.place.util.Constants;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -39,8 +40,6 @@ public class RestaurantListView extends Activity  {
         listView.setAdapter(adapter);// if extending Activity
         
         Log.d("KMC", "INIT RestaurantListView 4");
-        
-        
 	}
 
 	Button.OnClickListener mClickListener = new View.OnClickListener() {
@@ -49,13 +48,15 @@ public class RestaurantListView extends Activity  {
 			case R.id.btn_selectRestaurant:
 				Log.d("KMC", "Select Restaurant");
 				//initGroup();
-				Intent intent = new Intent(getApplicationContext(), RegistGroup.class);
+				Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
 				intent.putExtra("icon",adapter.getItem(adapter.selected_position).getIcon());
 				intent.putExtra("title",adapter.getItem(adapter.selected_position).getTitle());
 				
 				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getIcon());
 				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getTitle());
-				startActivity(intent);
+				
+				RestaurantListView.this.setResult(Constants.RESTAURANT_LIST_REQ_CODE, intent);
+				
 				finish();
 				break;
 			}	
@@ -64,10 +65,10 @@ public class RestaurantListView extends Activity  {
 	
 	private ArrayList<Model> generateData(){
         ArrayList<Model> models = new ArrayList<Model>();
-        //models.add(new Model("¸ÀÁı Á¤º¸"));
-        models.add(new Model(R.drawable.example_1,"È¸¸Ô°í ¼úÇÑÀÜ","1"));
-        models.add(new Model(R.drawable.example_2,"Ä¡Å²¸Ô°í µÚÁ®º¸ÀÚ","2"));
-        models.add(new Model(R.drawable.example_3,"¸·°É¸®¸¸ ÆÄ´Â°÷","3"));
+        //models.add(new Model("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"));
+        models.add(new Model(R.drawable.example_1,"í’ë…„ ìˆ¯ë¶ˆê°ˆë¹„","1"));
+        models.add(new Model(R.drawable.example_2,"ë€ë‚˜ íƒ€ì´","2"));
+        models.add(new Model(R.drawable.example_3,"ì¤‘êµ­ ìŒì‹ì ","3"));
  
         return models;
     }

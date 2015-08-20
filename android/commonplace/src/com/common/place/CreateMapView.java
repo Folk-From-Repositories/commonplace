@@ -9,9 +9,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.common.place.util.Constants;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,13 +66,32 @@ public class CreateMapView extends FragmentActivity   {
 		});
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d("KMC", "CREATE Map onActivityResult" + resultCode);
+		
+		switch(requestCode){
+			case Constants.RESTAURANT_LIST_REQ_CODE:
+				setResult(Constants.MAP_VIEW_REQ_CODE, data);
+				finish();
+				break;
+			default:
+				break;
+		}
+		
+		
+	}
+	
     Button.OnClickListener mClickListener = new View.OnClickListener() {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.restaurantSearch:
 				Logger.d("Search Restaurant");
 				//initGroup();
-				startActivityForResult(new Intent(getApplicationContext(), RestaurantListView.class),0);
+				//RegistGroup instance = new RegistGroup();
+				//Context context = (CreateMapView)instance.registGroupContext;
+				
+				startActivityForResult(new Intent(getApplicationContext(), RestaurantListView.class),Constants.RESTAURANT_LIST_REQ_CODE);
 				break;
 			}	
 		}

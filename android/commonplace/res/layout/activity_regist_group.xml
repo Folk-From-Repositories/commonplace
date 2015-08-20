@@ -1,7 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent" >
+
+<LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="5px" >
     
     <LinearLayout 
         android:orientation="horizontal"
@@ -87,7 +92,7 @@
         <TextView
 	        android:id="@+id/add_restaurant_title"
 	        android:layout_width="fill_parent"
-	        android:background="@drawable/photo_frame"
+	        
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center"
 	        android:textColor="#E0E0E0"
@@ -102,8 +107,9 @@
 	        android:layout_height="wrap_content">
 	        <ImageView
 		        android:id="@+id/retaurant_image"
-		        android:layout_width="150dp"
+		        android:layout_width="1dp"
 		        android:layout_height="150dp"
+		        android:layout_marginLeft="10dp"
 		        android:layout_gravity="center" />
 	 
 	    	<TextView
@@ -112,10 +118,47 @@
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center"
 		        android:layout_centerHorizontal="true"
+		        android:gravity="center_horizontal"
+		        android:text="등록된 회식 그룹이 없습니다."
 		        android:layout_weight="1"
 		        android:textSize="20sp"/>   
 	   </LinearLayout>
+	   
+        <TextView
+	        android:id="@+id/contacts_title"
+	        android:layout_width="fill_parent"
+	        
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="10dp"
+	        android:layout_gravity="center"
+	        android:textColor="#E0E0E0"
+	        android:text="선택한 모임 인원"
+	        android:textSize="20sp"/>
+        
+        <LinearLayout 
+	        android:orientation="horizontal"
+	        android:layout_marginTop="10dp"
+	        android:background="@drawable/photo_frame"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	    	
+	    	<TextView
+		        android:id="@+id/contacts_description"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:layout_centerHorizontal="true"
+		        android:gravity="center"
+		        android:layout_weight="1"
+		        android:text="등록된 모임 인원이 없습니다."
+		        android:textSize="20sp"/>
+	   </LinearLayout>
     </LinearLayout>
     
-    
+    <Button
+        android:id="@+id/registGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="그룹 등록" />
 </LinearLayout>
+</ScrollView>

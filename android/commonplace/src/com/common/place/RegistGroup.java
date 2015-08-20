@@ -1,28 +1,34 @@
 package com.common.place;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.common.place.db.Provider;
+import com.common.place.model.ContactsModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class RegistGroup extends Activity implements OnClickListener{
 
-	Context registGroupContext;
+	public static Context registGroupContext;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,47 +36,71 @@ public class RegistGroup extends Activity implements OnClickListener{
 		setContentView(R.layout.activity_regist_group);
 		Log.d("KMC", "INIT RegistGroup");
 		
-		//registGroupContext = getApplicationContext();
+		registGroupContext = getApplicationContext();
 		
-		EditText groupName=(EditText)findViewById(R.id.name_edit);
-		EditText meetTime=(EditText)findViewById(R.id.time_edit);
-		
-		ImageView retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
-		TextView retaurant_description= (TextView)findViewById(R.id.retaurant_description);
-
 		findViewById(R.id.seachAddr).setOnClickListener(this);
 		findViewById(R.id.searchMap).setOnClickListener(this);
 		findViewById(R.id.btn_contacts).setOnClickListener(this);
+		findViewById(R.id.registGroup).setOnClickListener(this);
 		
 		deleteAllMemberListInDB();
-		
-		Intent intent = getIntent();
-
-		if(intent != null && intent.getExtras() != null){
-			int icon = intent.getExtras().getInt("icon");
-			String title = intent.getStringExtra("title");
-			
-			retaurant_image.setImageResource(icon);
-			retaurant_description.setText(title);
-			retaurant_image.setVisibility(1);
-			retaurant_image.getLayoutParams().width = 500;
-			
-		}else{
-			retaurant_image.setVisibility(0);
-			retaurant_image.getLayoutParams().width = 1;
-			retaurant_description.setText("��ϵ� ��Ұ� �����ϴ�.");
-		}
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch(requestCode){
-		case Constants.MAP_VIEW_REQ_CODE:
-			Log.d("KMC","RegistGroup's onActivityResult: " + resultCode);
+		case Constants.RESTAURANT_LIST_REQ_CODE:
+			
 			break;
-//		case Constants.MEMBER_ACTIVITY_REQ_CODE:
-//			Logger.i("onActivityResult("+Constants.MEMBER_ACTIVITY_REQ_CODE+")");
-//			break;
+		
+		case Constants.MAP_VIEW_REQ_CODE:
+			Log.d("KMC","RegistGroup's onActivityResult MAP_VIEW_REQ_CODE: " + resultCode);
+			
+			ImageView retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
+			TextView retaurant_description= (TextView)findViewById(R.id.retaurant_description);
+			
+			if(data != null && data.getExtras() != null){
+				int icon = data.getExtras().getInt("icon");
+				String title = data.getStringExtra("title");
+				
+				retaurant_image.setImageResource(icon);
+				retaurant_description.setText(title);
+				retaurant_image.setVisibility(1);
+				retaurant_image.getLayoutParams().width = 500;
+				retaurant_image.getLayoutParams().height = 500;
+				
+			}else{
+				retaurant_image.setVisibility(0);
+				retaurant_image.getLayoutParams().width = 1;
+				retaurant_image.getLayoutParams().height = 1;
+				retaurant_description.setText("등록된 모임 장소가 없습니다.");
+			}
+			break;
+			
+		case Constants.MEMBER_ACTIVITY_REQ_CODE:
+			Log.d("KMC","onActivityResult("+Constants.MEMBER_ACTIVITY_REQ_CODE+")");
+
+			Serializable contactArray = data.getSerializableExtra("contactArrayList");
+			TextView contact_list= (TextView)findViewById(R.id.contacts_description);
+			
+			if(contactArray != null){
+				ArrayList<ContactsModel> getArrayList = (ArrayList<ContactsModel>) contactArray;
+				contact_list.setText("");
+				for(int i=0;i<getArrayList.size();i++){
+					String name = getArrayList.get(i).getName();
+					String phone = getArrayList.get(i).getPhone();
+					Log.d("KMC name", name);
+					Log.d("KMC phone", phone);
+					
+					contact_list.setGravity(Gravity.LEFT);
+					contact_list.append(name + "  " + phone + "\n");
+				}
+			}else{
+				contact_list.setGravity(Gravity.CENTER);
+				contact_list.setText("등록된 모임 인원이 없습니다.");
+				Log.d("KMC"," is null");
+			}
+			break;
 		default:
 			break;
 		}
@@ -139,8 +169,24 @@ public class RegistGroup extends Activity implements OnClickListener{
 		case R.id.btn_contacts:
 			Logger.i("Contacts button clicked");
 			// call back is not needed!! because member list is stored in Database!!
-			startActivity(new Intent(getApplicationContext(), MemberActivity.class));
+			startActivityForResult(new Intent(getApplicationContext(), MemberActivity.class),Constants.MEMBER_ACTIVITY_REQ_CODE);
+			//startActivity(new Intent(getApplicationContext(), MemberActivity.class));
 			break;
+		case R.id.registGroup:
+			/*
+			 * you must save data to server
+			 */
+			EditText groupName=(EditText)findViewById(R.id.name_edit);
+			EditText meetTime=(EditText)findViewById(R.id.time_edit);
+			
+			Intent intent = new Intent(getApplicationContext(), GroupMainView.class);
+			intent.putExtra("groupName",groupName.getText().toString());
+			
+			Log.d("KMC", "groupName: " + groupName);
+			
+			setResult(Constants.GROUP_MAIN_VIEW_REQ_CODE, intent);
+			
+			finish();
 		}	
 	}
 }
