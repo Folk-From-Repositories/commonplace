@@ -198,6 +198,16 @@ exports.updatePassword = function(email, newPass, callback)
 	});
 }
 
+/**
+ * Regist Client info (phone, name, token)
+ *
+ * @public
+ * @param {json} data 사용자 정보
+ *            {string} data.phone 전화번호
+ *            {string} data.name 사용자 이름
+ *            {string} data.token GCM 토큰
+ * @return {json} result
+ */
 exports.registDeviceInfo = function(data, callback) {
 	var phone = phoneToDbFormat(data.phone);
 	var token = data.token;
@@ -213,35 +223,16 @@ exports.registDeviceInfo = function(data, callback) {
 		return;
 	}
 
-	// find with phone number
-	var insertSql = 'INSERT INTO `commonplace`.`user` (`token`, `phone`, `name`, `create`) VALUES (?, ?, ?, NOW())';
-	var updateSql = 'UPDATE `commonplace`.`user` SET `token` = ?, `update` = NOW() WHERE `phone` = ?';
+	// add new account with phone number. if existing phone number, do token update
+	var sql = 'INSERT INTO `commonplace`.`user` (`token`, `phone`, `name`, `create`) VALUES (?, ?, ?, NOW())'
+			+ 'ON DUPLICATE KEY UPDATE `token` = ?, `name` = ?, `update` = NOW()';
 
-	findByphone(phone, function(err, o) {
-		if (err) { callback(err); return; }
-
-		var sql;
-
-		if (o) {
-			// existing phone number. Do token update
-			connection.query(updateSql, [token, phone], function(err, result) {
-				if (err) {
-					console.error(err);
-					callback('server error');
-				} else {
-					callback(null, result);
-				}
-			});
+	connection.query(sql, [token, phone, name, token, name], function(err, result) {
+		if (err) {
+			console.error(err);
+			callback('server error');
 		} else {
-			// add new account with phone number
-			connection.query(insertSql, [token, phone, name], function(err, result) {
-				if (err) {
-					console.error(err);
-					callback('server error');
-				} else {
-					callback(null, result);
-				}
-			});
+			callback(null, result);
 		}
 	});
 }

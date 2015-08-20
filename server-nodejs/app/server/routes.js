@@ -199,7 +199,7 @@ module.exports = function(app) {
 
 // common place api //
 
-	// regist gcm token //
+	// regist gcm token (both insert and update) //
 	app.post('/commonplace/gcm/regist', function(req, res) {
 		var data = {
 			phone : req.body['phone'],
