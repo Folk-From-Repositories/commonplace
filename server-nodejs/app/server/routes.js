@@ -216,8 +216,6 @@ module.exports = function(app) {
 			name  : req.body['name']
 		};
 
-		console.debug(tag, req.originalUrl, data);
-
 		AM.registDeviceInfo(data, function(e) {
 			//TODO 에러 메시지 처리
 			if (e){
@@ -327,8 +325,13 @@ module.exports = function(app) {
 				GCM.sendMessage(result.users, {
 					category: 'invitation',
 					moimId: result.moimId
+				}, function(e, o) {
+					if (e) {
+						res.status(400).send();
+					} else {
+						res.status(200).send({sms: result.nonUsers});
+					}
 				});
-				res.status(200).send({sms: result.nonUsers});
 			}
 		});
 	});
@@ -342,8 +345,9 @@ module.exports = function(app) {
 	 * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
 	 **/
 	app.post('/commonplace/moim/my', function(req, res) {
+		var phone = req.body['phone'];
 
-		MM.getMyMoims(req.body['phone'], function(e, result) {
+		MM.getMyMoims(phone, function(e, result) {
 			//TODO 에러 메시지 처리
 			if (e){
 				res.status(400).send(e);
@@ -363,7 +367,9 @@ module.exports = function(app) {
 	 **/
 	app.post('/commonplace/moim/details', function(req, res) {
 
-		MM.getDetails(req.body['id'], function(e, result) {
+		var moimIds = req.body['moimIds'];
+
+		MM.getDetails(moimIds, function(e, result) {
 			//TODO 에러 메시지 처리
 			if (e){
 				res.status(400).send(e);

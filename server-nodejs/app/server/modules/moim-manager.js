@@ -100,12 +100,18 @@ exports.getMyMoims = function(phone, callback)
 	// validate data
 	if (!phone) { callback('error-phone-number'); return; }
 
-	phone = utils.phoneToDbFormat()
-
-	var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `owner` = ?';
+	var sql = 'SELECT * FROM `commonplace`.`userMoim` WHERE `phone` = ?';
 
 	connection.query(sql, phone, function(err, result) {
-		callback(err, result);
+		if (err) return callback(err);
+
+		var moimIds = [];
+
+		for (var i = 0; i < result.length; i++) {
+			moimIds.push(result[i].moimId);
+		}
+
+		exports.getDetails(moimIds, callback);
 	});
 }
 
@@ -114,16 +120,13 @@ exports.getMyMoims = function(phone, callback)
  */
 exports.getDetails = function(moimIds, callback)
 {
-	// validate data
-	if (!moimId) { callback('error-moim-id'); return; }
-
 	if (Object.prototype.toString.call( moimIds ) !== '[object Array]') {
 		moimIds = [moimIds];
 	}
 
-	var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` IN (' + ')';
+	var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` IN (' + connection.escape(moimIds) + ')';
 
-	connection.query(sql, moimId, function(err, result) {
+	connection.query(sql, function(err, result) {
 		callback(err, result);
 	});
 }
