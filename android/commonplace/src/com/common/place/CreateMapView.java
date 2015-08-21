@@ -82,10 +82,10 @@ public class CreateMapView extends FragmentActivity   {
         			group = (GroupModel) contactArray;
         			cameraLatLng = new LatLng(Double.parseDouble(group.getLocationLat()), 
         					Double.parseDouble(group.getLocationLon()));
-        			cameraLatLng = new LatLng(37.541, 126.986);//�씠嫄� �씠�뵲 二쇱꽍�빐�씪
+        			cameraLatLng = new LatLng(37.541, 126.986);//이거 이따 주석해라
         			Logger.d("TEST 04");
         			//MarkerOptions markerOptions = new MarkerOptions();
-        			//markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
+        			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
         			markerOptions.position(cameraLatLng);
         			Logger.d("TEST 04");
         			gmap.addMarker(markerOptions);
