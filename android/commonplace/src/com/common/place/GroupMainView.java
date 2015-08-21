@@ -85,7 +85,7 @@ public class GroupMainView extends Activity {
 	}
 	
 	public void setGridViewAndText(){
-    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("�깅��� 紐⑥�� 洹몃９�� ���듬����.");
+    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText(R.string.grouplist_not_regist);
 		
 		CustomGrid adapter = new CustomGrid(GroupMainView.this, groupNameList, groupIdList);
         grid.setAdapter(adapter);

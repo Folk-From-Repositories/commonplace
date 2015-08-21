@@ -97,6 +97,4 @@ public class RestaurantModel implements Serializable{
 	public void setGroupHeader(boolean isGroupHeader) {
 		this.isGroupHeader = isGroupHeader;
 	}
- 
-    
 }

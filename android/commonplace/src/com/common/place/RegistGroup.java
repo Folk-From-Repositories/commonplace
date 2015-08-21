@@ -109,7 +109,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 				retaurant_image.setVisibility(0);
 				retaurant_image.getLayoutParams().width = 1;
 				retaurant_image.getLayoutParams().height = 1;
-				retaurant_description.setText("�깅��� 紐⑥�� �μ��媛� ���듬����.");
+				retaurant_description.setText(R.string.group_not_regist);
 			}
 			break;
 			
@@ -223,7 +223,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 			group.setTime(meetTime.getText().toString());
 			group.setId(String.valueOf(id_count));
 			group.setLocationDesc(restaurant.getDescription());
-			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));//current ImageUrl �� ��怨� android png����
+			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));
 			group.setLocationLat(restaurant.getLocationLat());
 			group.setLocationLon(restaurant.getLocationLon());
 			group.setLocationName(restaurant.getName());

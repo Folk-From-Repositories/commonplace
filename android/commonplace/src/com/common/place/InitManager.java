@@ -68,12 +68,13 @@ public class InitManager extends Activity {
             regid = getRegistrationId(context);
             
             Logger.d(regid);
-            if (regid == null || regid == "") {
-                registerInBackground();
-            }else{
-            	Logger.d("REG ID: " + regid);
-            	splahView();
-            }
+            registerInBackground();
+//            if (regid == null || regid == "") {
+//                registerInBackground();
+//            }else{
+//            	Logger.d("REG ID: " + regid);
+//            	splahView();
+//            }
             
         } else {
             Logger.d("No valid Google Play Services APK found.");

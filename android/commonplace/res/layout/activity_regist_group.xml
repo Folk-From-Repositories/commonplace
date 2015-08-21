@@ -119,7 +119,7 @@
 		        android:layout_gravity="center"
 		        android:layout_centerHorizontal="true"
 		        android:gravity="center_horizontal"
-		        android:text="등록된 회식 그룹이 없습니다."
+		        android:text="@string/group_not_regist"
 		        android:layout_weight="1"
 		        android:textSize="20sp"/>   
 	   </LinearLayout>
@@ -150,7 +150,7 @@
 		        android:layout_centerHorizontal="true"
 		        android:gravity="center"
 		        android:layout_weight="1"
-		        android:text="등록된 모임 인원이 없습니다."
+		        android:text="@string/memeber_not_regist"
 		        android:textSize="20sp"/>
 	   </LinearLayout>
     </LinearLayout>

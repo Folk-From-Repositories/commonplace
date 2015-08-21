@@ -56,5 +56,5 @@
 		android:textSize="10pt"
 		android:layout_gravity="center"
 		android:gravity="center"
-		android:text="등록된 회식 그룹이 없습니다."/>
+		android:text="@string/grouplist_not_regist"/>
 </LinearLayout>
