@@ -38,17 +38,14 @@ exports.test_send_with_token = function(token, title, message, callback)
  *
  * @public
  * @param {array} phones 전송 대상 전화번호 리스트
- * @param {string} title GCM 메시지 타이틀
- * @param {string} message GCM 메시지 내용
+ * @param {json} data 메시지
  * @return {json} 전송 결과
  */
-exports.sendMessage = function(phones, title, message, callback)
+exports.sendMessage = function(phones, data, callback)
 {
 	// validate data
 	if (!phones) { callback('error-request-parameter(phones)'); return; }
 	if (Object.prototype.toString.call( phones ) !== '[object Array]' ) { callback('error-request-parameter(phones is not array.)'); return; }
-	if (!title) { callback('error-request-parameter(title)'); return; }
-	if (!message) { callback('error-request-parameter(message)'); return; }
 
 	AM.getGcmTokens(phones, function(err, res) {
 
@@ -63,20 +60,14 @@ exports.sendMessage = function(phones, title, message, callback)
 		console.dir({
 			where: 'gcm-sender.js -> sendMessage()',
 			what: 'phone number에 대한 gcm token 조회 결과 (from database)',
-			data: {
-				requestPhones: phones,
-				queryResults: tokens
-			}
+			data: data
 		});
 
 		var gcmMsg = new gcm.Message({
 			collapseKey: 'CommonPlace Notification',
 			delayWhileIdle: true,
 			timeToLive: 3,
-			data: {
-				title: title,
-				message: message
-			}
+			data: data
 		});
 
 		sender.send(gcmMsg, tokens, 4, callback);

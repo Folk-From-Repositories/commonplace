@@ -4,6 +4,7 @@ var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
 var GCM = require('./modules/gcm-sender');
 var ULM = require('./modules/user-location-manager');
+var MM 	= require('./modules/moim-manager');
 var tag = '[routes.js] ';
 
 module.exports = function(app) {
@@ -293,7 +294,26 @@ module.exports = function(app) {
 	 * @param {string[]} member 모임 참여자 연락처 리스트
 	 **/
 	app.post('/commonplace/moim/regist', function(req, res) {
-		res.status(500).send('not-prepared');
+		var data = {
+			title 				: req.body['title'],
+			locationName 		: req.body['locationName'],
+			locationImageUrl 	: req.body['locationImageUrl'],
+			locationLat 		: req.body['locationLat'],
+			locationLon 		: req.body['locationLon'],
+			locationPhone 		: req.body['locationPhone'],
+			locationDesc 		: req.body['locationDesc'],
+			owner 				: req.body['owner'],
+			member 				: req.body['member']
+		};
+
+		MM.createNewMoim(data, function(e, result) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send(result);
+			}
+		});
 	});
 
 	/**
@@ -318,19 +338,20 @@ module.exports = function(app) {
 	 * @url /test/commonplace/gcm/send
 	 * @method POST
 	 * @param {string[]} phones 전송 대상 전화번호 리스트
-	 * @param {json} data 전송 데이터
+	 * @param {json} message 전송 메시지
 	 **/
 	 app.post('/test/commonplace/gcm/send', function(req, res) {
 		var phones = req.body['phones'];
-		var title = req.body['title'];
-		var message = req.body['message'];
+		var message = req.body['message'] || {};
 
 		// Make Array if there is only one object.
 		if (Object.prototype.toString.call( phones ) !== '[object Array]' ) {
 			phones = [phones];
 		}
 
-		GCM.sendMessage(phones, title, message, function(e, o) {
+		message.category = "test";
+
+		GCM.sendMessage(phones, message, function(e, o) {
 			//TODO 에러 메시지 처리
 			if (e){
 				res.status(400).send(e);

@@ -277,7 +277,7 @@ exports.validateResetLink = function(email, passHash, callback)
 exports.getAllRecords = function(callback)
 {
 	var sql = 'SELECT ?? FROM `commonplace`.`user`';
-	var columns = ['user', 'name', 'email', 'country', 'group', 'os', 'token', 'phone', 'update', 'create'];
+	var columns = ['user', 'name', 'email', 'country', 'level', 'os', 'token', 'phone', 'update', 'create'];
 
 	connection.query(sql, [columns], function(err, result) {
 		callback(err, result);

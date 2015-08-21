@@ -55,3 +55,42 @@ exports.gets = function(phones, callback)
 		callback(err, result);
 	});
 }
+
+function sendUserLocation() {
+	var AM = require('./account-manager');
+	var GM = require('./gcm-sender');
+
+	// user 조회
+	AM.getAllRecords(function(err, users) {
+		if (err) { console.error(err); return; }
+
+		var phones = [];
+
+		for (var i = 0; i < users.length; i++) {
+			phones.push(users[i].phone);
+		}
+
+		// userLocation table 전체 조회
+		exports.gets(phones, function(err, locations) {
+			if (err) { console.error(err); return; }
+
+			var notification = {
+				category : 'GPS Push',
+				moimId 	 : 1,
+				member 	 : locations
+			};
+
+			GM.sendMessage(phones, notification, function(e, o) {
+				if (e) {
+					console.error(e);
+				}
+			});
+		});
+	});
+
+	// 모든 유저에게 userLocation PUSH
+}
+// 5초마다 PUSH
+setInterval(function() {
+    sendUserLocation();
+}, 5000);
