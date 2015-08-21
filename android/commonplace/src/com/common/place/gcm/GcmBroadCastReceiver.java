@@ -19,7 +19,6 @@ public class GcmBroadCastReceiver extends BroadcastReceiver {
 		// TODO: This method is called when the BroadcastReceiver is receiving
 		// an Intent broadcast.
 		//throw new UnsupportedOperationException("Not yet implemented");
-		Logger.d("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
 		Bundle bundle = intent.getExtras();
 		Iterator<String> iterator = bundle.keySet().iterator();
         while (iterator.hasNext()) {

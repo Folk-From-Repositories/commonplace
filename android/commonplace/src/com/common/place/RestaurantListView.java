@@ -2,7 +2,7 @@ package com.common.place;
 
 import java.util.ArrayList;
 
-import com.common.place.model.Model;
+import com.common.place.model.RestaurantModel;
 import com.common.place.util.Constants;
 
 import android.app.Activity;
@@ -18,6 +18,7 @@ import android.widget.ListView;
 public class RestaurantListView extends Activity  {
 
 	public RestaurantArrayAdapter adapter;
+	private ArrayList<RestaurantModel> models = new ArrayList<RestaurantModel>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +50,18 @@ public class RestaurantListView extends Activity  {
 				Log.d("KMC", "Select Restaurant");
 				//initGroup();
 				Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
-				intent.putExtra("icon",adapter.getItem(adapter.selected_position).getIcon());
-				intent.putExtra("title",adapter.getItem(adapter.selected_position).getTitle());
+				
+//				models.get(adapter.selected_position);
+				intent.putExtra("restaurantInfo",models.get(adapter.selected_position));
+//				intent.putExtra("description",adapter.getItem(adapter.selected_position).getDescription());
+//				intent.putExtra("imageUrl",adapter.getItem(adapter.selected_position).getImageUrl());
+//				intent.putExtra("locationLat",adapter.getItem(adapter.selected_position).getLocationLat());
+//				intent.putExtra("locationLon",adapter.getItem(adapter.selected_position).getLocationLon());
+//				intent.putExtra("name",adapter.getItem(adapter.selected_position).getName());
+//				intent.putExtra("phone",adapter.getItem(adapter.selected_position).getPhone());
 				
 				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getIcon());
-				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getTitle());
+				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getName());
 				
 				RestaurantListView.this.setResult(Constants.RESTAURANT_LIST_REQ_CODE, intent);
 				
@@ -63,13 +71,12 @@ public class RestaurantListView extends Activity  {
 		}
 	};
 	
-	private ArrayList<Model> generateData(){
-        ArrayList<Model> models = new ArrayList<Model>();
-        //models.add(new Model("���� ����"));
-        models.add(new Model(R.drawable.example_1,"풍년 숯불갈비","1"));
-        models.add(new Model(R.drawable.example_2,"란나 타이","2"));
-        models.add(new Model(R.drawable.example_3,"중국 음식점","3"));
- 
+	private ArrayList<RestaurantModel> generateData(){
+        
+        models.add(new RestaurantModel(R.drawable.example_1,"풍년 숯불갈비","맛있는 곳","","029919999","12.1","13.1",false));
+        models.add(new RestaurantModel(R.drawable.example_2,"란나 타이","가까운 곳","","023333333","25.2","44.4",false));
+        models.add(new RestaurantModel(R.drawable.example_3,"중국 음식점","분위기 좋은곳","","027777777","66.6","77.7",false));
+
         return models;
     }
 	

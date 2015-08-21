@@ -1,9 +1,12 @@
 package com.common.place;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.common.place.model.GroupModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,6 +27,8 @@ public class GroupMainView extends Activity {
 	
 	ArrayList<String> groupNameList = new ArrayList<String>();
 	ArrayList<Integer> groupIdList = new ArrayList<Integer>();
+	
+	public static GroupModel group;
  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +46,12 @@ public class GroupMainView extends Activity {
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 	    	@Override
 	    	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-	    		Toast.makeText(GroupMainView.this, "You Clicked at " +groupNameList.get(position), Toast.LENGTH_SHORT).show();
+	    		//Toast.makeText(GroupMainView.this, "You Clicked at " +groupNameList.get(position), Toast.LENGTH_SHORT).show();
+	    		
+	    		Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
+				intent.putExtra("requestType",Constants.REQUEST_TYPE_GPS_GETHERING);
+	    		
+	    		startActivityForResult(intent,Constants.MEMBER_ACTIVITY_REQ_CODE);
             }
     	});
     }
@@ -68,8 +78,10 @@ public class GroupMainView extends Activity {
 	    Log.d("KMC","GrouopMainView's onActivityResult: " + resultCode);
 	    switch(resultCode){
 	    	case Constants.GROUP_MAIN_VIEW_REQ_CODE:
-	    		String groupName = data.getStringExtra("groupName");
-	    		addGroup(groupName,R.drawable.soju);
+	    		Serializable groupInfo = data.getSerializableExtra("group");
+	    		group = (GroupModel)groupInfo;
+	    		
+	    		addGroup(group.getLocationName(),R.drawable.soju);
 	    		break;
 	    }
 	    setGridViewAndText();

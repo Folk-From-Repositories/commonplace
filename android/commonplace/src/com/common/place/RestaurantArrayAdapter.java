@@ -2,7 +2,7 @@ package com.common.place;
  
 import java.util.ArrayList;
 
-import com.common.place.model.Model;
+import com.common.place.model.RestaurantModel;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,13 +13,13 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
  
-public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
+public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
  
         private final Context context;
-        private final ArrayList<Model> modelsArrayList;
+        private final ArrayList<RestaurantModel> modelsArrayList;
         public int selected_position = -1;
  
-        public RestaurantArrayAdapter(Context context, ArrayList<Model> modelsArrayList) {
+        public RestaurantArrayAdapter(Context context, ArrayList<RestaurantModel> modelsArrayList) {
  
             super(context, R.layout.target_item, modelsArrayList);
  
@@ -46,7 +46,7 @@ public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
                 CheckBox checkbox = (CheckBox) rowView.findViewById(R.id.cb_checkbox);
                 // 4. Set the text for textView 
                 imgView.setImageResource(modelsArrayList.get(position).getIcon());
-                titleView.setText(modelsArrayList.get(position).getTitle());
+                titleView.setText(modelsArrayList.get(position).getName());
                 
                 checkbox.setChecked(position == selected_position);
                 checkbox.setTag(position);
@@ -64,7 +64,7 @@ public class RestaurantArrayAdapter extends ArrayAdapter<Model> {
             else{
                     rowView = inflater.inflate(R.layout.group_header_item, parent, false);
                     TextView titleView = (TextView) rowView.findViewById(R.id.header);
-                    titleView.setText(modelsArrayList.get(position).getTitle());
+                    titleView.setText(modelsArrayList.get(position).getName());
  
             }
  

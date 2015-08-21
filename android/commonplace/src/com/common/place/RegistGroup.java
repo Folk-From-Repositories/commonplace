@@ -1,19 +1,39 @@
 package com.common.place;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import com.common.place.db.Provider;
 import com.common.place.model.ContactsModel;
+import com.common.place.model.GroupModel;
+import com.common.place.model.RestaurantModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -22,13 +42,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class RegistGroup extends Activity implements OnClickListener{
 
 	public static Context registGroupContext;
+	public static String ownerPhoneNumber;
+	
+	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
+	public ArrayList<ContactsModel> getArrayList;
+	public RestaurantModel restaurant;
+	
+	private GroupModel group;
+	
+	ImageView retaurant_image;
+	TextView retaurant_description;
+	int id_count=1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +86,21 @@ public class RegistGroup extends Activity implements OnClickListener{
 		case Constants.MAP_VIEW_REQ_CODE:
 			Log.d("KMC","RegistGroup's onActivityResult MAP_VIEW_REQ_CODE: " + resultCode);
 			
-			ImageView retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
-			TextView retaurant_description= (TextView)findViewById(R.id.retaurant_description);
+			retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
+			retaurant_description= (TextView)findViewById(R.id.retaurant_description);
+			
+			
 			
 			if(data != null && data.getExtras() != null){
-				int icon = data.getExtras().getInt("icon");
-				String title = data.getStringExtra("title");
+				Serializable restaurantInfo = data.getSerializableExtra("restaurantInfo");
 				
-				retaurant_image.setImageResource(icon);
-				retaurant_description.setText(title);
+				restaurant =(RestaurantModel)restaurantInfo;
+							
+//				int icon = data.getExtras().getInt("icon");
+//				String title = data.getStringExtra("title");
+				
+				retaurant_image.setImageResource(restaurant.getIcon());
+				retaurant_description.setText(restaurant.getDescription());
 				retaurant_image.setVisibility(1);
 				retaurant_image.getLayoutParams().width = 500;
 				retaurant_image.getLayoutParams().height = 500;
@@ -84,7 +120,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 			TextView contact_list= (TextView)findViewById(R.id.contacts_description);
 			
 			if(contactArray != null){
-				ArrayList<ContactsModel> getArrayList = (ArrayList<ContactsModel>) contactArray;
+				getArrayList = (ArrayList<ContactsModel>) contactArray;
 				contact_list.setText("");
 				for(int i=0;i<getArrayList.size();i++){
 					String name = getArrayList.get(i).getName();
@@ -164,7 +200,9 @@ public class RegistGroup extends Activity implements OnClickListener{
 			break;
 		case R.id.searchMap:
 			Log.d("KMC", "Search Map");
-			startActivityForResult(new Intent(getApplicationContext(), CreateMapView.class),Constants.MAP_VIEW_REQ_CODE);
+			Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
+			intent.putExtra("requestType",Constants.REQUEST_TYPE_MAP_CREATE);
+			startActivityForResult(intent,Constants.MAP_VIEW_REQ_CODE);
 			break;
 		case R.id.btn_contacts:
 			Logger.i("Contacts button clicked");
@@ -175,18 +213,97 @@ public class RegistGroup extends Activity implements OnClickListener{
 		case R.id.registGroup:
 			/*
 			 * you must save data to server
-			 */
+			 */		
+			group = new GroupModel();
+			
 			EditText groupName=(EditText)findViewById(R.id.name_edit);
 			EditText meetTime=(EditText)findViewById(R.id.time_edit);
 			
-			Intent intent = new Intent(getApplicationContext(), GroupMainView.class);
-			intent.putExtra("groupName",groupName.getText().toString());
+			group.setTitle(groupName.getText().toString());
+			group.setTime(meetTime.getText().toString());
+			group.setId(String.valueOf(id_count));
+			group.setLocationDesc(restaurant.getDescription());
+			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));//current ImageUrl 은 없고 android png파일
+			group.setLocationLat(restaurant.getLocationLat());
+			group.setLocationLon(restaurant.getLocationLon());
+			group.setLocationName(restaurant.getName());
+			group.setLocationPhone(restaurant.getPhone());
+			group.setMemeber(getArrayList);
+			group.setOwner(ownerPhoneNumber);
+			
+			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainView.class);
+			intentGroupMain.putExtra("group",group);
 			
 			Log.d("KMC", "groupName: " + groupName);
-			
-			setResult(Constants.GROUP_MAIN_VIEW_REQ_CODE, intent);
+				
+    		registerInBackground();
+    		
+			setResult(Constants.GROUP_MAIN_VIEW_REQ_CODE, intentGroupMain);
 			
 			finish();
 		}	
 	}
+	private void registerInBackground() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+
+                try {
+                	String groupInfo = new Gson().toJson(group);
+                    sendReatuanrantDataToBackend(groupInfo);
+                } catch (Exception ex) {
+                    msg = "Error :" + ex.getMessage();
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+
+        }.execute(null, null, null);
+    }
+	
+	//Transfer Data to Server(httpRequest)
+    private void sendReatuanrantDataToBackend(final String groupInfo) {
+    	Thread thread = new Thread() {
+            @Override
+            public void run() {
+                HttpClient httpClient = new DefaultHttpClient();
+
+        		Log.d("KMC"," TEST JSON: " + groupInfo);
+        		
+                
+//                String urlString = "http://rambling.synology.me:52015/commonplace/gcm/regist";
+                try {
+                    URI url = new URI(Constants.SVR_MOIM_REGIST_URL); // use Constants.java file like this!!
+
+                    HttpPost httpPost = new HttpPost();
+                    httpPost.setURI(url);
+
+//                    List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
+                    
+                    StringEntity params =new StringEntity(groupInfo);
+                    httpPost.setEntity(params);
+
+                    HttpResponse response = httpClient.execute(httpPost);
+                    String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+
+                   Log.d("KMC responseString", responseString);
+                    
+                } catch (URISyntaxException e) {
+                    Logger.e(e.getLocalizedMessage());
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    Logger.e(e.getLocalizedMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Logger.e(e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+    }
 }

@@ -46,7 +46,7 @@ public class InitManager extends Activity {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     //private static final String TAG = "KMC";
 
-    String SENDER_ID = "1073384423017";
+    String SENDER_ID = "1073384423107";
     
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
@@ -200,10 +200,15 @@ public class InitManager extends Activity {
                     
                     TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE); 
                     String phoneNum = telManager.getLine1Number();
-                    phoneNum = phoneNum.substring(2);
+                    phoneNum = phoneNum.substring(3);
+                    phoneNum = "0"+phoneNum;
+                    RegistGroup.ownerPhoneNumber = phoneNum;
+                    
+                    Log.d("KMC","phoneNum: "+phoneNum);
                     
                     nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
                     nameValuePairs.add(new BasicNameValuePair("token", regid));
+                    nameValuePairs.add(new BasicNameValuePair("name", "moochang"));
 
                     httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -211,8 +216,8 @@ public class InitManager extends Activity {
                     HttpResponse response = httpClient.execute(httpPost);
                     String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
 
-                    Logger.d("SERVER RESPONE: "+responseString);
-                    Logger.d("regid: "+regid);
+                    Log.d("KMC","SERVER RESPONE: "+responseString);
+                    Log.d("KMC","regid: "+regid);
 
                     storeRegistrationId(context, regid);
                     
