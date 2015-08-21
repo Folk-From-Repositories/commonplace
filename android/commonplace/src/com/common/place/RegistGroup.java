@@ -197,6 +197,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 		switch (v.getId()) {
 		case R.id.seachAddr:
 			Logger.d( "Search Addr");
+
 			break;
 		case R.id.searchMap:
 			Logger.d( "Search Map");
@@ -281,7 +282,7 @@ public class RegistGroup extends Activity implements OnClickListener{
                     HttpPost httpPost = new HttpPost();
                     httpPost.setURI(url);
 
-//                    List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
+                    List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
                     
                     StringEntity params =new StringEntity(groupInfo);
                     httpPost.setEntity(params);

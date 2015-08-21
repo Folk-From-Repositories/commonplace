@@ -296,7 +296,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         values.put(Provider.RECIPIENT, recipient);
         values.put(Provider.PHONE_NUMBER, phoneNumber);
         
-        ContactsModel model = new ContactsModel(recipient,phoneNumber);
+        ContactsModel model = new ContactsModel(recipient,phoneNumber,"","");
 		personList.add(model);
         
         Cursor cursor = getContentResolver().query(Provider.CONTENT_URI, null, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null, null);
