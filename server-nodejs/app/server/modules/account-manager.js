@@ -1,37 +1,6 @@
-
 var crypto 		= require('crypto');
 var moment 		= require('moment');
-var mysql 		= require('mysql');
-var dbInfo 		= require(__dirname + '/../conf/database.json');
-
-/* establish the database connection */
-var connection;
-var tag = '[account-manager.js] ';
-
-function makeConnection() {
-	connection = mysql.createConnection(dbInfo);
-
-	connection.connect(function(err) {
-		if (err) {
-			console.error(tag + 'Error when connecting to db:', err);
-			setTimeout(makeConnection, 3000);
-		} else {
-			console.log(tag + 'Establish db connection.')
-		}
-	});
-
-	connection.on('error', function(err) {
-		console.error(tag + 'Database error', err);
-
-		if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-			makeConnection();
-		} else {
-			throw err;
-		}
-	});
-}
-
-makeConnection();
+var connection 	= require('./database-connector.js').connection;
 
 /* login validation methods */
 
@@ -197,6 +166,7 @@ exports.updatePassword = function(email, newPass, callback)
 		}
 	});
 }
+
 
 /**
  * Regist Client info (phone, name, token)
@@ -394,11 +364,17 @@ var phoneToDbFormat = function(phone) {
 
 var isOnlyNumber = function(str) {
 	var isNumber = true;
-	for (var i=0; i < str.length; i++) {
-		if (isNaN(str[i])) {
-			isNumber = false;
-			break;
+
+	if (str && str.length > 0) {
+		for (var i=0; i < str.length; i++) {
+			if (isNaN(str[i])) {
+				isNumber = false;
+				break;
+			}
 		}
+	} else {
+		isNumber = false;
 	}
+
 	return isNumber;
 }

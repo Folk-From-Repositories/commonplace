@@ -311,7 +311,7 @@ module.exports = function(app) {
 	 * @param {string[]} phones 조회 대상 전화번호 리스트
 	 * @return {json} phone, token
 	 **/
-	app.get('/test/commonplace/user/list', function(req, res) {
+	app.post('/test/commonplace/user/list', function(req, res) {
 		AM.getGcmTokens(req.body['phones'], function(e, o) {
 			if (e){
 				res.status(400).send(e);
