@@ -1,6 +1,7 @@
 var crypto 		= require('crypto');
 var moment 		= require('moment');
-var connection 	= require('./database-connector.js').connection;
+var connection 	= require('./database-connector').connection;
+var utils 		= require('./utils');
 
 /* login validation methods */
 
@@ -179,14 +180,14 @@ exports.updatePassword = function(email, newPass, callback)
  * @return {json} result
  */
 exports.registDeviceInfo = function(data, callback) {
-	var phone = phoneToDbFormat(data.phone);
+	var phone = utils.phoneToDbFormat(data.phone);
 	var token = data.token;
 	var name = data.name;
 
 	// validate data
 	if (!phone || !token || !name) { callback('insufficiency-form-data'); return; }
 
-	if (!isOnlyNumber(phone)) { callback('invalid-phone-number-format'); return; }
+	if (!utils.isOnlyNumber(phone)) { callback('invalid-phone-number-format'); return; }
 
 	if(typeof phone !== 'string' || typeof token !== 'string' || typeof name !== 'string') {
 		callback('invalid-form-data');
@@ -217,9 +218,9 @@ exports.getGcmTokens = function(phones, callback) {
 	}
 
 	for (var index in phones) {
-		phones[index] = phoneToDbFormat(phones[index]);
+		phones[index] = utils.phoneToDbFormat(phones[index]);
 
-		if (!isOnlyNumber(phones[index])) {
+		if (!utils.isOnlyNumber(phones[index])) {
 			callback('invalid-phone-number-format'); return;
 		}
 	}
@@ -351,30 +352,3 @@ var findByphone = function(phone, callback)
 		callback(err, rows[0]);
 	});
 };
-
-
-var phoneToDbFormat = function(phone) {
-
-	if (phone) {
-		phone = phone.replace(/[-_\W]/g, "");
-	}
-
-	return phone;
-};
-
-var isOnlyNumber = function(str) {
-	var isNumber = true;
-
-	if (str && str.length > 0) {
-		for (var i=0; i < str.length; i++) {
-			if (isNaN(str[i])) {
-				isNumber = false;
-				break;
-			}
-		}
-	} else {
-		isNumber = false;
-	}
-
-	return isNumber;
-}

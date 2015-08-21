@@ -3,6 +3,7 @@ var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
 var GCM = require('./modules/gcm-sender');
+var ULM = require('./modules/user-location-manager');
 var tag = '[routes.js] ';
 
 module.exports = function(app) {
@@ -214,6 +215,8 @@ module.exports = function(app) {
 			name  : req.body['name']
 		};
 
+		console.debug(tag, req.originalUrl, data);
+
 		AM.registDeviceInfo(data, function(e) {
 			//TODO 에러 메시지 처리
 			if (e){
@@ -234,7 +237,44 @@ module.exports = function(app) {
 	 * @param {string} longitude 경도
 	 **/
 	app.post('/commonplace/user/location', function(req, res) {
-		res.status(500).send('not-prepared');
+
+		var data = {
+			phone : req.body['phone'],
+			latitude : req.body['latitude'],
+			longitude  : req.body['longitude']
+		};
+
+		ULM.update(data, function(e) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send('ok');
+			}
+		});
+	});
+
+	/**
+	 * // TODO delete
+	 * 사용자 GPS 정보 조회
+	 *
+	 * @private
+	 * @url /test/commonplace/user/location/retrieve
+	 * @method GET
+	 * @param {string[]} phones 전화번호
+	 **/
+	app.post('/test/commonplace/user/location/retrieve', function(req, res) {
+
+		var phones = req.body['phones'];
+
+		ULM.gets(phones, function(e, result) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send(result);
+			}
+		});
 	});
 
 	/**
