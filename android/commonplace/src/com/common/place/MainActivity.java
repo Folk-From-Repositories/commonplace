@@ -1,9 +1,10 @@
 package com.common.place;
 
+import com.common.place.util.Logger;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,7 +20,7 @@ public class MainActivity extends Activity {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    Log.d("KMC","resultCode: " + resultCode);
+	    Logger.d("resultCode: " + resultCode);
 
 	    if(resultCode == RESULT_OK){
 	    	startActivity(new Intent(this, GroupMainView.class));

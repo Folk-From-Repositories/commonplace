@@ -6,7 +6,7 @@ public class Logger {
 	
 	public static final boolean LOG_ON = true;
 	
-	private static final String TAG = "KMC";
+	private static final String TAG = "COMMON";
 	
 	public static void i(String msg){
 		if(LOG_ON)

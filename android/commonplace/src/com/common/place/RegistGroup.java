@@ -64,8 +64,8 @@ public class RegistGroup extends Activity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_regist_group);
-		Log.d("KMC", "INIT RegistGroup");
-		
+		Logger.d( "INIT RegistGroup");
+		 
 		registGroupContext = getApplicationContext();
 		
 		findViewById(R.id.seachAddr).setOnClickListener(this);
@@ -84,7 +84,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 			break;
 		
 		case Constants.MAP_VIEW_REQ_CODE:
-			Log.d("KMC","RegistGroup's onActivityResult MAP_VIEW_REQ_CODE: " + resultCode);
+			Logger.d("RegistGroup's onActivityResult MAP_VIEW_REQ_CODE: " + resultCode);
 			
 			retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
 			retaurant_description= (TextView)findViewById(R.id.retaurant_description);
@@ -109,12 +109,12 @@ public class RegistGroup extends Activity implements OnClickListener{
 				retaurant_image.setVisibility(0);
 				retaurant_image.getLayoutParams().width = 1;
 				retaurant_image.getLayoutParams().height = 1;
-				retaurant_description.setText("등록된 모임 장소가 없습니다.");
+				retaurant_description.setText("�깅��� 紐⑥�� �μ��媛� ���듬����.");
 			}
 			break;
 			
 		case Constants.MEMBER_ACTIVITY_REQ_CODE:
-			Log.d("KMC","onActivityResult("+Constants.MEMBER_ACTIVITY_REQ_CODE+")");
+			Logger.d("onActivityResult("+Constants.MEMBER_ACTIVITY_REQ_CODE+")");
 
 			Serializable contactArray = data.getSerializableExtra("contactArrayList");
 			TextView contact_list= (TextView)findViewById(R.id.contacts_description);
@@ -133,8 +133,8 @@ public class RegistGroup extends Activity implements OnClickListener{
 				}
 			}else{
 				contact_list.setGravity(Gravity.CENTER);
-				contact_list.setText("등록된 모임 인원이 없습니다.");
-				Log.d("KMC"," is null");
+				contact_list.setText("...");
+				Logger.d(" is null");
 			}
 			break;
 		default:
@@ -196,10 +196,10 @@ public class RegistGroup extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.seachAddr:
-			Log.d("KMC", "Search Addr");
+			Logger.d( "Search Addr");
 			break;
 		case R.id.searchMap:
-			Log.d("KMC", "Search Map");
+			Logger.d( "Search Map");
 			Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
 			intent.putExtra("requestType",Constants.REQUEST_TYPE_MAP_CREATE);
 			startActivityForResult(intent,Constants.MAP_VIEW_REQ_CODE);
@@ -223,7 +223,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 			group.setTime(meetTime.getText().toString());
 			group.setId(String.valueOf(id_count));
 			group.setLocationDesc(restaurant.getDescription());
-			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));//current ImageUrl 은 없고 android png파일
+			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));//current ImageUrl �� ��怨� android png����
 			group.setLocationLat(restaurant.getLocationLat());
 			group.setLocationLon(restaurant.getLocationLon());
 			group.setLocationName(restaurant.getName());
@@ -234,7 +234,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainView.class);
 			intentGroupMain.putExtra("group",group);
 			
-			Log.d("KMC", "groupName: " + groupName);
+			Logger.d( "groupName: " + groupName);
 				
     		registerInBackground();
     		
@@ -271,7 +271,7 @@ public class RegistGroup extends Activity implements OnClickListener{
             public void run() {
                 HttpClient httpClient = new DefaultHttpClient();
 
-        		Log.d("KMC"," TEST JSON: " + groupInfo);
+        		Logger.d(" TEST JSON: " + groupInfo);
         		
                 
 //                String urlString = "http://rambling.synology.me:52015/commonplace/gcm/regist";

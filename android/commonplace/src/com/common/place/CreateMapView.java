@@ -64,7 +64,7 @@ public class CreateMapView extends FragmentActivity   {
             	gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng,12));
             }
         } catch (Exception e) {
-        	Log.d("KMC","TEST EXCEPTION: " + e.getMessage());
+        	Logger.d("TEST EXCEPTION: " + e.getMessage());
             e.printStackTrace();
         }		
 		
@@ -97,7 +97,7 @@ public class CreateMapView extends FragmentActivity   {
 			});
 			
 		}else{
-			Log.d("KMC","TEST 02: requestType" + requestType);
+			Logger.d("TEST 02: requestType" + requestType);
 		}	
 	}
 	
@@ -165,7 +165,7 @@ public class CreateMapView extends FragmentActivity   {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("KMC", "CREATE Map onActivityResult" + resultCode);
+		Logger.d( "CREATE Map onActivityResult" + resultCode);
 		
 		switch(requestCode){
 			case Constants.RESTAURANT_LIST_REQ_CODE:

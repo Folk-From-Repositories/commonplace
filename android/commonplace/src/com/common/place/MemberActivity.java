@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.common.place.db.Provider;
 import com.common.place.model.ContactsModel;
 import com.common.place.util.Constants;
+import com.common.place.util.Logger;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -21,7 +22,6 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -114,7 +114,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         switch(v.getId()){
                 
             case R.id.btn_confirm:
-            	Log.d("KMC", "Select Restaurant: " + recipientCursor);
+            	Logger.d( "Select Restaurant: " + recipientCursor);
 				//initGroup();
 				Intent intent = new Intent(getApplicationContext(), RegistGroup.class);
 				intent.putExtra("contactArrayList", personList);

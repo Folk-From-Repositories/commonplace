@@ -204,11 +204,11 @@ public class InitManager extends Activity {
                     phoneNum = "0"+phoneNum;
                     RegistGroup.ownerPhoneNumber = phoneNum;
                     
-                    Log.d("KMC","phoneNum: "+phoneNum);
+                    Logger.d("phoneNum: "+phoneNum);
                     
                     nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
                     nameValuePairs.add(new BasicNameValuePair("token", regid));
-                    nameValuePairs.add(new BasicNameValuePair("name", "moochang"));
+                    nameValuePairs.add(new BasicNameValuePair("name", phoneNum));
 
                     httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -216,8 +216,8 @@ public class InitManager extends Activity {
                     HttpResponse response = httpClient.execute(httpPost);
                     String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
 
-                    Log.d("KMC","SERVER RESPONE: "+responseString);
-                    Log.d("KMC","regid: "+regid);
+                    Logger.d("SERVER RESPONE: "+responseString);
+                    Logger.d("regid: "+regid);
 
                     storeRegistrationId(context, regid);
                     

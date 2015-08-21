@@ -6,18 +6,15 @@ import java.util.ArrayList;
 import com.common.place.model.GroupModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
-import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class GroupMainView extends Activity {
 
@@ -75,7 +72,7 @@ public class GroupMainView extends Activity {
     
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    Log.d("KMC","GrouopMainView's onActivityResult: " + resultCode);
+	    Logger.d("GrouopMainView's onActivityResult: " + resultCode);
 	    switch(resultCode){
 	    	case Constants.GROUP_MAIN_VIEW_REQ_CODE:
 	    		Serializable groupInfo = data.getSerializableExtra("group");
@@ -88,7 +85,7 @@ public class GroupMainView extends Activity {
 	}
 	
 	public void setGridViewAndText(){
-    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("등록된 모임 그룹이 없습니다.");
+    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText("�깅��� 紐⑥�� 洹몃９�� ���듬����.");
 		
 		CustomGrid adapter = new CustomGrid(GroupMainView.this, groupNameList, groupIdList);
         grid.setAdapter(adapter);
@@ -96,7 +93,7 @@ public class GroupMainView extends Activity {
 	
     /* Add Dummy Data */
     public void initGroup(){
-    	groupNameList.add("모임그룹_" + count++); groupIdList.add(R.drawable.soju);
+
     }
     
     public void addGroup(String groupName, int imageId){

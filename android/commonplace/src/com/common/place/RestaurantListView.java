@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import com.common.place.model.RestaurantModel;
 import com.common.place.util.Constants;
+import com.common.place.util.Logger;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,29 +25,29 @@ public class RestaurantListView extends Activity  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_list_view);
 		
-		Log.d("KMC", "INIT RestaurantListView");
+		Logger.d( "INIT RestaurantListView"); 
 		
 		 // 1. pass context and data to the custom adapter
 		adapter = new RestaurantArrayAdapter(this, generateData());
-		Log.d("KMC", "INIT RestaurantListView 2");
+		Logger.d( "INIT RestaurantListView 2");
         // if extending Activity 2. Get ListView from activity_main.xml
 		ListView listView = (ListView) findViewById(R.id.restaurantList);
 		findViewById(R.id.btn_selectRestaurant).setOnClickListener(mClickListener);
 
-		Log.d("KMC", "INIT RestaurantListView 3");
+		Logger.d( "INIT RestaurantListView 3");
 		
         // 3. setListAdapter
 		
         listView.setAdapter(adapter);// if extending Activity
         
-        Log.d("KMC", "INIT RestaurantListView 4");
+        Logger.d( "INIT RestaurantListView 4");
 	}
 
 	Button.OnClickListener mClickListener = new View.OnClickListener() {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.btn_selectRestaurant:
-				Log.d("KMC", "Select Restaurant");
+				Logger.d( "Select Restaurant");
 				//initGroup();
 				Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
 				
@@ -60,8 +60,8 @@ public class RestaurantListView extends Activity  {
 //				intent.putExtra("name",adapter.getItem(adapter.selected_position).getName());
 //				intent.putExtra("phone",adapter.getItem(adapter.selected_position).getPhone());
 				
-				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getIcon());
-				Log.d("KMC", "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getName());
+				Logger.d( "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getIcon());
+				Logger.d( "INIT RestaurantListView 5 : " + adapter.getItem(adapter.selected_position).getName());
 				
 				RestaurantListView.this.setResult(Constants.RESTAURANT_LIST_REQ_CODE, intent);
 				
