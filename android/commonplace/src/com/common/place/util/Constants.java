@@ -11,7 +11,7 @@ public class Constants {
 	public static final String TEST_URL = HOST + "/test/commonplace/gcm/send";
 	public static final String SVR_USER_LOCATION = HOST + "/commonplace/user/location";
 	
-	public static final String RESTAURANT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU&location=37.55500949462912,126.98537103831768&radius=500&types=restaurant";
+	public static final String RESTAURANT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU&radius=5000&types=restaurant&location=37.55500949462912,126.98537103831768";//
 	
 	public static final int MAP_VIEW_REQ_CODE        = 100;
 	public static final int MEMBER_ACTIVITY_REQ_CODE = 200;

@@ -1,27 +1,49 @@
 package com.common.place;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import com.common.place.model.ContactsModel;
 import com.common.place.model.GroupModel;
+import com.common.place.model.RestaurantModel;
 import com.common.place.service.GPSService;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +56,7 @@ public class GroupMainView extends Activity {
 	ArrayList<String> groupNameList = new ArrayList<String>();
 	ArrayList<Integer> groupIdList = new ArrayList<Integer>();
 	
-	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
+	public static ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
 	
 	public static GroupModel group;
 	Intent serviceIntent;
@@ -56,7 +78,26 @@ public class GroupMainView extends Activity {
                 	Logger.d("KMC TEST 01");
                 	//new Gson().fromJson(, ContactsModel.class);
                 	//ArrayList<ContactsModel> memeber = new Gson().fromJson(value, ArrayList<ContactsModel>);
-                	//groupList.get(0).setMemeber(memeber);
+                	
+                	JsonElement jelement = new JsonParser().parse(value);
+                    JsonArray  json = jelement.getAsJsonArray();
+                   
+                    
+                    ArrayList<ContactsModel> aaa = new ArrayList<ContactsModel>();
+                    
+                    
+                    for(int i=0;i<json.size();i++){
+                    	
+                    	ContactsModel a = new ContactsModel("",json.get(i).getAsJsonObject().get("phone").getAsString(), 
+                    			json.get(i).getAsJsonObject().get("latitude").getAsString(), 
+                    			json.get(i).getAsJsonObject().get("longitude").getAsString()
+                    			);
+                    	aaa.add(a);
+                    }
+                    //if(groupList.size() > 0){
+                    	groupList.get(0).setMemeber(aaa);
+                    //}
+                	
                 	//CreateMapView.group = 
 //                	Intent i = new Intent(CreateMapView.context, CreateMapView.class);
 //                	i.putExtra("requestType", Constants.REQUEST_TYPE_GPS_GETHERING);

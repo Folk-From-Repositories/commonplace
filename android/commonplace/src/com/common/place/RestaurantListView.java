@@ -42,6 +42,7 @@ public class RestaurantListView extends Activity  {
 	private ArrayList<RestaurantModel> models = new ArrayList<RestaurantModel>();
 	
 	Context context;
+	String location;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class RestaurantListView extends Activity  {
 		
 		Logger.d( "INIT RestaurantListView"); 
 		context= this;
+		Intent intent = getIntent();
+    	String location = intent.getStringExtra("location");
 		 // 1. pass context and data to the custom adapter
 		registerInBackground();
 		
@@ -125,9 +128,9 @@ public class RestaurantListView extends Activity  {
 	}
 	
 	private void registerInBackground() {
-        new AsyncTask<Void, Void, String>() {
+        new AsyncTask<String, String, String>() {
             @Override
-            protected String doInBackground(Void... params) {
+            protected String doInBackground(String... params) {
                 String msg = "";
 
                 try {
@@ -141,14 +144,28 @@ public class RestaurantListView extends Activity  {
                 return msg;
             }
 
-        }.execute(null, null, null);
+			@Override
+			protected void onPostExecute(String result) {
+				Logger.i("onPostExecute result:"+result);
+				createList();
+				super.onPostExecute(result);
+			}
+
+            
+
+        }.execute(null, null, "aaa");
     }
+	private void createList() {
+		Logger.i("createList adapter:"+adapter);
+		ListView listView = (ListView) findViewById(R.id.restaurantList);
+        listView.setAdapter(adapter);
+	}
 	
 	//Transfer Data to Server(httpRequest)
     private void sendReatuanrantDataToBackend() {
-    	Thread thread = new Thread() {
-            @Override
-            public void run() {
+//    	Thread thread = new Thread() {
+//            @Override
+//            public void run() {
             	HttpClient httpClient = new DefaultHttpClient();
 
                 try {
@@ -170,30 +187,51 @@ public class RestaurantListView extends Activity  {
                     HttpResponse response = httpClient.execute(httpPost);
                     String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
                     
+                    Log.d("COMMON", responseString);
+                    
                     JsonElement jelement = new JsonParser().parse(responseString);
                     JsonObject  jobject = jelement.getAsJsonObject();
-                    JsonArray result = jobject.getAsJsonArray("result");
+                    JsonArray result = jobject.getAsJsonArray("results");
                     
                     for(int i=0;i<result.size();i++){
-                    	JsonObject restaurant= result.get(i).getAsJsonObject();
-                    	JsonObject location = restaurant.get("location").getAsJsonObject();
-                    	String lat = location.get("lat").getAsString();
-                    	String lon = location.get("lon").getAsString();
-                    	Logger.d("lat: "+lat);
-                    	Logger.d("lon: "+lon);
+                    	try{
+                    		Log.d("COMMON","AAA02");
+                        	JsonObject restaurant= result.get(i).getAsJsonObject();
+                        	if(!restaurant.isJsonNull()){
+                        		Log.d("COMMON","AAA03");
+                            	JsonObject geometry = restaurant.get("geometry").getAsJsonObject();
+                            	if(!geometry.isJsonNull()){
+	                            	JsonObject location = geometry.get("location").getAsJsonObject();
+	                            	Log.d("COMMON","AAA04");
+	                            	if(!location.isJsonNull()){
+		                            	String lat = location.get("lat").getAsString();
+		                            	String lon = location.get("lng").getAsString();
+		                            	
+		                            	
+		                            	String icon = restaurant.get("icon").getAsString();
+		                            	String name = restaurant.get("name").getAsString();
+		                            	String rating = restaurant.get("rating").getAsString();
+		                            	Logger.d("lat: "+lat);
+		                            	Logger.d("lon: "+lon);
+		                            	Logger.d("icon"+icon);
+		                            	Logger.d("rating"+rating);
+		                            	Log.d("COMMON","AAA05");
+		                            	
+		                            	models.add(new RestaurantModel(R.drawable.example_1,name,rating,icon,"029999999",lat,lon,false));
+		                            	Log.d("COMMON","AAA07");
+	                            	}
+                            	}
+                        	}
+                        	
+                    	}catch(Exception e){
+                    	}
                     	
-                    	String icon = restaurant.get("icon").getAsString();
-                    	String name = restaurant.get("name").getAsString();
-                    	String rating = restaurant.get("rating").getAsString();
-                    	
-                    	models.add(new RestaurantModel(R.drawable.example_1,name,rating,icon,"029999999",lat,lon,false));
                     }
                     
-                    Log.d("COMMON", responseString);
+                    
     
-                    adapter = new RestaurantArrayAdapter(context, models);
-                    ListView listView = (ListView) findViewById(R.id.restaurantList);
-                    listView.setAdapter(adapter);
+                    adapter = new RestaurantArrayAdapter(getApplicationContext(), models);
+                    
                     //JsonArray jarray = result.size()
                     
                     //String result = jobject.get("translatedText").toString();
@@ -211,9 +249,9 @@ public class RestaurantListView extends Activity  {
                     Log.e("COMMON", e.getLocalizedMessage());
                     e.printStackTrace();
                 }
-            }
-        };
-
-        thread.start();
+//            }
+//        };
+//
+//        thread.start();
     }
 }

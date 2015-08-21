@@ -82,10 +82,10 @@ public class CreateMapView extends FragmentActivity   {
         			group = (GroupModel) contactArray;
         			cameraLatLng = new LatLng(Double.parseDouble(group.getLocationLat()), 
         					Double.parseDouble(group.getLocationLon()));
-        			cameraLatLng = new LatLng(37.541, 126.986);//이거 이따 주석해라
+        			cameraLatLng = new LatLng(37.541, 126.986);//�씠嫄� �씠�뵲 二쇱꽍�빐�씪
         			Logger.d("TEST 04");
         			//MarkerOptions markerOptions = new MarkerOptions();
-        			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
+        			//markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
         			markerOptions.position(cameraLatLng);
         			Logger.d("TEST 04");
         			gmap.addMarker(markerOptions);
@@ -107,8 +107,10 @@ public class CreateMapView extends FragmentActivity   {
 			Logger.d("REQUEST_TYPE_GPS_GETHERING 1");
 			restaurantSearch.getLayoutParams().height = 0;
 			restaurantSearch.setVisibility(restaurantSearch.INVISIBLE);
+			if(GroupMainView.groupList!= null && GroupMainView.groupList.size()>0){
+				setGpsToMap(GroupMainView.groupList.get(0).getMemeber());
+			}
 			
-			setGpsToMap(group.getMemeber());
 			Logger.d("REQUEST_TYPE_GPS_GETHERING 2");
 			//getInfoInBackground();
 			
@@ -216,6 +218,7 @@ public class CreateMapView extends FragmentActivity   {
 			LatLng latLng = new LatLng(Double.parseDouble(group.get(i).getLocationLat()), 
 					Double.parseDouble(group.get(i).getLocationLon()));
 			markerOptions.position(latLng);
+			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant));
 			Logger.d("TEST 04");
 			gmap.addMarker(markerOptions);
 			}catch(Exception e){
@@ -247,7 +250,9 @@ public class CreateMapView extends FragmentActivity   {
 				//RegistGroup instance = new RegistGroup();
 				//Context context = (CreateMapView)instance.registGroupContext;
 				
-				startActivityForResult(new Intent(getApplicationContext(), RestaurantListView.class),Constants.RESTAURANT_LIST_REQ_CODE);
+				//String location="location"+group.getLocationLat()+","+group.getLocationLon();
+				Intent test = new Intent(getApplicationContext(), RestaurantListView.class);
+				startActivityForResult(test,Constants.RESTAURANT_LIST_REQ_CODE);
 				break;
 			}	
 		}

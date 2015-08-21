@@ -100,7 +100,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 //				String title = data.getStringExtra("title");
 				
 				retaurant_image.setImageResource(restaurant.getIcon());
-				retaurant_description.setText(restaurant.getDescription());
+				retaurant_description.setText(restaurant.getName() +"\n" + restaurant.getDescription() +"\n" + restaurant.getPhone());
 				retaurant_image.setVisibility(1);
 				retaurant_image.getLayoutParams().width = 500;
 				retaurant_image.getLayoutParams().height = 500;
