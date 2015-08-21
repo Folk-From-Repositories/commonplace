@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import com.common.place.model.ContactsModel;
 import com.common.place.model.GroupModel;
+import com.common.place.service.GPSService;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.google.gson.Gson;
@@ -97,6 +98,9 @@ public class GroupMainView extends Activity {
         
         IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
         registerReceiver(receiver, filter);
+        
+        serviceIntent = new Intent(this, GPSService.class);
+        startService(serviceIntent);
     }
     
     Button.OnClickListener mClickListener = new View.OnClickListener() {
