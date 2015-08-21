@@ -196,11 +196,18 @@ module.exports = function(app) {
 	});
 
 
-
 // common place api //
 
-	// regist gcm token (both insert and update) //
-	app.post('/commonplace/gcm/regist', function(req, res) {
+	/**
+	 * 서비스 가입 (기존 가입자일 경우 필수 정보 업데이트)
+	 *
+	 * @url /commonplace/regist
+	 * @method POST
+	 * @param {string} phone 전화번호
+	 * @param {string} token GCM 토큰
+	 * @param {string} name  사용자 이름(별칭)
+	 **/
+	app.post('/commonplace/regist', function(req, res) {
 		var data = {
 			phone : req.body['phone'],
 			token : req.body['token'],
@@ -217,7 +224,63 @@ module.exports = function(app) {
 		});
 	});
 
-	app.post('/commonplace/gcm/send', function(req, res) {
+	/**
+	 * 사용자 GPS 정보 등록
+	 *
+	 * @url /commonplace/user/location
+	 * @method POST
+	 * @param {string} phone 전화번호
+	 * @param {string} latitude 위도
+	 * @param {string} longitude 경도
+	 **/
+	app.post('/commonplace/user/location', function(req, res) {
+		res.status(500).send('not-prepared');
+	});
+
+	/**
+	 * 모임 생성 정보 등록
+	 *
+	 * @url /commonplace/moim/regist
+	 * method POST
+	 * @param {string} title 모임명
+	 * @param {string} locationName 모임장소명
+	 * @param {string} locationImageUrl 모임장소 이미지 주소
+	 * @param {string} locationLat 모임장소 위도
+	 * @param {string} locationLon 모임장소 경도
+	 * @param {string} locationPhone 모임장소 연락처
+	 * @param {string} locationDesc 모임장소 기타정보
+	 * @param {string} owner 모임 만든이 연락처
+	 * @param {string[]} member 모임 참여자 연락처 리스트
+	 **/
+	app.post('/commonplace/moim/regist', function(req, res) {
+		res.status(500).send('not-prepared');
+	});
+
+	/**
+	 * 내 모임 정보 조회
+	 *
+	 * @url /commonplace/moim
+	 * method GET
+	 * @param {string} phone 사용자 전화번호
+	 * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
+	 **/
+	app.get('/commonplace/moim', function(req, res) {
+		res.status(500).send('not-prepared');
+	});
+
+
+	/**
+	 * // TODO delete
+	 * @private 테스트용
+	 *
+	 * Phone Number Array로 GCM 메시지 전송
+	 *
+	 * @url /test/commonplace/gcm/send
+	 * @method POST
+	 * @param {string[]} phones 전송 대상 전화번호 리스트
+	 * @param {json} data 전송 데이터
+	 **/
+	 app.post('/test/commonplace/gcm/send', function(req, res) {
 		var phones = req.body['phones'];
 		var title = req.body['title'];
 		var message = req.body['message'];
@@ -235,10 +298,20 @@ module.exports = function(app) {
 				res.status(200).send(o);
 			}
 		});
-	});
+	 });
 
-	// TODO deletion //
-	app.post('/commonplace/gcm/list', function(req, res) {
+	/**
+	 * // TODO delete
+	 * @private 테스트용
+	 *
+	 * 사용자 GCM token 조회
+	 *
+	 * @url /test/commonplace/user/list
+	 * @method POST
+	 * @param {string[]} phones 조회 대상 전화번호 리스트
+	 * @return {json} phone, token
+	 **/
+	app.get('/test/commonplace/user/list', function(req, res) {
 		AM.getGcmTokens(req.body['phones'], function(e, o) {
 			if (e){
 				res.status(400).send(e);
@@ -248,14 +321,16 @@ module.exports = function(app) {
 		});
 	});
 
-	// Only for testing //
-	/*
-		req_params = {
-				'token': '___GCM_TOKEN_SHA___',
-				'title': 'Hello',
-				'message': 'hello world.'
-		};
-	 */
+	/**
+	 * // TODO delete
+	 * @private 테스트용
+	 *
+	 * GCM token 으로 메시지 전송
+	 *
+	 * @url /test/gcm-send-with-token
+	 * @method POST
+	 * @param {string} token 전송 대상
+	 **/
 	app.post('/test/gcm-send-with-token', function(req, res) {
 		var token = req.body['token'];
 		var title = req.body['title'];
