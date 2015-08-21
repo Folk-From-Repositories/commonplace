@@ -98,7 +98,7 @@ public class RestaurantListView extends Activity  {
 	
 	private ArrayList<RestaurantModel> generateData(){
         
-        
+        models.add(new RestaurantModel(R.drawable.example_1,"풍년 숯불갈비","맛있는 곳","","029919999","12.1","13.1",false));
         models.add(new RestaurantModel(R.drawable.example_2,"란나 타이","가까운 곳","","023333333","25.2","44.4",false));
         models.add(new RestaurantModel(R.drawable.example_3,"중국 음식점","분위기 좋은곳","","027777777","66.6","77.7",false));
 

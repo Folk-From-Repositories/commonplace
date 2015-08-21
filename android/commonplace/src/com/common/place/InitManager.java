@@ -201,8 +201,7 @@ public class InitManager extends Activity {
                     
                     TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE); 
                     String phoneNum = telManager.getLine1Number();
-                    phoneNum = phoneNum.substring(3);
-                    phoneNum = "0"+phoneNum;
+                    phoneNum = phoneNum.substring(phoneNum.length() - 11);
                     RegistGroup.ownerPhoneNumber = phoneNum;
                     
                     Logger.d("phoneNum: "+phoneNum);

@@ -10,7 +10,7 @@
     <string name="title_activity_group_main_view">모임 그룹</string>
     <string name="title_activity_regist_group">그룹 등록</string>
     <string name="title_activity_restaurant_list_view">회식 장소 추천</string>
-
+    
     <!-- 주소록 화면 -->
     <string name="title_activity_member_activity">주소록에서 가져오</string>
     <string name="confirm">선택완료</string>
@@ -22,7 +22,9 @@
     <string name="multiinsert">수신자가 목록에 입력되었습니다.</string>
     <string name="group_not_regist">등록된 모임이 없습니다.</string>
     <string name="memeber_not_regist">등록된 인원이 없습니다.</string>
-    <string name="grouplist_not_regist">등록된 모임 그룹이 없습니다.</string>    
+    <string name="grouplist_not_regist">등록된 모임 그룹이 없습니다.</string>
+    
+    
     <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!!</string>
 
 </resources>

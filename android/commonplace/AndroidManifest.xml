@@ -108,10 +108,9 @@
         <service
             android:name=".service.GPSService"
             android:exported="false"/>
-
-        <provider
-            android:name=".db.Provider"
-            android:authorities="com.common.place.db" />
+        
+        <provider android:name="com.common.place.db.Provider"
+			android:authorities="com.common.place.db" />
     </application>
 
 </manifest>

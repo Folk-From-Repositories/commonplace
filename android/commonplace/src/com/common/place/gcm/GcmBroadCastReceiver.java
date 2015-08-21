@@ -33,19 +33,9 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
             msg += "key:" + key + ", value:" + URLDecoder.decode(value) + "\n";
             
             
-            
-            if(key.compareTo("member")==0){
-            	Logger.d("KMC TEST 01");  	
-            	
-//            	Intent intentBroad =new Intent("android.intent.action.BROAD");
-//            	intentBroad.putExtra("member", value);
-//            	sendBro
-            }
-            msg += "key:" + key + ", value:" + URLDecoder.decode(value) + "\n";
-            
-            
         }
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();      
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+		
 //		ComponentName comp = new ComponentName(context.getPackageName(),GcmIntentService.class.getName());
 //        // Start the service, keeping the device awake while it is launching.
 //        startWakefulService(context, (intent.setComponent(comp)));
