@@ -1,3 +1,5 @@
+var AM 			= require('./account-manager');
+var GM 			= require('./gcm-sender');
 var connection 	= require('./database-connector').connection;
 var utils 		= require('./utils');
 
@@ -56,10 +58,8 @@ exports.gets = function(phones, callback)
 	});
 }
 
-function sendUserLocation() {
-	var AM = require('./account-manager');
-	var GM = require('./gcm-sender');
-
+// 전체 사용자 GPS 정보 조회
+exports.getAllUsersLocation = function(callback) {
 	// user 조회
 	AM.getAllRecords(function(err, users) {
 		if (err) { console.error(err); return; }
@@ -74,23 +74,52 @@ function sendUserLocation() {
 		exports.gets(phones, function(err, locations) {
 			if (err) { console.error(err); return; }
 
-			var notification = {
-				category : 'GPS Push',
-				moimId 	 : 1,
-				member 	 : locations
-			};
-
-			GM.sendMessage(phones, notification, function(e, o) {
-				if (e) {
-					console.error(e);
-				}
-			});
+			callback(null, phones, locations);
 		});
 	});
-
-	// 모든 유저에게 userLocation PUSH
 }
-// 5초마다 PUSH
-setInterval(function() {
-    sendUserLocation();
-}, 5000);
+
+var notiThread;
+
+function sendUserLocation() {
+	exports.getAllUsersLocation(function(err, phones, locations) {
+
+		if (err) return;
+
+		var message = {
+			category : 'GPS Push',
+			moimId 	 : 1,
+			member 	 : locations
+		};
+
+		GM.sendMessage(phones, message, function(e, o) {
+			if (e) {
+				console.error(e);
+			}
+		});
+	});
+}
+
+exports.enableGPSNotification = function() {
+
+	if (!notiThread) {
+		console.log('enableGPSNotification()');
+
+		notiThread = setInterval(function() {
+		    sendUserLocation();
+		}, 5000);
+	} else {
+		console.log('enableGPSNotification() - already enabled.');
+	}
+}
+
+exports.disableGPSNotification = function() {
+
+	if (notiThread) {
+		console.log('disableGPSNotification()');
+		clearInterval(notiThread);
+		notiThread = undefined;
+	} else {
+		console.log('disableGPSNotification() - already disabled.');
+	}
+}

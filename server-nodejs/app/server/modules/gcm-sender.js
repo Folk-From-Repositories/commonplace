@@ -57,11 +57,11 @@ exports.sendMessage = function(phones, data, callback)
 			tokens.push(res[idx].token);
 		}
 
-		console.dir({
-			where: 'gcm-sender.js -> sendMessage()',
-			what: 'phone number에 대한 gcm token 조회 결과 (from database)',
-			data: data
-		});
+		// console.dir({
+		// 	where: 'gcm-sender.js -> sendMessage()',
+		// 	what: 'phone number에 대한 gcm token 조회 결과 (from database)',
+		// 	data: data
+		// });
 
 		var gcmMsg = new gcm.Message({
 			collapseKey: 'CommonPlace Notification',

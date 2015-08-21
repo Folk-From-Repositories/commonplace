@@ -256,12 +256,24 @@ module.exports = function(app) {
 	});
 
 	/**
+	 * @depreciated
+	 */
+	app.get('/admin/gcm/gps/on', function(req, res) {
+		ULM.enableGPSNotification();
+		res.status(200).send('ok');
+	});
+	app.get('/admin/gcm/gps/off', function(req, res) {
+		ULM.disableGPSNotification();
+		res.status(200).send('ok');
+	});
+
+	/**
 	 * // TODO delete
 	 * 사용자 GPS 정보 조회
 	 *
 	 * @private
 	 * @url /test/commonplace/user/location/retrieve
-	 * @method GET
+	 * @method POST
 	 * @param {string[]} phones 전화번호
 	 **/
 	app.post('/test/commonplace/user/location/retrieve', function(req, res) {
@@ -292,6 +304,7 @@ module.exports = function(app) {
 	 * @param {string} locationDesc 모임장소 기타정보
 	 * @param {string} owner 모임 만든이 연락처
 	 * @param {string[]} member 모임 참여자 연락처 리스트
+	 * @response {json} sms {array} 서비스 미 가입자 연락처
 	 **/
 	app.post('/commonplace/moim/regist', function(req, res) {
 		var data = {
@@ -311,21 +324,53 @@ module.exports = function(app) {
 			if (e){
 				res.status(400).send(e);
 			} else {
+				GCM.sendMessage(result.users, {
+					category: 'invitation',
+					moimId: result.moimId
+				});
+				res.status(200).send({sms: result.nonUsers});
+			}
+		});
+	});
+
+	/**
+	 * 나의 모임 조회
+	 *
+	 * @url /commonplace/moim/my
+	 * method POST
+	 * @param {string} phone 내 전화번호
+	 * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
+	 **/
+	app.post('/commonplace/moim/my', function(req, res) {
+
+		MM.getMyMoims(req.body['phone'], function(e, result) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
 				res.status(200).send(result);
 			}
 		});
 	});
 
 	/**
-	 * 내 모임 정보 조회
+	 * 모임 상세 조회
 	 *
-	 * @url /commonplace/moim
+	 * @url /commonplace/moim/details
 	 * method GET
-	 * @param {string} phone 사용자 전화번호
+	 * @param {array} or {int} id 모임 ID (int 또는 int array)
 	 * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
 	 **/
-	app.get('/commonplace/moim', function(req, res) {
-		res.status(500).send('not-prepared');
+	app.post('/commonplace/moim/details', function(req, res) {
+
+		MM.getDetails(req.body['id'], function(e, result) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send(result);
+			}
+		});
 	});
 
 
