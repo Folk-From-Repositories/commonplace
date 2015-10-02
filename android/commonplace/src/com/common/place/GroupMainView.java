@@ -1,34 +1,17 @@
 package com.common.place;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import com.common.place.model.ContactsModel;
 import com.common.place.model.GroupModel;
-import com.common.place.model.RestaurantModel;
 import com.common.place.service.GPSService;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import android.app.Activity;
@@ -36,14 +19,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,12 +41,13 @@ public class GroupMainView extends Activity {
 	public static GroupModel group;
 	Intent serviceIntent;
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
+        @SuppressWarnings("deprecation")
+		@Override
         public void onReceive(Context context, Intent intent) {
         	
         	Bundle bundle = intent.getExtras();
     		Iterator<String> iterator = bundle.keySet().iterator();
-            Toast.makeText(getApplicationContext(), "received", Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), "received", Toast.LENGTH_SHORT).show();
     		Logger.d("KMC TEST AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaa");
             while (iterator.hasNext()) {
                 String key = iterator.next();

@@ -16,7 +16,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.common.place.RegistGroup;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.google.android.gms.common.ConnectionResult;
@@ -50,7 +49,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 	public void onStart(Intent intent, int startId) {
 		Logger.w("START SERVICE!!!!");
 		
-		TelephonyManager telManager = (TelephonyManager)getApplicationContext().getSystemService(getApplicationContext().TELEPHONY_SERVICE); 
+		TelephonyManager telManager = (TelephonyManager)getApplicationContext().getSystemService(GPSService.TELEPHONY_SERVICE); 
         String orgNum = telManager.getLine1Number();
         phoneNum = orgNum.substring(orgNum.length() - 11);
 		

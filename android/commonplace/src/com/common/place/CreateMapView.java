@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -31,7 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -42,7 +39,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 public class CreateMapView extends FragmentActivity   {
 	
@@ -106,7 +102,7 @@ public class CreateMapView extends FragmentActivity   {
 			
 			Logger.d("REQUEST_TYPE_GPS_GETHERING 1");
 			restaurantSearch.getLayoutParams().height = 0;
-			restaurantSearch.setVisibility(restaurantSearch.INVISIBLE);
+			restaurantSearch.setVisibility(View.INVISIBLE);
 			if(GroupMainView.groupList!= null && GroupMainView.groupList.size()>0){
 				setGpsToMap(GroupMainView.groupList.get(0).getMemeber());
 			}
@@ -116,7 +112,7 @@ public class CreateMapView extends FragmentActivity   {
 			
 		}else if(requestType.compareTo(Constants.REQUEST_TYPE_MAP_CREATE)==0){
 			
-			restaurantSearch.setVisibility(restaurantSearch.VISIBLE);
+			restaurantSearch.setVisibility(View.VISIBLE);
 			findViewById(R.id.restaurantSearch).setOnClickListener(mClickListener);
 			
 			gmap.setOnMapClickListener(new OnMapClickListener() {
@@ -142,6 +138,7 @@ public class CreateMapView extends FragmentActivity   {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private void getInfoInBackground() {
         new AsyncTask<Void, Void, String>() {
             @Override

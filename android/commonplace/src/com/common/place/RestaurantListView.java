@@ -52,7 +52,8 @@ public class RestaurantListView extends Activity  {
 		Logger.d( "INIT RestaurantListView"); 
 		context= this;
 		Intent intent = getIntent();
-    	String location = intent.getStringExtra("location");
+    	@SuppressWarnings("unused")
+		String location = intent.getStringExtra("location");
 		 // 1. pass context and data to the custom adapter
 		registerInBackground();
 		
@@ -99,6 +100,7 @@ public class RestaurantListView extends Activity  {
 		}
 	};
 	
+	@SuppressWarnings("unused")
 	private ArrayList<RestaurantModel> generateData(){
         
         models.add(new RestaurantModel(R.drawable.example_1,"풍년 숯불갈비","맛있는 곳","","029919999","12.1","13.1",false));

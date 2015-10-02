@@ -2,7 +2,6 @@ package com.common.place.gcm;
 
 import com.common.place.MainActivity;
 import com.common.place.R;
-import com.common.place.R.drawable;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.IntentService;

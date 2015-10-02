@@ -32,7 +32,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -52,7 +51,8 @@ public class InitManager extends Activity {
     SharedPreferences prefs;
     Context context;
     String regid;
-    private TextView mDisplay;
+    @SuppressWarnings("unused")
+	private TextView mDisplay;
     
     Handler hd = new Handler();
 	
@@ -199,7 +199,7 @@ public class InitManager extends Activity {
 
                     List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
                     
-                    TelephonyManager telManager = (TelephonyManager)context.getSystemService(context.TELEPHONY_SERVICE); 
+                    TelephonyManager telManager = (TelephonyManager)context.getSystemService(InitManager.TELEPHONY_SERVICE); 
                     String phoneNum = telManager.getLine1Number();
                     phoneNum = phoneNum.substring(phoneNum.length() - 11);
                     RegistGroup.ownerPhoneNumber = phoneNum;

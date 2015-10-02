@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -24,7 +23,6 @@ import com.common.place.model.GroupModel;
 import com.common.place.model.RestaurantModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 
 import android.app.Activity;
@@ -33,7 +31,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -76,6 +73,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 		deleteAllMemberListInDB();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch(requestCode){
@@ -282,7 +280,8 @@ public class RegistGroup extends Activity implements OnClickListener{
                     HttpPost httpPost = new HttpPost();
                     httpPost.setURI(url);
 
-                    List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
+                    @SuppressWarnings("unused")
+					List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
                     
                     StringEntity params =new StringEntity(groupInfo);
                     httpPost.setEntity(params);

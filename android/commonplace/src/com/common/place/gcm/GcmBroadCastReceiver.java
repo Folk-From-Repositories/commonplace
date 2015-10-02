@@ -3,11 +3,6 @@ package com.common.place.gcm;
 import java.net.URLDecoder;
 import java.util.Iterator;
 
-import com.common.place.CreateMapView;
-import com.common.place.RegistGroup;
-import com.common.place.util.Constants;
-import com.common.place.util.Logger;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +13,7 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
 	public GcmBroadCastReceiver() {
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// TODO: This method is called when the BroadcastReceiver is receiving
