@@ -29,4 +29,7 @@ public class Constants {
     public static final String SENDER_ID = "1073384423107";
     
     public static final String SHARED_PREFERENCE_FILE_NAME = "commonPlaceSpref";
+    
+    public static String PHONE_NUMBER = "";
+    
 }

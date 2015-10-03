@@ -23,6 +23,7 @@ import com.common.place.model.GroupModel;
 import com.common.place.model.RestaurantModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.common.place.util.Utils;
 import com.google.gson.Gson;
 
 import android.app.Activity;
@@ -45,7 +46,6 @@ import android.widget.Toast;
 public class RegistGroup extends Activity implements OnClickListener{
 
 	public static Context registGroupContext;
-	public static String ownerPhoneNumber;
 	
 	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
 	public ArrayList<ContactsModel> getArrayList;
@@ -232,7 +232,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 			group.setLocationName(restaurant.getName());
 			group.setLocationPhone(restaurant.getPhone());
 			group.setMemeber(getArrayList);
-			group.setOwner(ownerPhoneNumber);
+			group.setOwner(Utils.getPhoneNumber(RegistGroup.this));
 			
 			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainView.class);
 			intentGroupMain.putExtra("group",group);
