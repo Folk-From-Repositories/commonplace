@@ -113,7 +113,11 @@ public class RegistGroup extends Activity implements OnClickListener{
 			
 		case Constants.MEMBER_ACTIVITY_REQ_CODE:
 			Logger.d("onActivityResult("+Constants.MEMBER_ACTIVITY_REQ_CODE+")");
-
+			
+			if(data == null){
+				Logger.d("member list is null (or back-key pressed)");
+				return;
+			}
 			Serializable contactArray = data.getSerializableExtra("contactArrayList");
 			TextView contact_list= (TextView)findViewById(R.id.contacts_description);
 			

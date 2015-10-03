@@ -30,7 +30,6 @@ import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class InitManager extends Activity {
 	
@@ -80,14 +79,6 @@ public class InitManager extends Activity {
         }, 500);
 	}
 	
-	
-
-	
-
-    
-
-    
-	
     private void registerInBackground() {
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -109,6 +100,13 @@ public class InitManager extends Activity {
                 return msg;
             }
 
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+				
+				goToNextActivity();
+			}
+
         }.execute(null, null, null);
     }
 
@@ -116,12 +114,10 @@ public class InitManager extends Activity {
 
     //Transfer Data to Server(httpRequest)
     private void sendRegistrationIdToBackend() {
-    	boolean isSuccessfullyRegistered = false;
         HttpClient httpClient = new DefaultHttpClient();
 
-//                String urlString = "http://rambling.synology.me:52015/commonplace/gcm/regist";
         try {
-            URI url = new URI(Constants.SVR_REGIST_URL); // use Constants.java file like this!!
+            URI url = new URI(Constants.SVR_REGIST_URL);
 
             HttpPost httpPost = new HttpPost();
             httpPost.setURI(url);
@@ -150,18 +146,10 @@ public class InitManager extends Activity {
 
             Utils.storeRegistrationId(context, regid);
             
-            isSuccessfullyRegistered = true;
-            
         } catch (Exception e) {
             Logger.e(e.getMessage());
         }
         
-        if(isSuccessfullyRegistered){
-        	goToNextActivity();
-        }else{
-        	//Toast.makeText(InitManager.this, "Registration to server FAILED!!", Toast.LENGTH_SHORT).show();
-        }
-                
     }
     
 	@Override
