@@ -5,11 +5,11 @@ public class Constants {
 
 	public static final String APP_NAME = "Common Place";
 	
-	private static final String HOST = "http://rambling.synology.me:52015";
-	public static final String SVR_REGIST_URL = HOST + "/commonplace/regist";
+	public static final String HOST                = "http://rambling.synology.me:52015";
+	public static final String SVR_REGIST_URL      = HOST + "/commonplace/regist";
 	public static final String SVR_MOIM_REGIST_URL = HOST + "/commonplace/moim/regist";
-	public static final String TEST_URL = HOST + "/test/commonplace/gcm/send";
-	public static final String SVR_USER_LOCATION = HOST + "/commonplace/user/location";
+	public static final String TEST_URL            = HOST + "/test/commonplace/gcm/send";
+	public static final String SVR_USER_LOCATION   = HOST + "/commonplace/user/location";
 	
 	public static final String RESTAURANT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU&radius=5000&types=restaurant&location=37.55500949462912,126.98537103831768";//
 	
@@ -20,4 +20,13 @@ public class Constants {
 	
 	public static final String REQUEST_TYPE_GPS_GETHERING = "gethering";
 	public static final String REQUEST_TYPE_MAP_CREATE = "create";
+	
+	public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    
+	public static final String PROPERTY_REG_ID               = "registration_id";
+    public static final String PROPERTY_APP_VERSION          = "appVersion";
+    
+    public static final String SENDER_ID = "1073384423107";
+    
+    public static final String SHARED_PREFERENCE_FILE_NAME = "commonPlaceSpref";
 }

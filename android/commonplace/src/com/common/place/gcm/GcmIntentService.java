@@ -1,6 +1,6 @@
 package com.common.place.gcm;
 
-import com.common.place.MainActivity;
+import com.common.place.InitManager;
 import com.common.place.R;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -44,7 +44,7 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, InitManager.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
