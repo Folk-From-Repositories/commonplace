@@ -163,11 +163,11 @@ public class RegistGroup extends Activity implements OnClickListener{
 	}
 
 	public int deleteAllMemberListInDB(){
-		return getContentResolver().delete(Provider.CONTENT_URI, null, null);
+		return getContentResolver().delete(Provider.RECIPIENT_CONTENT_URI, null, null);
 	}
 	// you can use member list like this...
 	public Cursor getMemberListFromDB(){
-		return getContentResolver().query(Provider.CONTENT_URI, null, null, null, null);
+		return getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
 	}
 	
 	

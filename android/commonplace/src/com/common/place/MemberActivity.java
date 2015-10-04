@@ -75,7 +75,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         confirm = (Button) findViewById(R.id.btn_confirm);
         selectAll = (Button) findViewById(R.id.btn_select_all);
         
-        recipientCursor = getContentResolver().query(Provider.CONTENT_URI, null, null, null, null);
+        recipientCursor = getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
         recipientAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, 
                 recipientCursor, new String[]{"recipient", "phone_number"}, new int[]{android.R.id.text1, android.R.id.text2});        
         recipientList.setAdapter(recipientAdapter);
@@ -154,7 +154,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
                 if(cursor.moveToFirst() && cursor.getCount() > 0){
                     do{
                         
-                        Cursor beforeCursor = resolver.query(Provider.CONTENT_URI, 
+                        Cursor beforeCursor = resolver.query(Provider.RECIPIENT_CONTENT_URI, 
                                 null, 
                                 Provider.RECIPIENT+" =\'"+cursor.getString(cursor.getColumnIndex(Phone.DISPLAY_NAME))+"\'", 
                                 null, 
@@ -165,7 +165,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
                             values.put(Provider.RECIPIENT, cursor.getString(cursor.getColumnIndex(Phone.DISPLAY_NAME)));
                             values.put(Provider.PHONE_NUMBER, cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
                             
-                            getContentResolver().insert(Provider.CONTENT_URI, values);
+                            getContentResolver().insert(Provider.RECIPIENT_CONTENT_URI, values);
                             count++;
                         }
                         beforeCursor.close();
@@ -177,7 +177,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
                 
                 cursor.close();
 
-                int total = resolver.query(Provider.CONTENT_URI, null, null, null, null).getCount();
+                int total = resolver.query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null).getCount();
                 
                 addhandler.sendMessage(addhandler.obtainMessage(count, total));
             }
@@ -204,7 +204,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         
-        Cursor cursor = getContentResolver().query(Provider.CONTENT_URI, null, null, null, null);
+        Cursor cursor = getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
         howmany.setText(cursor.getCount()+" "+getText(R.string.recipient_selected_string));
         cursor.close();
         
@@ -271,9 +271,9 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
                 break;
                 
             case R.id.recipient_list:
-                getContentResolver().delete(Provider.CONTENT_URI, "_id =\'"+id+"\'", null);
+                getContentResolver().delete(Provider.RECIPIENT_CONTENT_URI, "_id =\'"+id+"\'", null);
                 
-                recipientCursor = getContentResolver().query(Provider.CONTENT_URI, null, null, null, null);
+                recipientCursor = getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
                 synchronized (recipientAdapter) {
                     recipientAdapter.notify();    
                 }
@@ -299,11 +299,11 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         ContactsModel model = new ContactsModel(recipient,phoneNumber,"","");
 		personList.add(model);
         
-        Cursor cursor = getContentResolver().query(Provider.CONTENT_URI, null, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null, null);
+        Cursor cursor = getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null, null);
         if(cursor.getCount() > 0){
-            getContentResolver().delete(Provider.CONTENT_URI, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null);
+            getContentResolver().delete(Provider.RECIPIENT_CONTENT_URI, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null);
         }else{
-            getContentResolver().insert(Provider.CONTENT_URI, values);    
+            getContentResolver().insert(Provider.RECIPIENT_CONTENT_URI, values);    
         }
         
         cursor.close();
@@ -314,7 +314,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
     }
     
     public void refreshFooter(){
-        recipientCursor = getContentResolver().query(Provider.CONTENT_URI, null, null, null, null);
+        recipientCursor = getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
         synchronized (recipientAdapter) {
             recipientAdapter.notify();    
         }
