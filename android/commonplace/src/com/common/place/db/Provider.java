@@ -25,7 +25,7 @@ public class Provider extends ContentProvider{
     private static final int    DATABASE_VERSION  = 1;
     
     private static final String RECIPIENT_TABLE_NAME = "Recipient";
-    private static final String GROUP_TABLE_NAME     = "Group";
+    private static final String GROUP_TABLE_NAME     = "Moim";
     private static final String MEMBER_TABLE_NAME    = "Member";
     
     public static final String AUTHORITY             = "com.common.place.db";
@@ -52,19 +52,18 @@ public class Provider extends ContentProvider{
     public static final String RECIPIENT		   = "recipient";
     public static final String PHONE_NUMBER        = "phone_number";
     
-    public static final String TITLE              = "title";
-    public static final String OWNER              = "owner";
-    public static final String TIME               = "time";
-    public static final String LOCATION_NAME      = "locationName";
-    public static final String LOCATION_IMAGE_URL = "locationImageUrl";
-    public static final String LOCATION_LAT       = "locationLat";
-    public static final String LOCATION_LON       = "locationLon";
-    public static final String LOCATION_PHONE     = "locationPhone";
-    public static final String LOCATION_DESC      = "locationDesc";
+    public static final String TITLE              = "moim_title";
+    public static final String OWNER              = "moim_owner";
+    public static final String TIME               = "moim_time";
+    public static final String LOCATION_NAME      = "locName";
+    public static final String LOCATION_IMAGE_URL = "locImageUrl";
+    public static final String LOCATION_LAT       = "locLat";
+    public static final String LOCATION_LON       = "locLon";
+    public static final String LOCATION_PHONE     = "locPhone";
+    public static final String LOCATION_DESC      = "locDesc";
     
     public static final String GROUP_ID           = "groupId";
     public static final String NAME               = "name";
-    public static final String PHONE              = "phone";
     
     
     private static final String CREATE_RECIPIENT_TABLE 
@@ -91,7 +90,7 @@ public class Provider extends ContentProvider{
 		    "("+_ID+"                  integer primary key autoincrement, " +
 		    " "+GROUP_ID+"             text NOT NULL," +            
 		    " "+NAME+"                 text NOT NULL," +            
-		    " "+PHONE+"                text NOT NULL," +            
+		    " "+PHONE_NUMBER+"         text NOT NULL," +            
 		    " "+LOCATION_LAT+"         text NOT NULL," +            
 		    " "+LOCATION_LON+"         text NOT NULL)";
     

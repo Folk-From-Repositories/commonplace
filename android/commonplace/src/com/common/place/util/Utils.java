@@ -1,9 +1,11 @@
 package com.common.place.util;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -13,7 +15,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import com.common.place.InitManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -30,42 +31,41 @@ import android.telephony.TelephonyManager;
 public class Utils {
 
 	
-	public static boolean sendRegistrationIdToBackend(Context context, String regId) {
-        HttpClient httpClient = new DefaultHttpClient();
+	public static String sendRegistrationIdToBackend(Context context, String regId) {
+		
+		List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
+        
+        nameValuePairs.add(new BasicNameValuePair("phone", Utils.getPhoneNumber(context)));
+        nameValuePairs.add(new BasicNameValuePair("token", regId));
+        nameValuePairs.add(new BasicNameValuePair("name", Utils.getPhoneNumber(context)));
 
+		try {
+			return callToServer(context, Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs));
+		} catch (UnsupportedEncodingException e) {
+			Logger.e(e.getMessage());
+		}
+		return null;
+    }
+	
+	public static String callToServer(Context context, String url, HttpEntity entity){
+		HttpClient httpClient = new DefaultHttpClient();
         try {
-            URI url = new URI(Constants.SVR_REGIST_URL);
-
             HttpPost httpPost = new HttpPost();
-            httpPost.setURI(url);
-
-            List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
-            
-            Logger.d("phoneNum: "+ Utils.getPhoneNumber(context));
-            
-            nameValuePairs.add(new BasicNameValuePair("phone", Utils.getPhoneNumber(context)));
-            nameValuePairs.add(new BasicNameValuePair("token", regId));
-            nameValuePairs.add(new BasicNameValuePair("name", Utils.getPhoneNumber(context)));
-
-            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
+            httpPost.setURI(new URI(url));
+            httpPost.setEntity(entity);
 
             HttpResponse response = httpClient.execute(httpPost);
             String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
-
-            Logger.d("SERVER RESPONE: "+responseString);
-            Logger.d("regid: "+regId);
-
-            Utils.storeRegistrationId(context, regId);
             
-            return true;
+            Logger.d("response from ["+url+"]:"+responseString);
+            
+            return responseString;
             
         } catch (Exception e) {
             Logger.e(e.getMessage());
         }
-        return false;
-    }
-	
+        return null;
+	}
 	
 	
 	public static void createCloseApplicationDialog(final Context context, String message){
@@ -100,7 +100,7 @@ public class Utils {
 	
 	public static String getPhoneNumber(Context context){
 		if(Constants.PHONE_NUMBER == null || Constants.PHONE_NUMBER.equals("")){
-			TelephonyManager telManager = (TelephonyManager)context.getSystemService(InitManager.TELEPHONY_SERVICE); 
+			TelephonyManager telManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE); 
 			String phoneNum = telManager.getLine1Number();
 			Constants.PHONE_NUMBER = phoneNum.substring(phoneNum.length() - 11);
 		}

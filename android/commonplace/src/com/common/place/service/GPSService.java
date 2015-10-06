@@ -38,7 +38,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 
 	protected GoogleApiClient mGoogleApiClient;
 
-	public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
+	public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10 * 1000;
 	public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 	

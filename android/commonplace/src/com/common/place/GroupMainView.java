@@ -22,12 +22,11 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GroupMainView extends Activity {
+public class GroupMainView extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener{
 
 	GridView grid;
 	TextView warningText;
@@ -101,22 +100,11 @@ public class GroupMainView extends Activity {
         
         warningText=(TextView)findViewById(R.id.group_warning);
            
-        findViewById(R.id.nextBtn3).setOnClickListener(mClickListener);
-		findViewById(R.id.nextBtn2).setOnClickListener(mClickListener);
+        findViewById(R.id.nextBtn3).setOnClickListener(this);
+		findViewById(R.id.nextBtn2).setOnClickListener(this);
         
-		grid=(GridView)findViewById(R.id.grid);
-        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-	    	@Override
-	    	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-	    		//Toast.makeText(GroupMainView.this, "You Clicked at " +groupNameList.get(position), Toast.LENGTH_SHORT).show();
-	    		
-	    		Intent intent = new Intent(getApplicationContext(), CreateMapView.class);
-				intent.putExtra("requestType",Constants.REQUEST_TYPE_GPS_GETHERING);
-				intent.putExtra("group", groupList.get(position));
-	    		
-	    		startActivityForResult(intent,Constants.MEMBER_ACTIVITY_REQ_CODE);
-            }
-    	});
+		grid = (GridView)findViewById(R.id.grid);
+        grid.setOnItemClickListener(this);
         
         IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
         registerReceiver(receiver, filter);
@@ -124,23 +112,6 @@ public class GroupMainView extends Activity {
         serviceIntent = new Intent(this, GPSService.class);
         startService(serviceIntent);
     }
-    
-    Button.OnClickListener mClickListener = new View.OnClickListener() {
-		public void onClick(View v) {
-			switch (v.getId()) {
-			case R.id.nextBtn2:
-				removeAllGroup();
-				setGridViewAndText();
-				Logger.d("REMOVE ALL GROUP");
-				break;
-			case R.id.nextBtn3:
-				Logger.d("REGISTER GROUP");
-				//initGroup();
-				startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
-				break;
-			}
-		}
-	};
     
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,11 +134,6 @@ public class GroupMainView extends Activity {
         grid.setAdapter(adapter);
     }
 	
-    /* Add Dummy Data */
-    public void initGroup(){
-
-    }
-    
     public void addGroup(String groupName, int imageId){
     	groupNameList.add(groupName);
     	groupIdList.add(imageId);
@@ -205,6 +171,29 @@ public class GroupMainView extends Activity {
 //		GPSService.shouldContinue = false;
 		stopService(serviceIntent);
 		super.onDestroy();
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+		case R.id.nextBtn2:
+			removeAllGroup();
+			setGridViewAndText();
+			Logger.d("REMOVE ALL GROUP");
+			break;
+		case R.id.nextBtn3:
+			Logger.d("REGISTER GROUP");
+			startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
+			break;
+		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Intent intent = new Intent(getApplicationContext(), MapActivity.class);
+		intent.putExtra("requestType",Constants.REQUEST_TYPE_GPS_GETHERING);
+		intent.putExtra("group", groupList.get(position));
+		startActivityForResult(intent,Constants.MEMBER_ACTIVITY_REQ_CODE);
 	}
     
     
