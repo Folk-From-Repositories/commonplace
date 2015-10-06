@@ -111,7 +111,7 @@ public class RestaurantListView extends Activity implements View.OnClickListener
                         	String name = restaurant.get("name").getAsString();
                         	String rating = restaurant.get("rating").getAsString();
                         	
-                        	models.add(new RestaurantModel(R.drawable.example_1, name, rating, icon, "029999999", lat, lon, false));
+                        	models.add(new RestaurantModel(R.drawable.example_1, name, rating, icon, "02-927-3745", lat, lon, false));
                     	}
                 	}
             	}

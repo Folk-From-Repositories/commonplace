@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MapActivity extends FragmentActivity implements View.OnClickListener, OnMapClickListener {
 	
@@ -173,9 +174,14 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.restaurantSearch:
+			if(selectedLatLng == null){
+				Toast.makeText(MapActivity.this, "Select Location...", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			Intent i = new Intent(getApplicationContext(), RestaurantListView.class);
 			i.putExtra("location", selectedLatLng);
 			startActivity(i);
+			MapActivity.this.finish();
 			break;
 		}	
 	}

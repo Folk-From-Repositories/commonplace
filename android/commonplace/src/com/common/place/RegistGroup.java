@@ -53,7 +53,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 		findViewById(R.id.seachAddr).setOnClickListener(this);
 		findViewById(R.id.searchMap).setOnClickListener(this);
 		findViewById(R.id.btn_contacts).setOnClickListener(this);
-		findViewById(R.id.registGroup).setOnClickListener(this);
+		findViewById(R.id.btn_regist_group).setOnClickListener(this);
 		
 		deleteAllMemberListInDB();
 	}
@@ -76,13 +76,9 @@ public class RegistGroup extends Activity implements OnClickListener{
 			restaurant =(RestaurantModel)selectedRestaurant;
 			retaurant_image.setImageResource(restaurant.getIcon());
 			retaurant_description.setText(restaurant.getName() +"\n" + restaurant.getDescription() +"\n" + restaurant.getPhone());
-			retaurant_image.setVisibility(1);
-			retaurant_image.getLayoutParams().width = 500;
-			retaurant_image.getLayoutParams().height = 500;
+			retaurant_image.setVisibility(View.VISIBLE);
 		}else{
-			retaurant_image.setVisibility(0);
-			retaurant_image.getLayoutParams().width = 1;
-			retaurant_image.getLayoutParams().height = 1;
+			retaurant_image.setVisibility(View.GONE);
 			retaurant_description.setText(R.string.group_not_regist);
 		}
 	}
@@ -130,7 +126,7 @@ public class RegistGroup extends Activity implements OnClickListener{
 		case R.id.btn_contacts:
 			startActivity(new Intent(getApplicationContext(), MemberActivity.class));
 			break;
-		case R.id.registGroup:
+		case R.id.btn_regist_group:
 			/*
 			 * you must save data to server
 			 */		

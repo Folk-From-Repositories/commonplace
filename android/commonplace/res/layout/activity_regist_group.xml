@@ -1,164 +1,168 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent" >
-
-<LinearLayout 
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:padding="5px" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
     
-    <LinearLayout 
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <TextView
-	        android:id="@+id/name_text"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="그룹 이름" />
-    	<EditText
-	        android:id="@+id/name_edit"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:hint="그룹 이름을 입력하세요" />
-    </LinearLayout>
-    
-    <LinearLayout 
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <TextView
-	        android:id="@+id/time_text"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="모임 시간" />
-    	<EditText
-	        android:id="@+id/time_edit"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:hint="모임 시간을 입력하세요" />
-    </LinearLayout>
-    
-    <LinearLayout android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <TextView
-	        android:id="@+id/restaurant_text"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="모임 장소" />
-        <Button
-	        android:id="@+id/searchMap"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:text="지도 검색" />
-    	<Button
-	        android:id="@+id/seachAddr"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:text="주소 검색" />
-    </LinearLayout>
-    
-    <LinearLayout 
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-    	<TextView
-	        android:id="@+id/contacts_text"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="모임 인원" />
-        <Button
-	        android:id="@+id/btn_contacts"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="주소록에서 가져오기" />
-    </LinearLayout>
-    
-    <LinearLayout 
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <TextView
-	        android:id="@+id/add_restaurant_title"
-	        android:layout_width="fill_parent"
-	        
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center"
-	        android:textColor="#E0E0E0"
-	        android:text="선택한 모임 장소"
-	        android:textSize="20sp"/>  
-        
-        <LinearLayout 
-	        android:orientation="horizontal"
-	        android:layout_marginTop="10dp"
-	        android:background="@drawable/photo_frame"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content">
-	        <ImageView
-		        android:id="@+id/retaurant_image"
-		        android:layout_width="1dp"
-		        android:layout_height="150dp"
-		        android:layout_marginLeft="10dp"
-		        android:layout_gravity="center" />
-	 
-	    	<TextView
-		        android:id="@+id/retaurant_description"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center"
-		        android:layout_centerHorizontal="true"
-		        android:gravity="center_horizontal"
-		        android:text="@string/group_not_regist"
-		        android:layout_weight="1"
-		        android:textSize="20sp"/>   
-	   </LinearLayout>
-	   
-        <TextView
-	        android:id="@+id/contacts_title"
-	        android:layout_width="fill_parent"
-	        
-	        android:layout_height="wrap_content"
-	        android:layout_marginTop="10dp"
-	        android:layout_gravity="center"
-	        android:textColor="#E0E0E0"
-	        android:text="선택한 모임 인원"
-	        android:textSize="20sp"/>
-        
-        <LinearLayout 
-	        android:orientation="horizontal"
-	        android:layout_marginTop="10dp"
-	        android:background="@drawable/photo_frame"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content">
-	    	
-	    	<TextView
-		        android:id="@+id/contacts_description"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="center"
-		        android:layout_centerHorizontal="true"
-		        android:gravity="center"
-		        android:layout_weight="1"
-		        android:text="@string/memeber_not_regist"
-		        android:textSize="20sp"/>
-	   </LinearLayout>
-    </LinearLayout>
+	<ScrollView 
+	    android:layout_height="match_parent"
+	    android:layout_width="match_parent"
+	    android:layout_alignParentTop="true"
+	    android:layout_above="@+id/btn_regist_group" >
+	
+		<LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+		    android:padding="5dp" >
+		    
+		    <LinearLayout 
+		        android:orientation="horizontal"
+		        android:layout_marginTop="10dp"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		        <TextView
+			        android:id="@+id/name_text"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="그룹 이름" />
+		    	<EditText
+			        android:id="@+id/name_edit"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:hint="그룹 이름을 입력하세요" />
+		    </LinearLayout>
+		    
+		    <LinearLayout 
+		        android:orientation="horizontal"
+		        android:layout_marginTop="10dp"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		        <TextView
+			        android:id="@+id/time_text"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="모임 시간" />
+		    	<EditText
+			        android:id="@+id/time_edit"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:hint="모임 시간을 입력하세요" />
+		    </LinearLayout>
+		    
+		    <LinearLayout android:orientation="horizontal"
+		        android:layout_marginTop="10dp"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		        <TextView
+			        android:id="@+id/restaurant_text"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="모임 장소" />
+		        <Button
+			        android:id="@+id/searchMap"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:text="지도 검색" />
+		    	<Button
+			        android:id="@+id/seachAddr"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
+			        android:text="주소 검색" />
+		    </LinearLayout>
+		    
+		    <LinearLayout 
+		        android:orientation="horizontal"
+		        android:layout_marginTop="10dp"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		    	<TextView
+			        android:id="@+id/contacts_text"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="모임 인원" />
+		        <Button
+			        android:id="@+id/btn_contacts"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:text="주소록에서 가져오기" />
+		    </LinearLayout>
+		    
+		    <LinearLayout 
+		        android:orientation="vertical"
+		        android:layout_marginTop="10dp"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content">
+		        <TextView
+			        android:id="@+id/add_restaurant_title"
+			        android:layout_width="match_parent"
+			        
+			        android:layout_height="wrap_content"
+			        android:layout_gravity="center"
+			        android:text="선택한 모임 장소"/>  
+		        
+		        <LinearLayout 
+			        android:orientation="horizontal"
+			        android:layout_marginTop="10dp"
+			        android:background="@drawable/photo_frame"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content">
+			        <ImageView
+				        android:id="@+id/retaurant_image"
+				        android:layout_width="100dp"
+				        android:layout_height="100dp"
+				        android:scaleType="centerCrop"
+				        android:layout_gravity="center" />
+			 
+			    	<TextView
+				        android:id="@+id/retaurant_description"
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:layout_centerHorizontal="true"
+				        android:gravity="center_horizontal"
+				        android:text="@string/group_not_regist"
+				        android:layout_weight="1"/>   
+			   </LinearLayout>
+			   
+		        <TextView
+			        android:id="@+id/contacts_title"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="10dp"
+			        android:layout_gravity="center"
+			        android:text="선택한 모임 인원"/>
+		        
+		        <LinearLayout 
+			        android:orientation="horizontal"
+			        android:layout_marginTop="10dp"
+			        android:background="@drawable/photo_frame"
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content">
+			    	
+			    	<TextView
+				        android:id="@+id/contacts_description"
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center"
+				        android:layout_centerHorizontal="true"
+				        android:gravity="center"
+				        android:layout_weight="1"
+				        android:text="@string/memeber_not_regist"/>
+			   </LinearLayout>
+		    </LinearLayout>
+		    
+		    
+		</LinearLayout>
+	</ScrollView>
     
     <Button
-        android:id="@+id/registGroup"
-        android:layout_width="fill_parent"
+        android:id="@+id/btn_regist_group"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:text="그룹 등록" />
-</LinearLayout>
-</ScrollView>
+    
+</RelativeLayout>
