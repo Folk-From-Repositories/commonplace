@@ -25,7 +25,7 @@ public class InitActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_gcmhandler);
+		setContentView(R.layout.activity_init_activity);
 	}
 	
 	@Override

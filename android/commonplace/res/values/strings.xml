@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="contentDescription">image content description</string>
+    
     <string name="app_name">모두의 회식</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -24,9 +26,7 @@
     <string name="memeber_not_regist">등록된 인원이 없습니다.</string>
     <string name="grouplist_not_regist">등록된 모임 그룹이 없습니다.</string>
     
-    
     <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!!</string>
-
     
     <string name="fail_to_register">서버에 Push key 저장에 실패하였습니다! 어플리케이션을 종료합니다.</string>
     

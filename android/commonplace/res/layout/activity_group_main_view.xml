@@ -18,7 +18,6 @@
 	        android:layout_weight="1"
 	        android:layout_margin="1dp"
 	        android:text="기타 기능_1" />
-		
 		<Button 
 		    android:id="@+id/nextBtn2" 
 	        android:layout_width="wrap_content"
@@ -26,7 +25,6 @@
 	        android:layout_weight="1"
 	        android:layout_margin="1dp"
 	        android:text="그룹 지우기" />
-		
 		<Button 
 		    android:id="@+id/nextBtn3" 
 	        android:layout_width="wrap_content"
