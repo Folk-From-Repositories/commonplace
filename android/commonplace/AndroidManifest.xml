@@ -56,11 +56,6 @@
         </activity>
 
         <activity
-            android:name=".GetPhoneNumberList"
-            android:label="@string/title_activity_get_phone_number_list" >
-        </activity>
-        
-        <activity
             android:name=".GroupMainView"
             android:label="@string/title_activity_group_main_view"
             android:permission="com.google.android.c2dm.permission.SEND" >
