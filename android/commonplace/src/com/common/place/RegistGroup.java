@@ -2,6 +2,8 @@ package com.common.place;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.apache.http.entity.StringEntity;
 
@@ -15,6 +17,8 @@ import com.common.place.util.Utils;
 import com.google.gson.Gson;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -22,12 +26,15 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class RegistGroup extends Activity implements OnClickListener{
+public class RegistGroup extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
 	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
 	public ArrayList<ContactsModel> getArrayList;
@@ -37,15 +44,24 @@ public class RegistGroup extends Activity implements OnClickListener{
 	
 	ImageView retaurant_image;
 	TextView retaurant_description, contact_list;
+	Button btn_date, btn_time;
+	
 	int id_count = 1;
 	
 	public static RestaurantModel selectedRestaurant;
+	
+	int year, month, day, hour, minute;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_regist_group);
 
+		btn_date = (Button) findViewById(R.id.btn_date);
+		btn_time = (Button) findViewById(R.id.btn_time);
+		btn_date.setOnClickListener(this);
+		btn_time.setOnClickListener(this);
+		
 		contact_list = (TextView)findViewById(R.id.contacts_description);
 		retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
 		retaurant_description= (TextView)findViewById(R.id.retaurant_description);
@@ -109,19 +125,30 @@ public class RegistGroup extends Activity implements OnClickListener{
 		return getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
 	}
 	
+	public void getCurrentCalendar(){
+		GregorianCalendar calendar = new GregorianCalendar();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day= calendar.get(Calendar.DAY_OF_MONTH);
+        hour = calendar.get(Calendar.HOUR_OF_DAY);
+        minute = calendar.get(Calendar.MINUTE);
+	}
 	
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.seachAddr:
-			Logger.d( "Search Addr");
-
+		case R.id.btn_date:
+			getCurrentCalendar();
+			new DatePickerDialog(RegistGroup.this, RegistGroup.this, year, month, day).show();
+			break;
+		case R.id.btn_time:
+			getCurrentCalendar();
+			new TimePickerDialog(RegistGroup.this, RegistGroup.this, hour, minute, false).show();
 			break;
 		case R.id.searchMap:
-			Logger.d( "Search Map");
 			Intent intent = new Intent(getApplicationContext(), MapActivity.class);
 			intent.putExtra("requestType",Constants.REQUEST_TYPE_MAP_CREATE);
-			startActivityForResult(intent,Constants.MAP_VIEW_REQ_CODE);
+			startActivity(intent);
 			break;
 		case R.id.btn_contacts:
 			startActivity(new Intent(getApplicationContext(), MemberActivity.class));
@@ -133,10 +160,10 @@ public class RegistGroup extends Activity implements OnClickListener{
 			group = new GroupModel();
 			
 			EditText groupName=(EditText)findViewById(R.id.name_edit);
-			EditText meetTime=(EditText)findViewById(R.id.time_edit);
+			//EditText meetTime=(EditText)findViewById(R.id.time_edit);
 			
 			group.setTitle(groupName.getText().toString());
-			group.setTime(meetTime.getText().toString());
+			//group.setTime(meetTime.getText().toString());
 			group.setId(String.valueOf(id_count));
 			group.setLocationDesc(restaurant.getDescription());
 			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));
@@ -182,4 +209,15 @@ public class RegistGroup extends Activity implements OnClickListener{
 			Logger.e(e.getMessage());
 		}
     }
+
+    @Override
+    public void onDateSet(DatePicker arg0, int year, int monthOfYear, int dayOfMonth) {
+    	Toast.makeText(RegistGroup.this, year+"/"+monthOfYear+"/"+dayOfMonth, Toast.LENGTH_SHORT).show();
+    }
+    
+	@Override
+	public void onTimeSet(TimePicker arg0, int hourOfDay, int minute) {
+        Toast.makeText(RegistGroup.this, hourOfDay+":"+minute, Toast.LENGTH_SHORT).show();
+	}
+
 }

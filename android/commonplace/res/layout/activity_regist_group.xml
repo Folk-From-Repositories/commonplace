@@ -36,18 +36,31 @@
 		        android:orientation="horizontal"
 		        android:layout_marginTop="10dp"
 		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content">
+		        android:layout_height="wrap_content"
+		        android:gravity="center_vertical">
 		        <TextView
 			        android:id="@+id/time_text"
-			        android:layout_width="wrap_content"
+			        android:layout_width="80dp"
 			        android:layout_height="wrap_content"
+			        android:gravity="center_horizontal"
 			        android:text="모임 시간" />
-		    	<EditText
-			        android:id="@+id/time_edit"
+		        <LinearLayout 
+			        android:orientation="horizontal"
 			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:hint="모임 시간을 입력하세요"/>
+			        android:layout_height="wrap_content">
+			    	<Button
+				        android:id="@+id/btn_date"
+				        android:layout_width="0dp"
+				        android:layout_height="wrap_content"
+				        android:layout_weight="1"
+				        android:text="모임 날짜"/>
+			    	<Button
+				        android:id="@+id/btn_time"
+				        android:layout_width="0dp"
+				        android:layout_height="wrap_content"
+				        android:layout_weight="1"
+				        android:text="모임 시간"/>
+		    	</LinearLayout>
 		    </LinearLayout>
 		    
 		    <LinearLayout android:orientation="horizontal"
