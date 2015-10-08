@@ -1,5 +1,6 @@
 package com.common.place;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,20 +28,28 @@ import android.widget.ListView;
 public class RestaurantListActivity extends Activity implements View.OnClickListener {
 
 	public RestaurantArrayAdapter adapter;
-	private ArrayList<RestaurantModel> models = new ArrayList<RestaurantModel>();
+	private ArrayList<RestaurantModel> models;
 	
 	LatLng selectedlatLng;
 	ProgressDialog dialog;
+	
+	int requestCount = 0;
+	String pageToken;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_list_view);
+		
+		models = new ArrayList<RestaurantModel>();
 		
 		Intent intent = getIntent();
 		selectedlatLng = intent.getParcelableExtra("location");
     	
 	    dialog = ProgressDialog.show(RestaurantListActivity.this, "", "로딩 중입니다. 잠시 기다려주세요", true);
 		
+	    pageToken = null;
+	    
 		getRestaurantListFromWeb();
 		
 		findViewById(R.id.btn_selectRestaurant).setOnClickListener(this);
@@ -70,20 +79,29 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 	}
 	
     private void sendReatuanrantDataToBackend() {
-    	
+    	String pipe = "";
+    	try {
+    		pipe = URLEncoder.encode("|","UTF-8");
+    	} catch (Exception e) {
+    		Logger.e(e.getMessage());
+    	}
     	List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("key", "AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU"));
-        nameValuePairs.add(new BasicNameValuePair("location", selectedlatLng.latitude+","+selectedlatLng.longitude));
-        nameValuePairs.add(new BasicNameValuePair("radius", "5000"));
-        nameValuePairs.add(new BasicNameValuePair("types", "restaurant"));
-        //?key=AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU&radius=5000&types=restaurant&location=37.55500949462912,126.98537103831768";
+        if(pageToken != null){
+        	nameValuePairs.add(new BasicNameValuePair("pagetoken", pageToken));
+        }else{
+        	nameValuePairs.add(new BasicNameValuePair("location", selectedlatLng.latitude+","+selectedlatLng.longitude));
+            nameValuePairs.add(new BasicNameValuePair("radius", "3000"));
+            nameValuePairs.add(new BasicNameValuePair("types", "restaurant"+pipe+"food"+pipe+"cafe"));        	
+        }
+        
         String responseString = "";
     	try {
     		responseString = Utils.callToServer(Constants.RESTAURANT_URL, nameValuePairs);
 		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}
-    	
+    	requestCount++;
     	makeRestaurantList(responseString);
     	
     }
@@ -96,6 +114,28 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
         JsonObject  jobject = jelement.getAsJsonObject();
         JsonArray result = jobject.getAsJsonArray("results");
         
+        JsonElement nextPageTokenElement = jobject.get("next_page_token");
+        if(nextPageTokenElement != null){
+        	pageToken = nextPageTokenElement.getAsString();
+        }
+        
+        JsonElement statusElement = jobject.get("status");
+        String statusString = null;
+        if(statusElement != null){
+        	statusString = statusElement.getAsString();
+        	if(statusString.equals("INVALID_REQUEST")){
+        		try {
+        	        Thread.sleep(800); // WAIT FOR NEXT PAGE (BY GOOGLE)         
+        	    } catch (InterruptedException e) {
+        	       e.printStackTrace();
+        	    }
+        		requestCount--;
+        		sendReatuanrantDataToBackend();
+        		return;
+        	}
+        }
+        
+        
         for(int i=0 ; i < result.size() ; i++){
         	try{
             	JsonObject restaurant= result.get(i).getAsJsonObject();
@@ -104,11 +144,11 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
                 	if(!geometry.isJsonNull()){
                     	JsonObject location = geometry.get("location").getAsJsonObject();
                     	if(!location.isJsonNull()){
-                        	String lat = location.get("lat").getAsString();
-                        	String lon = location.get("lng").getAsString();
-                        	String icon = restaurant.get("icon").getAsString();
-                        	String name = restaurant.get("name").getAsString();
-                        	String rating = restaurant.get("rating").getAsString();
+                        	String lat = location.get("lat") != null ? location.get("lat").getAsString() : "";
+                        	String lon = location.get("lng") != null ? location.get("lng").getAsString() : "";
+                        	String icon = restaurant.get("icon") != null ? restaurant.get("icon").getAsString() : "";
+                        	String name = restaurant.get("name") != null ? restaurant.get("name").getAsString() : "";
+                        	String rating = restaurant.get("rating") != null ? restaurant.get("rating").getAsString() : "";
                         	
                         	models.add(new RestaurantModel(R.drawable.example_1, name, rating, icon, "02-927-3745", lat, lon, false));
                     	}
@@ -118,7 +158,12 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
         		Logger.e(e.getMessage());
         	}
         }
+        if(pageToken != null && requestCount < 3){
+        	sendReatuanrantDataToBackend();
+        	return;
+        }
         adapter = new RestaurantArrayAdapter(getApplicationContext(), models);
+        requestCount = 0;
     }
     
 	@Override

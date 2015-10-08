@@ -2,11 +2,14 @@ package com.common.place;
 
 import java.io.IOException;
 
+import com.common.place.uicomponents.UserNameDialog;
 import com.common.place.util.Constants;
 import com.common.place.util.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,8 +33,25 @@ public class InitActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-        if (Utils.checkPlayServices(this, this)) {
+
+		String userName = Utils.getUserName(InitActivity.this);
+		if(userName == null || userName.equals("")){
+			UserNameDialog dialog = new UserNameDialog(InitActivity.this);
+			dialog.setCancelable(false);
+			dialog.show();
+			dialog.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface arg0) {
+					checkPlayService();
+				}
+			});
+		}else{
+			checkPlayService();
+		}
+	}
+	
+	public void checkPlayService(){
+		if (Utils.checkPlayServices(this, this)) {
             gcm = GoogleCloudMessaging.getInstance(this);
             registerInBackground();
         } else {

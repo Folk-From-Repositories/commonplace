@@ -117,7 +117,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 	@Override
 	public void onLocationChanged(Location location) {
 		Toast.makeText(getApplicationContext(), "CHANGED:\n"+location.getLatitude()+"\n"+location.getLongitude(), Toast.LENGTH_LONG).show();
-		saveUserLocationToServer(location);
+		//saveUserLocationToServer(location);
 	}
 
 	@Override
@@ -153,17 +153,9 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 
                     Logger.d("SERVER RESPONE: "+responseString);
 
-                } catch (URISyntaxException e) {
-                    Logger.e(e.getLocalizedMessage());
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    Logger.e(e.getLocalizedMessage());
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    Logger.e(e.getLocalizedMessage());
-                    e.printStackTrace();
-                }
-                
+                } catch (Exception e) {
+                    Logger.e(e.getMessage());
+                }                
             }
         };
 

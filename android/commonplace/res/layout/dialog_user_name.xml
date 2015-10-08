@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="15dp"
+	    android:background="#FF5E00"
+	    android:padding="2dp" >
+		<RelativeLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:background="#FFFFFF"
+		    android:padding="10dp" >
+		    
+		    <TextView
+		        android:id="@+id/txt_dialog_title"
+		        android:layout_height="wrap_content"
+		        android:layout_width="match_parent"
+		        android:text="@string/txt_dialog_title"
+		        android:layout_margin="5dp"
+		        android:textColor="#000000"
+		        android:textAppearance="?android:attr/textAppearanceMedium"/>
+		    <ImageView
+		        android:id="@+id/divider"
+		        android:layout_width="match_parent"
+		        android:layout_height="1dp"
+		        android:layout_below="@+id/txt_dialog_title"
+		        android:background="#eeeeee"
+		        android:contentDescription="@string/contentDescription"/>
+		    <TextView
+		        android:id="@+id/txt_dialog_body"
+		        android:layout_height="wrap_content"
+		        android:layout_width="match_parent"
+		        android:layout_below="@+id/txt_dialog_title"
+		        android:layout_margin="5dp"
+		        android:text="@string/txt_dialog_body"/>
+		    <EditText 
+		        android:id="@+id/input_user_name"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_below="@+id/txt_dialog_body"
+		        android:layout_marginTop="10dp"
+		        android:hint="@string/txt_dialog_title"/>
+			<Button
+			    android:id="@+id/btn_user_name_confirm"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+		        android:layout_below="@+id/input_user_name"
+		        android:layout_marginTop="10dp"
+			    android:text="@string/btn_user_name_confirm" />
+		</RelativeLayout>
+	</LinearLayout>
+</LinearLayout>

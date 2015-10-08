@@ -146,6 +146,18 @@ public class Utils {
     }
 	
 	
+	public static String getUserName(Context context){
+		final SharedPreferences prefs = getGCMPreferences(context);
+        return prefs.getString(Constants.PROPERTY_USER_NAME, "");
+	}
+	
+	public static void setUserName(Context context, String userName) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.PROPERTY_USER_NAME, userName);
+        editor.commit();
+    }
+	
 	public static String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences(context);
         String registrationId = prefs.getString(Constants.PROPERTY_REG_ID, "");
