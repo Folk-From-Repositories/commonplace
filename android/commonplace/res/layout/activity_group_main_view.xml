@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:baselineAligned= "true"
     android:orientation="vertical"
-    tools:context="com.common.place.GroupMainView" >
+    tools:context="com.common.place.GroupMainActivity" >
  
     <LinearLayout
         android:layout_width="fill_parent" 

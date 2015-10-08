@@ -116,7 +116,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
             case R.id.btn_confirm:
             	Logger.d( "Select Restaurant: " + recipientCursor);
 				//initGroup();
-				Intent intent = new Intent(getApplicationContext(), RegistGroup.class);
+				Intent intent = new Intent(getApplicationContext(), RegistGroupActivity.class);
 				intent.putExtra("contactArrayList", personList);
 				MemberActivity.this.setResult(Constants.MEMBER_ACTIVITY_REQ_CODE, intent);
                 MemberActivity.this.finish();

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import com.common.place.model.ContactsModel;
 import com.common.place.model.GroupModel;
 import com.common.place.service.GPSService;
+import com.common.place.uicomponents.CustomGridAdapter;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.google.gson.JsonArray;
@@ -26,7 +27,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GroupMainView extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener{
+public class GroupMainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener{
 
 	GridView grid;
 	TextView warningText;
@@ -130,7 +131,7 @@ public class GroupMainView extends Activity implements AdapterView.OnItemClickLi
 	public void setGridViewAndText(){
     	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText(R.string.grouplist_not_regist);
 		
-		CustomGrid adapter = new CustomGrid(GroupMainView.this, groupNameList, groupIdList);
+		CustomGridAdapter adapter = new CustomGridAdapter(GroupMainActivity.this, groupNameList, groupIdList);
         grid.setAdapter(adapter);
     }
 	
@@ -183,7 +184,7 @@ public class GroupMainView extends Activity implements AdapterView.OnItemClickLi
 			break;
 		case R.id.nextBtn3:
 			Logger.d("REGISTER GROUP");
-			startActivityForResult(new Intent(getApplicationContext(), RegistGroup.class),0);
+			startActivityForResult(new Intent(getApplicationContext(), RegistGroupActivity.class),0);
 			break;
 		}
 	}

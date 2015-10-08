@@ -1,7 +1,10 @@
-package com.common.place;
+package com.common.place.uicomponents;
 
 import java.util.ArrayList;
 
+import com.common.place.R;
+import com.common.place.R.id;
+import com.common.place.R.layout;
 import com.common.place.util.Logger;
 
 import android.content.Context;
@@ -12,7 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
  
-public class CustomGrid extends BaseAdapter{
+public class CustomGridAdapter extends BaseAdapter{
       private Context mContext;
       
       private ArrayList<String> web = new ArrayList<String>();
@@ -20,7 +23,7 @@ public class CustomGrid extends BaseAdapter{
 //      private final String[] web;
 //      private final int[] Imageid;
  
-        public CustomGrid(Context c,ArrayList<String> web,ArrayList<Integer> Imageid ) {
+        public CustomGridAdapter(Context c,ArrayList<String> web,ArrayList<Integer> Imageid ) {
         	Logger.d("CUSTOM GRID VIEW");
             mContext = c;
             this.Imageid = Imageid;

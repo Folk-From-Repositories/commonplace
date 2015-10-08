@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.common.place.model.RestaurantModel;
+import com.common.place.uicomponents.RestaurantArrayAdapter;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.common.place.util.Utils;
@@ -23,7 +24,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-public class RestaurantListView extends Activity implements View.OnClickListener {
+public class RestaurantListActivity extends Activity implements View.OnClickListener {
 
 	public RestaurantArrayAdapter adapter;
 	private ArrayList<RestaurantModel> models = new ArrayList<RestaurantModel>();
@@ -38,7 +39,7 @@ public class RestaurantListView extends Activity implements View.OnClickListener
 		Intent intent = getIntent();
 		selectedlatLng = intent.getParcelableExtra("location");
     	
-	    dialog = ProgressDialog.show(RestaurantListView.this, "", "로딩 중입니다. 잠시 기다려주세요", true);
+	    dialog = ProgressDialog.show(RestaurantListActivity.this, "", "로딩 중입니다. 잠시 기다려주세요", true);
 		
 		getRestaurantListFromWeb();
 		
@@ -124,7 +125,7 @@ public class RestaurantListView extends Activity implements View.OnClickListener
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_selectRestaurant:
-			RegistGroup.selectedRestaurant = models.get(adapter.selected_position);
+			RegistGroupActivity.selectedRestaurant = models.get(adapter.selected_position);
 			finish();
 			break;
 		}	

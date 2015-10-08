@@ -1,7 +1,10 @@
-package com.common.place;
+package com.common.place.uicomponents;
  
 import java.util.ArrayList;
 
+import com.common.place.R;
+import com.common.place.R.id;
+import com.common.place.R.layout;
 import com.common.place.model.RestaurantModel;
 
 import android.content.Context;

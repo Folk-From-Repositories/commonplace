@@ -90,8 +90,8 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		if(requestType.compareTo(Constants.REQUEST_TYPE_GPS_GETHERING)==0){
 			restaurantSearch.getLayoutParams().height = 0;
 			restaurantSearch.setVisibility(View.INVISIBLE);
-			if(GroupMainView.groupList!= null && GroupMainView.groupList.size()>0){
-				setGpsToMap(GroupMainView.groupList.get(0).getMemeber());
+			if(GroupMainActivity.groupList!= null && GroupMainActivity.groupList.size()>0){
+				setGpsToMap(GroupMainActivity.groupList.get(0).getMemeber());
 			}
 		}else if(requestType.compareTo(Constants.REQUEST_TYPE_MAP_CREATE)==0){
 			restaurantSearch.setVisibility(View.VISIBLE);
@@ -178,7 +178,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 				Toast.makeText(MapActivity.this, "Select Location...", Toast.LENGTH_SHORT).show();
 				return;
 			}
-			Intent i = new Intent(getApplicationContext(), RestaurantListView.class);
+			Intent i = new Intent(getApplicationContext(), RestaurantListActivity.class);
 			i.putExtra("location", selectedLatLng);
 			startActivity(i);
 			MapActivity.this.finish();

@@ -34,7 +34,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class RegistGroup extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
+public class RegistGroupActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
 	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
 	public ArrayList<ContactsModel> getArrayList;
@@ -139,11 +139,11 @@ public class RegistGroup extends Activity implements OnClickListener, DatePicker
 		switch (v.getId()) {
 		case R.id.btn_date:
 			getCurrentCalendar();
-			new DatePickerDialog(RegistGroup.this, RegistGroup.this, year, month, day).show();
+			new DatePickerDialog(RegistGroupActivity.this, RegistGroupActivity.this, year, month, day).show();
 			break;
 		case R.id.btn_time:
 			getCurrentCalendar();
-			new TimePickerDialog(RegistGroup.this, RegistGroup.this, hour, minute, false).show();
+			new TimePickerDialog(RegistGroupActivity.this, RegistGroupActivity.this, hour, minute, false).show();
 			break;
 		case R.id.searchMap:
 			Intent intent = new Intent(getApplicationContext(), MapActivity.class);
@@ -172,9 +172,9 @@ public class RegistGroup extends Activity implements OnClickListener, DatePicker
 			group.setLocationName(restaurant.getName());
 			group.setLocationPhone(restaurant.getPhone());
 			group.setMemeber(getArrayList);
-			group.setOwner(Utils.getPhoneNumber(RegistGroup.this));
+			group.setOwner(Utils.getPhoneNumber(RegistGroupActivity.this));
 			
-			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainView.class);
+			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainActivity.class);
 			intentGroupMain.putExtra("group",group);
 			
 			Logger.d( "groupName: " + groupName);
@@ -212,12 +212,12 @@ public class RegistGroup extends Activity implements OnClickListener, DatePicker
 
     @Override
     public void onDateSet(DatePicker arg0, int year, int monthOfYear, int dayOfMonth) {
-    	Toast.makeText(RegistGroup.this, year+"/"+monthOfYear+"/"+dayOfMonth, Toast.LENGTH_SHORT).show();
+    	Toast.makeText(RegistGroupActivity.this, year+"/"+monthOfYear+"/"+dayOfMonth, Toast.LENGTH_SHORT).show();
     }
     
 	@Override
 	public void onTimeSet(TimePicker arg0, int hourOfDay, int minute) {
-        Toast.makeText(RegistGroup.this, hourOfDay+":"+minute, Toast.LENGTH_SHORT).show();
+        Toast.makeText(RegistGroupActivity.this, hourOfDay+":"+minute, Toast.LENGTH_SHORT).show();
 	}
 
 }
