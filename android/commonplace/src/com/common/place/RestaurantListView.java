@@ -1,10 +1,8 @@
 package com.common.place;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.common.place.model.RestaurantModel;
@@ -75,13 +73,13 @@ public class RestaurantListView extends Activity implements View.OnClickListener
     	List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("key", "AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU"));
         nameValuePairs.add(new BasicNameValuePair("location", selectedlatLng.latitude+","+selectedlatLng.longitude));
-        nameValuePairs.add(new BasicNameValuePair("radius", "500"));
+        nameValuePairs.add(new BasicNameValuePair("radius", "5000"));
         nameValuePairs.add(new BasicNameValuePair("types", "restaurant"));
-
+        //?key=AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU&radius=5000&types=restaurant&location=37.55500949462912,126.98537103831768";
         String responseString = "";
     	try {
-    		responseString = Utils.callToServer(RestaurantListView.this, Constants.RESTAURANT_URL, new UrlEncodedFormEntity(nameValuePairs));
-		} catch (UnsupportedEncodingException e) {
+    		responseString = Utils.callToServer(Constants.RESTAURANT_URL, nameValuePairs);
+		} catch (Exception e) {
 			Logger.e(e.getMessage());
 		}
     	

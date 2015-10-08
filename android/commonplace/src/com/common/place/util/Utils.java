@@ -9,6 +9,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -40,14 +41,14 @@ public class Utils {
         nameValuePairs.add(new BasicNameValuePair("name", Utils.getPhoneNumber(context)));
 
 		try {
-			return callToServer(context, Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs));
+			return callToServer(Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs));
 		} catch (UnsupportedEncodingException e) {
 			Logger.e(e.getMessage());
 		}
 		return null;
     }
 	
-	public static String callToServer(Context context, String url, HttpEntity entity){
+	public static String callToServer(String url, HttpEntity entity){
 		HttpClient httpClient = new DefaultHttpClient();
         try {
             HttpPost httpPost = new HttpPost();
@@ -66,6 +67,32 @@ public class Utils {
         }
         return null;
 	}
+	
+	public static String callToServer(String url, List<BasicNameValuePair> nameValuePairs) {
+		String params = "";
+		if(nameValuePairs != null){
+			params += "?";
+			for(int i = 0 ; i < nameValuePairs.size() ; i++){
+				params += nameValuePairs.get(i).getName()+"="+nameValuePairs.get(i).getValue();
+				if(i < nameValuePairs.size() - 1){
+					params += "&";
+				}
+			}
+		}
+		
+        HttpClient client = new DefaultHttpClient();
+        HttpGet request = new HttpGet(url+params); 
+        HttpResponse response;
+        try {
+            response = client.execute(request);
+            String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+            Logger.d("response from ["+url+"]:"+responseString);
+            return responseString;
+        } catch (Exception e) {
+            Logger.e(e.getMessage());
+        }
+        return null;
+    }
 	
 	
 	public static void createCloseApplicationDialog(final Context context, String message){

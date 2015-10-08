@@ -3,7 +3,6 @@ package com.common.place;
 import java.io.IOException;
 
 import com.common.place.util.Constants;
-import com.common.place.util.Logger;
 import com.common.place.util.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -34,11 +33,9 @@ public class InitActivity extends Activity {
 		
         if (Utils.checkPlayServices(this, this)) {
             gcm = GoogleCloudMessaging.getInstance(this);
-            regId = Utils.getRegistrationId(this);
-            Logger.d(regId);
             registerInBackground();
         } else {
-            Logger.e("No valid Google Play Services APK found.");
+            Utils.createCloseApplicationDialog(InitActivity.this, getResources().getString(R.string.fail_to_google_play_service));
         }
 	}
 	
@@ -57,7 +54,7 @@ public class InitActivity extends Activity {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    if (gcm == null) {
+                    if (gcm == null || gcm.equals("")) {
                         gcm = GoogleCloudMessaging.getInstance(InitActivity.this);
                     }
                     regId = gcm.register(Constants.SENDER_ID);

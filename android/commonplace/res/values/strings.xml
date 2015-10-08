@@ -29,6 +29,7 @@
     <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!!</string>
     
     <string name="fail_to_register">서버에 Push key 저장에 실패하였습니다! 어플리케이션을 종료합니다.</string>
+    <string name="fail_to_google_play_service">Google Play Services 가 설치되어 있지 않습니다. 어플리케이션을 종료합니다.</string>
     
     
 </resources>

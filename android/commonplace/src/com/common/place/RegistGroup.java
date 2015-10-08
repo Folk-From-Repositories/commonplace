@@ -204,7 +204,7 @@ public class RegistGroup extends Activity implements OnClickListener, DatePicker
 	//Transfer Data to Server(httpRequest)
     private void sendReatuanrantDataToBackend(String groupInfo) {
     	try {
-			Utils.callToServer(RegistGroup.this, Constants.SVR_MOIM_REGIST_URL, new StringEntity(groupInfo));
+			Utils.callToServer(Constants.SVR_MOIM_REGIST_URL, new StringEntity(groupInfo));
 		} catch (UnsupportedEncodingException e) {
 			Logger.e(e.getMessage());
 		}
