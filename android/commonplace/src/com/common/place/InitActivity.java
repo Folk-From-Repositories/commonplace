@@ -2,18 +2,22 @@ package com.common.place;
 
 import java.io.IOException;
 
-import com.common.place.uicomponents.UserNameDialog;
 import com.common.place.util.Constants;
 import com.common.place.util.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class InitActivity extends Activity {
     
@@ -30,21 +34,14 @@ public class InitActivity extends Activity {
 		setContentView(R.layout.activity_init_activity);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onStart() {
 		super.onStart();
 
 		String userName = Utils.getUserName(InitActivity.this);
 		if(userName == null || userName.equals("")){
-			UserNameDialog dialog = new UserNameDialog(InitActivity.this);
-			dialog.setCancelable(false);
-			dialog.show();
-			dialog.setOnDismissListener(new OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface arg0) {
-					checkPlayService();
-				}
-			});
+			showDialog(0);
 		}else{
 			checkPlayService();
 		}
@@ -97,6 +94,48 @@ public class InitActivity extends Activity {
 				//}
 			}
         }.execute(null, null, null);
-    }
+    }    
 
+
+	@SuppressLint("InflateParams")
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		
+		AlertDialog dialogDetails = null;
+
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View dialogview = inflater.inflate(R.layout.dialog_user_name, null);
+
+		AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
+		dialogbuilder.setTitle(InitActivity.this.getResources().getString(R.string.txt_dialog_title));
+		dialogbuilder.setView(dialogview);
+		
+		dialogDetails = dialogbuilder.create();
+
+		return dialogDetails;
+		
+	}
+
+	@Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+
+      final AlertDialog alertDialog = (AlertDialog) dialog;
+      Button confirmBtn = (Button) alertDialog.findViewById(R.id.btn_user_name_confirm);
+      final EditText userName = (EditText) alertDialog.findViewById(R.id.input_user_name);
+      alertDialog.setCancelable(false);
+      confirmBtn.setOnClickListener(new View.OnClickListener() {
+    	  @Override
+    	  public void onClick(View v) {
+    		  String newName = userName.getText().toString();
+    		  if(newName == null || newName.equals("")){
+    			  Toast.makeText(InitActivity.this, InitActivity.this.getResources().getString(R.string.txt_dialog_body), Toast.LENGTH_SHORT).show();
+    			  return;
+    		  }
+    		  Utils.setUserName(InitActivity.this, newName);
+    		  checkPlayService();
+    		  alertDialog.dismiss();
+    	  }
+      });
+
+    }
 }
