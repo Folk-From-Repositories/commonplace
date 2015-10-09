@@ -27,6 +27,15 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Bitmap.Config;
+import android.graphics.PorterDuff.Mode;
 import android.telephony.TelephonyManager;
 
 public class Utils {
@@ -69,6 +78,25 @@ public class Utils {
 	}
 	
 	public static String callToServer(String url, List<BasicNameValuePair> nameValuePairs) {
+		String params = makeGetParams(nameValuePairs);
+		
+		//Logger.d("[GET]"+url+params);
+		
+        HttpClient client = new DefaultHttpClient();
+        HttpGet request = new HttpGet(url+params); 
+        HttpResponse response;
+        try {
+            response = client.execute(request);
+            String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+            //Logger.d("response from ["+url+"]:"+responseString);
+            return responseString;
+        } catch (Exception e) {
+            Logger.e(e.getMessage());
+        }
+        return null;
+    }
+	
+	public static String makeGetParams(List<BasicNameValuePair> nameValuePairs){
 		String params = "";
 		if(nameValuePairs != null){
 			params += "?";
@@ -79,21 +107,8 @@ public class Utils {
 				}
 			}
 		}
-		
-        HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url+params); 
-        HttpResponse response;
-        try {
-            response = client.execute(request);
-            String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
-            Logger.d("response from ["+url+"]:"+responseString);
-            return responseString;
-        } catch (Exception e) {
-            Logger.e(e.getMessage());
-        }
-        return null;
-    }
-	
+		return params;
+	}
 	
 	public static void createCloseApplicationDialog(final Context context, String message){
 		AlertDialog.Builder ab = new AlertDialog.Builder(context);
@@ -189,4 +204,30 @@ public class Utils {
         editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
+	
+	
+	
+	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels)
+			throws NullPointerException {
+		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+				bitmap.getHeight(), Config.ARGB_8888);
+		Canvas canvas = new Canvas(output);
+		final int color = Color.parseColor("#000000");
+		final Paint paint = new Paint();
+		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		final RectF rectF = new RectF(rect);
+		final float roundPx = pixels;
+		paint.setAntiAlias(true);
+		canvas.drawARGB(0, 0, 0, 0);
+		paint.setColor(color);
+		canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+		paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+		canvas.drawBitmap(bitmap, rect, rect, paint);
+		return output;
+	}
+	
+	
+	
+	
+	
 }

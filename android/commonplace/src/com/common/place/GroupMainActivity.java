@@ -11,6 +11,8 @@ import com.common.place.service.GPSService;
 import com.common.place.uicomponents.CustomGridAdapter;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -40,6 +42,9 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 	
 	public static GroupModel group;
 	Intent serviceIntent;
+	
+	private final int PLACE_PICKER_REQUEST = 1;
+	
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
         @SuppressWarnings("deprecation")
 		@Override
@@ -101,8 +106,8 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
         
         warningText=(TextView)findViewById(R.id.group_warning);
            
+        findViewById(R.id.nextBtn2).setOnClickListener(this);
         findViewById(R.id.nextBtn3).setOnClickListener(this);
-		findViewById(R.id.nextBtn2).setOnClickListener(this);
         
 		grid = (GridView)findViewById(R.id.grid);
         grid.setOnItemClickListener(this);
@@ -123,6 +128,13 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 	    		group = (GroupModel)groupInfo;
 	    		groupList.add(group);
 	    		addGroup(group.getLocationName(),R.drawable.soju);
+	    		break;
+	    	case PLACE_PICKER_REQUEST:
+	    		if (resultCode == RESULT_OK) {
+	    	        Place place = PlacePicker.getPlace(data, this);
+	    	        String toastMsg = String.format("Place: %s", place.getName());
+	    	        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+	    	    }
 	    		break;
 	    }
 	    setGridViewAndText();

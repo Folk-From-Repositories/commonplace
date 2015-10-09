@@ -90,7 +90,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	public void showSelectedRestaurant(){
 		if(selectedRestaurant != null){
 			restaurant =(RestaurantModel)selectedRestaurant;
-			retaurant_image.setImageResource(restaurant.getIcon());
+			//retaurant_image.setImageResource(restaurant.getIcon());
 			retaurant_description.setText(restaurant.getName() +"\n" + restaurant.getDescription() +"\n" + restaurant.getPhone());
 			retaurant_image.setVisibility(View.VISIBLE);
 		}else{
@@ -166,7 +166,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			//group.setTime(meetTime.getText().toString());
 			group.setId(String.valueOf(id_count));
 			group.setLocationDesc(restaurant.getDescription());
-			group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));
+			//group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));
 			group.setLocationLat(restaurant.getLocationLat());
 			group.setLocationLon(restaurant.getLocationLon());
 			group.setLocationName(restaurant.getName());

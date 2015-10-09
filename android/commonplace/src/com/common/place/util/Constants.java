@@ -5,6 +5,9 @@ public class Constants {
 
 	public static final String APP_NAME = "Common Place";
 	
+	public static final String GOOGLE_API_KEY = "AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU";
+	//public static final String GOOGLE_API_KEY = "AIzaSyALxswOwsqnWslA65rqrQ2qJ8peKsC0aG4";
+	
 	public static final String HOST                = "http://rambling.synology.me:52015";
 	public static final String SVR_REGIST_URL      = HOST + "/commonplace/regist";
 	public static final String SVR_MOIM_REGIST_URL = HOST + "/commonplace/moim/regist";

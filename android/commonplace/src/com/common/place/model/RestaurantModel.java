@@ -8,7 +8,7 @@ public class RestaurantModel implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int icon;
+	private String photo_reference;
     private String name;
     private String description;
     private String imageUrl;
@@ -22,10 +22,10 @@ public class RestaurantModel implements Serializable{
         isGroupHeader = true;
     }
     
-	public RestaurantModel(int icon, String name, String description, String imageUrl, String phone, String locationLat,
+	public RestaurantModel(String photo_reference, String name, String description, String imageUrl, String phone, String locationLat,
 			String locationLon, boolean isGroupHeader) {
 		super();
-		this.icon = icon;
+		this.photo_reference = photo_reference;
 		this.name = name;
 		this.description = description;
 		this.imageUrl = imageUrl;
@@ -35,12 +35,12 @@ public class RestaurantModel implements Serializable{
 		this.isGroupHeader = isGroupHeader;
 	}
 
-	public int getIcon() {
-		return icon;
+	public String getPhotoReference() {
+		return photo_reference;
 	}
 
-	public void setIcon(int icon) {
-		this.icon = icon;
+	public void setPhotoReference(String photo_reference) {
+		this.photo_reference = photo_reference;
 	}
 
 	public String getName() {
