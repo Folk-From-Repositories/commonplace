@@ -15,15 +15,23 @@ public class RestaurantModel implements Serializable{
     private String phone;
     private String locationLat;
     private String locationLon;
+    private String vicinity;
  
-    private boolean isGroupHeader = false;
+    public String getVicinity() {
+		return vicinity;
+	}
+
+	public void setVicinity(String vicinity) {
+		this.vicinity = vicinity;
+	}
+	private boolean isGroupHeader = false;
  
     public RestaurantModel(String title) {
         isGroupHeader = true;
     }
     
 	public RestaurantModel(String photo_reference, String name, String description, String imageUrl, String phone, String locationLat,
-			String locationLon, boolean isGroupHeader) {
+			String locationLon, boolean isGroupHeader, String vicinity) {
 		super();
 		this.photo_reference = photo_reference;
 		this.name = name;
@@ -33,6 +41,7 @@ public class RestaurantModel implements Serializable{
 		this.locationLat = locationLat;
 		this.locationLon = locationLon;
 		this.isGroupHeader = isGroupHeader;
+		this.vicinity = vicinity;
 	}
 
 	public String getPhotoReference() {

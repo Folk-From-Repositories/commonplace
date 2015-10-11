@@ -209,14 +209,29 @@ public class Utils {
 	
 	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels)
 			throws NullPointerException {
+		
+		int width = bitmap.getWidth();
+		int height = bitmap.getHeight();
+		
+		
+		int x = 0;
+		int y = 0;
+		
+		int rountPixel = width / 2;
+		x = ( height - width ) / 2;
+		if(width > height){
+			rountPixel = height / 2;
+			x = ( width - height ) / 2;
+		}
+		
 		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
 				bitmap.getHeight(), Config.ARGB_8888);
 		Canvas canvas = new Canvas(output);
 		final int color = Color.parseColor("#000000");
 		final Paint paint = new Paint();
-		final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+		final Rect rect = new Rect(x, y, rountPixel * 2, rountPixel * 2);
 		final RectF rectF = new RectF(rect);
-		final float roundPx = pixels;
+		final float roundPx = rountPixel;
 		paint.setAntiAlias(true);
 		canvas.drawARGB(0, 0, 0, 0);
 		paint.setColor(color);
@@ -226,7 +241,37 @@ public class Utils {
 		return output;
 	}
 	
-	
+	public static Bitmap getCircularBitmap(Bitmap bitmap) {
+	    Bitmap output;
+
+	    if (bitmap.getWidth() > bitmap.getHeight()) {
+	        output = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getHeight(), Config.ARGB_8888);
+	    } else {
+	        output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getWidth(), Config.ARGB_8888);
+	    }
+
+	    Canvas canvas = new Canvas(output);
+
+	    final int color = 0xff424242;
+	    final Paint paint = new Paint();
+	    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+	    float r = 0;
+
+	    if (bitmap.getWidth() > bitmap.getHeight()) {
+	        r = bitmap.getHeight() / 2;
+	    } else {
+	        r = bitmap.getWidth() / 2;
+	    }
+
+	    paint.setAntiAlias(true);
+	    canvas.drawARGB(0, 0, 0, 0);
+	    paint.setColor(color);
+	    canvas.drawCircle(r, r, r, paint);
+	    paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+	    canvas.drawBitmap(bitmap, rect, rect, paint);
+	    return output;
+	}
 	
 	
 	

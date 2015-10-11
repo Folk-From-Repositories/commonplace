@@ -120,10 +120,10 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
         
         Logger.d(rawData);
         
-//        JsonElement nextPageTokenElement = jobject.get("next_page_token");
-//        if(nextPageTokenElement != null){
-//        	pageToken = nextPageTokenElement.getAsString();
-//        }
+        JsonElement nextPageTokenElement = jobject.get("next_page_token");
+        if(nextPageTokenElement != null){
+        	pageToken = nextPageTokenElement.getAsString();
+        }
         
         JsonElement statusElement = jobject.get("status");
         String statusString = null;
@@ -151,6 +151,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
                 	String icon = "";
                 	String name = "";
                 	String rating = "";
+                	String vicinity = "";
                 	String photo_reference = "";
             		JsonObject geometry = restaurant.get("geometry").getAsJsonObject();
                 	if(!geometry.isJsonNull()){
@@ -170,6 +171,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
                 	icon = restaurant.get("icon") != null ? restaurant.get("icon").getAsString() : "";
                 	name = restaurant.get("name") != null ? restaurant.get("name").getAsString() : "";
                 	rating = restaurant.get("rating") != null ? restaurant.get("rating").getAsString() : "";
+                	vicinity = restaurant.get("vicinity") != null ? restaurant.get("vicinity").getAsString() : "";
                 	
                 	String url = "";
                 	
@@ -177,10 +179,11 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 	                	List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
 	                    nameValuePairs.add(new BasicNameValuePair("key", Constants.GOOGLE_API_KEY));
 	                    nameValuePairs.add(new BasicNameValuePair("maxwidth", "200"));  
+	                    nameValuePairs.add(new BasicNameValuePair("maxheight", "200"));  
 	                    nameValuePairs.add(new BasicNameValuePair("photoreference", photo_reference));
 	                    url = "https://maps.googleapis.com/maps/api/place/photo" + Utils.makeGetParams(nameValuePairs);
                 	}
-                	models.add(new RestaurantModel(url, name, rating, icon, "02-927-3745", lat, lon, false));
+                	models.add(new RestaurantModel(url, name, rating, icon, "02-927-3745", lat, lon, false, vicinity));
             	}
         	}catch(Exception e){
         		Logger.e(e.getMessage());

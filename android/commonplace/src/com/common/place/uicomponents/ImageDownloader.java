@@ -171,51 +171,6 @@ public class ImageDownloader {
 		  }
 		  
 		  return bitmap;
-		
-//        // AndroidHttpClient is not allowed to be used from the main thread
-//        final HttpClient client = (mode == Mode.NO_ASYNC_TASK) ? new DefaultHttpClient() :
-//            AndroidHttpClient.newInstance("Android");
-//        final HttpGet getRequest = new HttpGet(url);
-//
-//        try {
-//            HttpResponse response = client.execute(getRequest);
-//            final int statusCode = response.getStatusLine().getStatusCode();
-//            if (statusCode != HttpStatus.SC_OK) {
-//                Logger.w("Error " + statusCode +
-//                        " while retrieving bitmap from " + url);
-//                return null;
-//            }
-//
-//            final HttpEntity entity = response.getEntity();
-//            if (entity != null) {
-//                InputStream inputStream = null;
-//                try {
-//                    inputStream = entity.getContent();
-//                    // return BitmapFactory.decodeStream(inputStream);
-//                    // Bug on slow connections, fixed in future release.
-//                    Logger.d("############################# DOWNLOADED");
-//                    return BitmapFactory.decodeStream(new FlushedInputStream(inputStream));
-//                } catch(Exception e) {
-//                	Logger.e(e.getMessage());
-//                } finally {
-//                    if (inputStream != null) {
-//                        inputStream.close();
-//                    }
-//                    entity.consumeContent();
-//                }
-//            }
-//        } catch (IOException e) {
-//            getRequest.abort();
-//        } catch (IllegalStateException e) {
-//            getRequest.abort();
-//        } catch (Exception e) {
-//            getRequest.abort();
-//        } finally {
-//            if ((client instanceof AndroidHttpClient)) {
-//                ((AndroidHttpClient) client).close();
-//            }
-//        }
-//        return null;
     }
 
     /*
@@ -275,7 +230,7 @@ public class ImageDownloader {
             }
 
             if(bitmap != null){
-            	bitmap = Utils.getRoundedCornerBitmap(bitmap, 10);
+            	bitmap = Utils.getCircularBitmap(bitmap);
             }
             
             addBitmapToCache(url, bitmap);
