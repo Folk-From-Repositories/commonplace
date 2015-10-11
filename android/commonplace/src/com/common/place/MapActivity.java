@@ -155,7 +155,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	
     public void setGpsToMap(ArrayList<ContactsModel> group){
     	
-		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
 		
 		for(int i=0;i<group.size();i++){
 			try{
@@ -188,7 +188,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 
 	@Override
 	public void onMapClick(LatLng latLng) {
-		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher));
+		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
 		markerOptions.position(latLng);
 		gmap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 		gmap.clear();

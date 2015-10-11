@@ -170,7 +170,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
             		}
                 	icon = restaurant.get("icon") != null ? restaurant.get("icon").getAsString() : "";
                 	name = restaurant.get("name") != null ? restaurant.get("name").getAsString() : "";
-                	rating = restaurant.get("rating") != null ? restaurant.get("rating").getAsString() : "";
+                	rating = restaurant.get("rating") != null ? restaurant.get("rating").getAsString() : "-";
                 	vicinity = restaurant.get("vicinity") != null ? restaurant.get("vicinity").getAsString() : "";
                 	
                 	String url = "";

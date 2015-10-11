@@ -273,6 +273,15 @@ public class Utils {
 	    return output;
 	}
 	
+	public static int getResourceId(Context context, String pVariableName, String pResourcename, String pPackageName) 
+	{
+	    try {
+	        return context.getResources().getIdentifier(pVariableName, pResourcename, pPackageName);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return -1;
+	    } 
+	}
 	
 	
 }

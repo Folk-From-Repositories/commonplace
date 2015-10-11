@@ -37,6 +37,8 @@ public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
     		ImageView image_small;
             TextView restaurantName;
             TextView vicinity;
+            TextView item_ratings;
+            ImageView ratings_1, ratings_2, ratings_3, ratings_4, ratings_5;
             CheckBox check;
         }
         
@@ -54,6 +56,12 @@ public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
                 holder.image_small = (ImageView) convertView.findViewById(R.id.item_icon_small);
                 holder.restaurantName = (TextView) convertView.findViewById(R.id.item_title);
                 holder.vicinity = (TextView) convertView.findViewById(R.id.item_vicinity);
+                holder.item_ratings = (TextView) convertView.findViewById(R.id.item_ratings);
+                holder.ratings_1 = (ImageView) convertView.findViewById(R.id.ratings_1);
+                holder.ratings_2 = (ImageView) convertView.findViewById(R.id.ratings_2);
+                holder.ratings_3 = (ImageView) convertView.findViewById(R.id.ratings_3);
+                holder.ratings_4 = (ImageView) convertView.findViewById(R.id.ratings_4);
+                holder.ratings_5 = (ImageView) convertView.findViewById(R.id.ratings_5);
                 holder.check = (CheckBox) convertView.findViewById(R.id.cb_checkbox);
                 convertView.setTag(holder);
             }else{
@@ -61,8 +69,6 @@ public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
             }
         	
             RestaurantModel restaurant = (RestaurantModel) getItem(position);
-            
-            Logger.d("GetView - restaurant.getPhotoReference():["+restaurant.getPhotoReference()+"]");
             
             holder.image.setImageResource(R.drawable.icon);
             if(restaurant.getPhotoReference() != null && !"".equals(restaurant.getPhotoReference())){
@@ -76,6 +82,78 @@ public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
             holder.restaurantName.setText(restaurant.getName());
             holder.vicinity.setText(restaurant.getVicinity());
         	
+            
+            String rating = restaurant.getRating();
+            holder.item_ratings.setText(rating);
+            
+            if(rating != null && !"".equals(rating) && !"-".equals(rating)){
+            	int orgRating = (int) (Double.parseDouble(rating) * 10);
+            	int main = (int) (orgRating / 10);
+            	int sub = (int) (orgRating % 10);
+            	
+            	int cursor = main + 1;
+            	switch(main){
+            	case 5:
+            		holder.ratings_5.setImageResource(R.drawable.star_4);
+            	case 4:
+            		holder.ratings_4.setImageResource(R.drawable.star_4);
+            	case 3:
+            		holder.ratings_3.setImageResource(R.drawable.star_4);
+            	case 2:
+            		holder.ratings_2.setImageResource(R.drawable.star_4);
+            	case 1:
+            		holder.ratings_1.setImageResource(R.drawable.star_4);
+            	default:
+            		break;
+            	}
+            	
+            	int starId = 0;
+            	switch(sub){
+            	case 9:
+            	case 8:
+            	case 7:
+            		starId = R.drawable.star_3;
+            		break;
+            	case 6:
+            	case 5:
+            		starId = R.drawable.star_2;
+            		break;
+            	case 4:
+            	case 3:
+            	case 2:
+            		starId = R.drawable.star_1;
+            		break;
+            	case 1:
+            	default:
+            		starId = R.drawable.star_0;
+            		break;
+            	}
+            	
+            	switch(cursor){
+            	case 5:
+            		holder.ratings_5.setImageResource(starId);
+            		break;
+            	case 4:
+            		holder.ratings_4.setImageResource(starId);
+            		break;
+            	case 3:
+            		holder.ratings_3.setImageResource(starId);
+            		break;
+            	case 2:
+            		holder.ratings_2.setImageResource(starId);
+            		break;
+            	case 1:
+            		holder.ratings_1.setImageResource(starId);
+            		break;
+            	}
+            }else{
+            	holder.ratings_5.setImageResource(R.drawable.star_0);
+        		holder.ratings_4.setImageResource(R.drawable.star_0);
+        		holder.ratings_3.setImageResource(R.drawable.star_0);
+        		holder.ratings_2.setImageResource(R.drawable.star_0);
+        		holder.ratings_1.setImageResource(R.drawable.star_0);
+            }
+            
             holder.check.setChecked(position == selected_position);
             holder.check.setTag(position);
             holder.check.setOnClickListener(new View.OnClickListener() {
