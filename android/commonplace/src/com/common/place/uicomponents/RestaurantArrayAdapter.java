@@ -134,15 +134,25 @@ public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
             		holder.ratings_5.setImageResource(starId);
             		break;
             	case 4:
+            		holder.ratings_5.setImageResource(R.drawable.star_0);
             		holder.ratings_4.setImageResource(starId);
             		break;
             	case 3:
+            		holder.ratings_5.setImageResource(R.drawable.star_0);
+            		holder.ratings_4.setImageResource(R.drawable.star_0);
             		holder.ratings_3.setImageResource(starId);
             		break;
             	case 2:
+            		holder.ratings_5.setImageResource(R.drawable.star_0);
+            		holder.ratings_4.setImageResource(R.drawable.star_0);
+            		holder.ratings_3.setImageResource(R.drawable.star_0);
             		holder.ratings_2.setImageResource(starId);
             		break;
             	case 1:
+            		holder.ratings_5.setImageResource(R.drawable.star_0);
+            		holder.ratings_4.setImageResource(R.drawable.star_0);
+            		holder.ratings_3.setImageResource(R.drawable.star_0);
+            		holder.ratings_2.setImageResource(R.drawable.star_0);
             		holder.ratings_1.setImageResource(starId);
             		break;
             	}
