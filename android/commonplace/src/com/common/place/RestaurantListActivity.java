@@ -1,5 +1,8 @@
 package com.common.place;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +23,8 @@ import com.google.gson.JsonParser;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -200,9 +205,62 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_selectRestaurant:
+			dialog = ProgressDialog.show(RestaurantListActivity.this, "", RestaurantListActivity.this.getResources().getText(R.string.loading), true);
 			RegistGroupActivity.selectedRestaurant = models.get(adapter.selected_position);
-			finish();
+			downloadImage(models.get(adapter.selected_position).getPhotoReference());
 			break;
 		}	
 	}
+	
+	private void downloadImage(String url) {
+        new AsyncTask<String, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(String... imageUrl) {
+            	Bitmap bitmap = null;
+	      		try {
+	      			URL url = new URL(imageUrl[0]);
+	      			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	      			connection.setDoInput(true);
+	      			connection.connect();
+	      			InputStream input = connection.getInputStream();
+	      			bitmap = BitmapFactory.decodeStream(input);
+	      		   
+	      		}catch (Exception e) {
+	      			e.printStackTrace();
+	      		}
+	      		return bitmap;
+            }
+
+			@Override
+			protected void onPostExecute(Bitmap result) {
+				super.onPostExecute(result);
+				RegistGroupActivity.selectedRestaurantImage = result;
+				dialog.dismiss();
+				finish();
+			}
+
+        }.execute(url, null, null);
+    }
+	
+	/*
+	 * Bitmap downloadBitmap(String imageUrl) {
+		
+		Bitmap bitmap = null;
+		  try {
+		         URL url = new URL(imageUrl);
+		         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		         connection.setDoInput(true);
+		         connection.connect();
+		         InputStream input = connection.getInputStream();
+		         bitmap = BitmapFactory.decodeStream(input);
+		   
+		  }catch (Exception e) {
+		   e.printStackTrace();
+		  }
+		  
+		  return bitmap;
+    }
+	 * 
+	 * */
+	
 }

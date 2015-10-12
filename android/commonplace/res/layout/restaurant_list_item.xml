@@ -50,7 +50,7 @@
          android:layout_height="match_parent"
          android:layout_toRightOf="@+id/icon_area"
          android:layout_toLeftOf="@+id/cb_checkbox"
-         android:layout_marginRight="5px"
+         android:layout_marginRight="5dp"
          android:layout_centerVertical="true"
          android:layout_gravity="center"
          android:orientation="vertical">

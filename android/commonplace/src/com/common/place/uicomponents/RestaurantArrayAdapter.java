@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.common.place.R;
 import com.common.place.model.RestaurantModel;
-import com.common.place.util.Logger;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;

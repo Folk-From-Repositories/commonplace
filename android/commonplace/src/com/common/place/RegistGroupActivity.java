@@ -21,6 +21,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -42,13 +44,16 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	
 	private GroupModel group;
 	
-	ImageView retaurant_image;
-	TextView retaurant_description, contact_list;
+	RelativeLayout restaurant_area;
+	TextView retaurant_no_select, contact_list, item_title, item_vicinity;
 	Button btn_date, btn_time;
 	
 	int id_count = 1;
 	
+	public static Bitmap selectedRestaurantImage;
 	public static RestaurantModel selectedRestaurant;
+	
+	ImageView item_icon;
 	
 	int year, month, day, hour, minute;
 	
@@ -63,13 +68,20 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		btn_time.setOnClickListener(this);
 		
 		contact_list = (TextView)findViewById(R.id.contacts_description);
-		retaurant_image = (ImageView)findViewById(R.id.retaurant_image);
-		retaurant_description= (TextView)findViewById(R.id.retaurant_description);
+		
+		restaurant_area = (RelativeLayout)findViewById(R.id.restaurant_area);
+		item_icon = (ImageView) findViewById(R.id.item_icon);
+		item_title = (TextView) findViewById(R.id.item_title);
+		item_vicinity = (TextView) findViewById(R.id.item_vicinity);
+		retaurant_no_select= (TextView)findViewById(R.id.retaurant_no_select);
 
 		findViewById(R.id.seachAddr).setOnClickListener(this);
 		findViewById(R.id.searchMap).setOnClickListener(this);
 		findViewById(R.id.btn_contacts).setOnClickListener(this);
 		findViewById(R.id.btn_regist_group).setOnClickListener(this);
+		
+		restaurant = null;
+		selectedRestaurantImage = null;
 		
 		deleteAllMemberListInDB();
 	}
@@ -89,13 +101,20 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	
 	public void showSelectedRestaurant(){
 		if(selectedRestaurant != null){
-			restaurant =(RestaurantModel)selectedRestaurant;
-			//retaurant_image.setImageResource(restaurant.getIcon());
-			retaurant_description.setText(restaurant.getName() +"\n" + restaurant.getRating() +"\n" + restaurant.getPhone());
-			retaurant_image.setVisibility(View.VISIBLE);
+			retaurant_no_select.setVisibility(View.GONE);
+			restaurant_area.setVisibility(View.VISIBLE);
+
+			restaurant = (RestaurantModel)selectedRestaurant;
+			
+			item_title.setText(restaurant.getName());
+			item_vicinity.setText(restaurant.getVicinity());
+			
+			if(selectedRestaurantImage != null){
+				item_icon.setImageBitmap(selectedRestaurantImage);
+			}
 		}else{
-			retaurant_image.setVisibility(View.GONE);
-			retaurant_description.setText(R.string.group_not_regist);
+			restaurant_area.setVisibility(View.GONE);
+			retaurant_no_select.setVisibility(View.VISIBLE);
 		}
 	}
 	
