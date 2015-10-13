@@ -1,11 +1,12 @@
 
-var CT = require('./modules/country-list');
-var AM = require('./modules/account-manager');
-var EM = require('./modules/email-dispatcher');
-var GCM = require('./modules/gcm-sender');
-var ULM = require('./modules/user-location-manager');
-var MM     = require('./modules/moim-manager');
-var tag = '[routes.js] ';
+var CT   = require('./modules/country-list');
+var AM   = require('./modules/account-manager');
+var EM   = require('./modules/email-dispatcher');
+var GCM  = require('./modules/gcm-sender');
+var ULM  = require('./modules/user-location-manager');
+var MM   = require('./modules/moim-manager');
+var UTIL = require('./modules/utils');
+var tag  = '[routes.js] ';
 
 module.exports = function(app) {
 
@@ -328,7 +329,8 @@ module.exports = function(app) {
      * @param {string} locationDesc 모임장소 기타정보
      * @param {string} owner 모임 만든이 연락처
      * @param {string[]} member 모임 참여자 연락처 리스트
-     * @response {json} sms {array} 서비스 미 가입자 연락처
+     * @response {int} moimId 신규 생성된 모임 ID
+     * @response {string[]} sms 서비스 미 가입자 연락처
      **/
     app.post('/commonplace/moim/regist', function(req, res) {
         var data = {
@@ -348,16 +350,7 @@ module.exports = function(app) {
             if (e){
                 res.status(400).send(e);
             } else {
-                GCM.sendMessage(result.users, {
-                    category: 'invitation',
-                    moimId: result.moimId
-                }, function(e, o) {
-                    if (e) {
-                        res.status(400).send();
-                    } else {
-                        res.status(200).send({sms: result.nonUsers});
-                    }
-                });
+                 res.status(200).send(result);
             }
         });
     });

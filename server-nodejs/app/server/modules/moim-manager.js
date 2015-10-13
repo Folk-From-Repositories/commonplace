@@ -1,4 +1,5 @@
 var AM = require('./account-manager');
+var GCM = require('./gcm-sender');
 var connection = require('./database-connector').connection;
 var utils = require('./utils');
 /**
@@ -32,7 +33,7 @@ exports.createNewMoim = function(data, callback) {
 
         connection.query('INSERT INTO `commonplace`.`moim` SET ?', moimObj, function(err, result) {
             if (err) {
-                console.error(err);
+                console.error('신규 모임 생성 실패', err);
                 connection.rollback(function() {
                     console.error('rollback error');
                     throw err;
@@ -50,48 +51,82 @@ exports.createNewMoim = function(data, callback) {
 
             connection.query('INSERT INTO `commonplace`.`userMoim` (phone, moimId) VALUES ?', [userMoimObj], function(err, result) {
                 if (err) {
-                    console.error(err);
+                    console.error('사용자 모임정보 등록 실패', err);
                     connection.rollback(function() {
                         console.error('rollback error');
                         throw err;
                     });
                 } // if err
 
-                connection.commit(function(err) {
+                // user 조회 (등록 여부 = token 존재) 후 리턴
+                AM.getGcmTokens(data.member, function(e, r) {
                     if (err) {
-                        console.error(err);
+                        console.error('신규 모임 정보 생성 후 사용자 GCM 정보 조회 에러', e);
                         connection.rollback(function() {
                             console.error('rollback error');
                             throw err;
                         });
-                    } // if err
+                    }
 
-                    // user 조회 (등록 여부 = token 존재) 후 리턴
-                    AM.getGcmTokens(data.member, function(e, r) {
-                        if (err) {
-                            console.error(e);
-                            throw e;
+                    var nonUsers = data.member.slice(0); // clone
+                    var users = [];
+
+                    for (var j = 0; j < r.length; j++) {
+                        users.push(r[j].phone);
+
+                        var index = nonUsers.indexOf(r[j].phone);
+                        if (index >= 0) {
+                            nonUsers.splice(index, 1);
                         }
+                    }
 
-                        var nonUsers = data.member.slice(0); // clone
-                        var users = [];
+                    var httpRes = {
+                        sms: nonUsers,
+                        moimId: moimId
+                    };
 
-                        for (var j = 0; j < r.length; j++) {
-                            users.push(r[j].phone);
-
-                            var index = nonUsers.indexOf(r[j].phone);
-                            if (index >= 0) {
-                                nonUsers.splice(index, 1);
-                            }
-                        }
-
-                        callback(null, {
-                            nonUsers: nonUsers,
-                            users: users,
+                    // GCM 전송
+                    if (users.length > 0) {
+                        GCM.sendMessage(users, {
+                            category: 'invitation',
                             moimId: moimId
+                        }, function(e, o) {
+                            if (e) {
+                                console.error('신규 모임 생성 완료 후 GCM 전송 실패', e);
+                                connection.rollback(function() {
+                                    console.error('rollback error');
+                                    throw err;
+                                });
+                            } else {
+                                console.log('신규 모임 생성 완료 및 GCM 전송 완료');
+                                connection.commit(function(err) {
+                                    if (err) {
+                                        console.error('모임 정보 생성을 위한 트랜잭션 커밋 에러', err);
+                                        connection.rollback(function() {
+                                            console.error('rollback error');
+                                            throw err;
+                                        });
+                                    } else {
+                                        callback(null, httpRes);
+                                    }
+                                }); // commit
+                            }
                         });
-                    });
-                }); // commit
+                    } else {
+                        console.log('신규 모임 생성 완료');
+                        connection.commit(function(err) {
+                            if (err) {
+                                console.error('모임 정보 생성을 위한 트랜잭션 커밋 에러', err);
+                                connection.rollback(function() {
+                                    console.error('rollback error');
+                                    throw err;
+                                });
+                            } else {
+                                callback(null, httpRes);
+                            }
+                        }); // commit
+                    } // GCM 전송
+                }); // select user for gcm send
             }); // insert into userMoim
         }); // inset into moim
     }); // begin trnsaction

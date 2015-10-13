@@ -1,5 +1,6 @@
 exports.phoneToDbFormat = phoneToDbFormat;
 exports.isOnlyNumber = isOnlyNumber;
+exports.isArray = isArray;
 
 function phoneToDbFormat(phone) {
 
@@ -25,4 +26,9 @@ function isOnlyNumber(str) {
     }
 
     return isNumber;
+}
+
+function isArray(arr) {
+    var isArr = Object.prototype.toString.call( arr ) === '[object Array]';
+    return isArr;
 }
