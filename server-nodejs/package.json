@@ -9,6 +9,9 @@
   "website": {
     "url": "Not prepared"
   },
+  "scripts": {
+    "test": "mocha test"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/rambling/commonplace.git"
@@ -30,6 +33,11 @@
     "stylus": "0.51.1"
   },
   "engines": {
-    "node": "0.12.4"
+    "node": ">0.12.4"
+  },
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "hippie": "^0.4.0",
+    "mocha": "^2.3.3"
   }
 }

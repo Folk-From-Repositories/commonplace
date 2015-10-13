@@ -208,6 +208,44 @@ exports.registDeviceInfo = function(data, callback) {
 	});
 }
 
+/**
+ * Unregist Client info (phone, name, token)
+ *
+ * @public
+ * @param {json} data 사용자 정보
+ *            {string} data.phone 전화번호
+ *            {string} data.name 사용자 이름
+ *            {string} data.token GCM 토큰
+ * @return {json} result
+ */
+exports.unregistDeviceInfo = function(data, callback) {
+	var phone = utils.phoneToDbFormat(data.phone);
+	var token = data.token;
+	var name = data.name;
+
+	// validate data
+	if (!phone || !token || !name) { callback('insufficiency-form-data'); return; }
+
+	if (!utils.isOnlyNumber(phone)) { callback('invalid-phone-number-format'); return; }
+
+	if(typeof phone !== 'string' || typeof token !== 'string' || typeof name !== 'string') {
+		callback('invalid-form-data');
+		return;
+	}
+
+	// delete account with phone number, gcm token and user name
+	var sql = 'DELETE FROM `commonplace`.`user` WHERE `token` = ? AND `phone` = ? AND `name` = ?';
+
+	connection.query(sql, [token, phone, name], function(err, result) {
+		if (err) {
+			console.error(err);
+			callback('server error');
+		} else {
+			callback(null, result);
+		}
+	});
+}
+
 exports.getGcmTokens = function(phones, callback) {
 	// validate data
 	if (!phones) { callback('error-phone-number'); return; }

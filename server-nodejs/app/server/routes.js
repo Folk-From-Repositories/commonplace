@@ -227,6 +227,32 @@ module.exports = function(app) {
 	});
 
 	/**
+	 * 서비스 탈퇴 (가입정보 삭제)
+	 *
+	 * @url /commonplace/unregist
+	 * @method POST
+	 * @param {string} phone 전화번호
+	 * @param {string} token GCM 토큰
+	 * @param {string} name  사용자 이름(별칭)
+	 **/
+	app.post('/commonplace/unregist', function(req, res) {
+		var data = {
+			phone : req.body['phone'],
+			token : req.body['token'],
+			name  : req.body['name']
+		};
+
+		AM.unregistDeviceInfo(data, function(e) {
+			//TODO 에러 메시지 처리
+			if (e){
+				res.status(400).send(e);
+			} else {
+				res.status(200).send('ok');
+			}
+		});
+	});
+
+	/**
 	 * 사용자 GPS 정보 등록
 	 *
 	 * @url /commonplace/user/location
