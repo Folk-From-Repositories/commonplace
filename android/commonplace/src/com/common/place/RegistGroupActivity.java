@@ -82,6 +82,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		
 		restaurant = null;
 		selectedRestaurantImage = null;
+		selectedRestaurant = null;
 		
 		deleteAllMemberListInDB();
 	}
