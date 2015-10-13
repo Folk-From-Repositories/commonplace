@@ -7,6 +7,8 @@ var url_createAccount = '/commonplace/regist';      //서비스 가입 (기존 �
 var url_deleteAccount = '/commonplace/unregist';    //서비스 탈퇴 (가입정보 삭제)
 var url_userLocation = '/commonplace/user/location';   //사용자 GPS 정보 등록
 
+var url_createMoim = '/commonplace/moim/regist'; // 모임 생성 정보 등록
+
 var valid_param_for_user_creation = {
     phone: '010-1234-0000',
     token: 'dummy_gcm_token',
@@ -167,5 +169,12 @@ describe('CommonPlace - Account', function() {
                 });
         });
     });
+
+});
+
+
+describe('CommonPlace - Moim', function() {
+
+    describe('Create Moim', function() {});
 
 });

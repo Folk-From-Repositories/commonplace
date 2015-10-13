@@ -1,125 +1,132 @@
-var AM 			= require('./account-manager');
-var GM 			= require('./gcm-sender');
-var connection 	= require('./database-connector').connection;
-var utils 		= require('./utils');
+var AM = require('./account-manager');
+var GM = require('./gcm-sender');
+var connection = require('./database-connector').connection;
+var utils = require('./utils');
 
 /**
  * 사용자 위치 정보 등록
  */
-exports.update = function(data, callback)
-{
-	var sql = 'INSERT INTO `commonplace`.`userLocation` (`phone`, `latitude`, `longitude`, `update`) VALUES (?, ?, ?, NOW())'
-			+ 'ON DUPLICATE KEY UPDATE `latitude` = ?, `longitude` = ?, `update` = NOW()';
+exports.update = function(data, callback) {
+    var sql = 'INSERT INTO `commonplace`.`userLocation` (`phone`, `latitude`, `longitude`, `update`) VALUES (?, ?, ?, NOW())' + 'ON DUPLICATE KEY UPDATE `latitude` = ?, `longitude` = ?, `update` = NOW()';
 
-	var phone = utils.phoneToDbFormat(data.phone);
-	var latitude = data.latitude;
-	var longitude = data.longitude;
+    var phone = utils.phoneToDbFormat(data.phone);
+    var latitude = data.latitude;
+    var longitude = data.longitude;
 
-	if(typeof phone !== 'string' || typeof latitude !== 'string' || typeof longitude !== 'string') {
-		callback('invalid-form-data');
-		return;
-	}
+    if (typeof phone !== 'string' || typeof latitude !== 'string' || typeof longitude !== 'string') {
+        callback('invalid-form-data');
+        return;
+    }
 
-	connection.query(sql, [phone, latitude, longitude, latitude, longitude], function(err, result) {
-		if (err) {
-			console.error(err);
-			callback('server error');
-		} else {
-			callback(null, result);
-		}
-	});
+    connection.query(sql, [phone, latitude, longitude, latitude, longitude], function(err, result) {
+        if (err) {
+            console.error(err);
+            callback('server error');
+        } else {
+            callback(null, result);
+        }
+    });
 }
 
 /**
  * 사용자 위치 정보 조회
  */
-exports.gets = function(phones, callback)
-{
-	// validate data
-	if (!phones) { callback('error-phone-number'); return; }
+exports.gets = function(phones, callback) {
+    // validate data
+    if (!phones) {
+        callback('error-phone-number');
+        return;
+    }
 
-	// Make Array if there is only one number.
-	if (Object.prototype.toString.call( phones ) !== '[object Array]' ) {
-		phones = [phones];
-	}
+    // Make Array if there is only one number.
+    if (Object.prototype.toString.call(phones) !== '[object Array]') {
+        phones = [phones];
+    }
 
-	for (var index in phones) {
-		phones[index] = utils.phoneToDbFormat(phones[index]);
+    for (var index in phones) {
+        phones[index] = utils.phoneToDbFormat(phones[index]);
 
-		if (!utils.isOnlyNumber(phones[index])) {
-			callback('invalid-phone-number-format'); return;
-		}
-	}
+        if (!utils.isOnlyNumber(phones[index])) {
+            callback('invalid-phone-number-format');
+            return;
+        }
+    }
 
-	var sql = 'SELECT * FROM `commonplace`.`userLocation` WHERE `phone` IN (' + connection.escape(phones) + ')';
+    var sql = 'SELECT * FROM `commonplace`.`userLocation` WHERE `phone` IN (' + connection.escape(phones) + ')';
 
-	connection.query(sql, function(err, result) {
-		callback(err, result);
-	});
+    connection.query(sql, function(err, result) {
+        callback(err, result);
+    });
 }
 
 // 전체 사용자 GPS 정보 조회
 exports.getAllUsersLocation = function(callback) {
-	// user 조회
-	AM.getAllRecords(function(err, users) {
-		if (err) { console.error(err); return; }
+    // user 조회
+    AM.getAllRecords(function(err, users) {
+        if (err) {
+            console.error(err);
+            return;
+        }
 
-		var phones = [];
+        var phones = [];
 
-		for (var i = 0; i < users.length; i++) {
-			phones.push(users[i].phone);
-		}
+        for (var i = 0; i < users.length; i++) {
+            phones.push(users[i].phone);
+        }
 
-		// userLocation table 전체 조회
-		exports.gets(phones, function(err, locations) {
-			if (err) { console.error(err); return; }
+        // userLocation table 전체 조회
+        exports.gets(phones, function(err, locations) {
+            if (err) {
+                console.error(err);
+                return;
+            }
 
-			callback(null, phones, locations);
-		});
-	});
+            callback(null, phones, locations);
+        });
+    });
 }
 
 var notiThread;
 
 function sendUserLocation() {
-	exports.getAllUsersLocation(function(err, phones, locations) {
+    exports.getAllUsersLocation(function(err, phones, locations) {
 
-		if (err) return;
+        if (err) return;
 
-		var message = {
-			category : 'GPS Push',
-			moimId 	 : 1,
-			member 	 : locations
-		};
+        var message = {
+            category: 'GPS Push',
+            moimId: 1,
+            member: locations
+        };
 
-		GM.sendMessage(phones, message, function(e, o) {
-			if (e) {
-				console.error(e);
-			}
-		});
-	});
+        GM.sendMessage(phones, message, function(e, o) {
+            if (e) {
+                console.error(e);
+            }
+        });
+    });
 }
 
 exports.enableGPSNotification = function() {
 
-	if (!notiThread) {
-		console.log('enableGPSNotification()');
+    if (!notiThread) {
+        console.log('enableGPSNotification()');
 
-		notiThread = setInterval(function() {
-		    sendUserLocation();
-		}, 5000);
-	} else {
-		console.log('enableGPSNotification() - already enabled.');
-	}
+        notiThread = setInterval(function() {
+            sendUserLocation();
+        }, 5000);
+    } else {
+        console.log('enableGPSNotification() - already enabled.');
+    }
 }
 
 exports.disableGPSNotification = function() {
 
-	if (notiThread) {
-		console.log('disableGPSNotification()');
-		clearInterval(notiThread);
-		notiThread = undefined;
-	} else {
-		console.log('disableGPSNotification() - already disabled.');
-	}
+    if (notiThread) {
+        console.log('disableGPSNotification()');
+        clearInterval(notiThread);
+        notiThread = undefined;
+    } else {
+        console.log('disableGPSNotification() - already disabled.');
+    }
 }
