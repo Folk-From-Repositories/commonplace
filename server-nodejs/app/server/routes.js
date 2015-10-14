@@ -321,7 +321,7 @@ module.exports = function(app) {
      * 모임 생성 정보 등록
      *
      * @url /commonplace/moim/regist
-     * method POST
+     * @method POST
      * @param {string} title 모임명
      * @param {string} dateTime 모임시각 (YYYYMMDD HH:MM 의 formatted string)
      * @param {string} locationName 모임장소명
@@ -362,7 +362,7 @@ module.exports = function(app) {
      * 나의 모임 조회
      *
      * @url /commonplace/moim/my
-     * method POST
+     * @method POST
      * @param {string} phone 내 전화번호
      * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
      **/
@@ -379,14 +379,14 @@ module.exports = function(app) {
         });
     });
 
-    /**
-     * 모임 상세 조회
-     *
-     * @url /commonplace/moim/details
-     * method GET
-     * @param {array} or {int} id 모임 ID (int 또는 int array)
-     * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
-     **/
+/**
+ * 모임 상세 조회
+ *
+ * @url /commonplace/moim/details
+ * @method GET
+ * @param {array} or {int} id 모임 ID (int 또는 int array)
+ * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
+ **/
     app.post('/commonplace/moim/details', function(req, res) {
 
         var moimIds = req.body['moimIds'];
@@ -401,6 +401,49 @@ module.exports = function(app) {
         });
     });
 
+    /**
+     * 모임 참여자 위치 정보의 브로드캐스트 활성화
+     *
+     * @url /commonplace/moim/broadcast/enable
+     * @method POST
+     * @param {int} id 모임 ID
+     * @return {boolean} result
+     **/
+    app.post('/commonplace/moim/broadcast/enable', function(req, res) {
+
+        var moimId = req.body['id'];
+
+        MM.enableLocationBroadcast(moimId, function(e, result) {
+            //TODO 에러 메시지 처리
+            if (e){
+                res.status(400).send(e);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    /**
+     * 모임 참여자 위치 정보의 브로드캐스트 비활성화
+     *
+     * @url /commonplace/moim/broadcast/disable
+     * method POST
+     * @param {int} id 모임 ID
+     * @return {boolean} result
+     **/
+    app.post('/commonplace/moim/broadcast/disable', function(req, res) {
+
+        var moimId = req.body['id'];
+
+        MM.disableLocationBroadcast(moimId, function(e, result) {
+            //TODO 에러 메시지 처리
+            if (e){
+                res.status(400).send(e);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
 
     /**
      * // TODO delete

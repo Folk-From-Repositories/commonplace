@@ -1,0 +1,16 @@
+{
+    "id": "/Location",
+    "type": "object",
+    "properties": {
+        "phone": {
+            "type": "string"
+        },
+        "latitude": {
+            "type": "string"
+        },
+        "longitude": {
+            "type": "string"
+        }
+    },
+    "required": ["phone", "latitude", "longitude"]
+}

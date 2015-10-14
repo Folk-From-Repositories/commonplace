@@ -9,6 +9,9 @@ var url_userLocation = '/commonplace/user/location';   //사용자 GPS 정보 �
 
 var url_createMoim = '/commonplace/moim/regist'; // 모임 생성 정보 등록
 var url_myMoim = '/commonplace/moim/my';    // 내 모임 정보 조회
+var url_moimDetail = '/commonplace/moim/details';   // 모임 상세 정보 조회
+var url_moimNotiEnable = '/commonplace/moim/broadcast/enable';  // 모임 참여자 위치 정보 전송 활성화
+var url_moimNotiDisable = '/commonplace/moim/broadcast/disable'; // 모임 참여자 위치 정보 전송 비활성화
 
 var valid_param_for_user_creation = {
     phone: '01012340000',
@@ -232,6 +235,58 @@ describe('CommonPlace - Moim', function() {
                 .form()
                 .post(url_myMoim)
                 .send({phone: ownerPhone})
+                .expectStatus(200)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+    });
+
+    describe('Get Moim details(' + url_moimDetail + ')', function () {
+        it('work fine with valid moimId - ' + testMoimId, function(done) {
+            hippie(server)
+                .json()
+                .form()
+                .post(url_moimDetail)
+                .send({moimIds: testMoimId})
+                .expectStatus(200)
+                .expect(function(res, body, next) {
+                    var err;
+                    if (body[0].title !== valid_param_for_moim_creation.title) {
+                        err = 'it returns miss-matched data.';
+                    }
+                    next(err);
+                })
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+    });
+
+    describe('Enable to broadcast the member\'s location(' + url_moimNotiEnable + ')', function () {
+        it('work fine with valid moimId - ' + testMoimId, function(done) {
+            hippie(server)
+                .json()
+                .form()
+                .post(url_moimNotiEnable)
+                .send({id: testMoimId})
+                .expectStatus(200)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+    });
+
+    describe('Disable to broadcast the member\'s location(' + url_moimNotiDisable + ')', function () {
+        it('work fine with valid moimId' + testMoimId, function(done) {
+            hippie(server)
+                .json()
+                .form()
+                .post(url_moimNotiDisable)
+                .send({id: testMoimId})
                 .expectStatus(200)
                 .end(function(err, res, body) {
                     if (err) throw err;

@@ -13,6 +13,8 @@ var moimSchema = require('../schema/moim-schema.json');
 exports.createNewMoim = function(data, callback) {
     var dataValidateResult = schemaValidate(data, moimSchema);
 
+    // TODO 상세한 에러 원인 전달 - dataValidateResult.errors[x].argument
+
     if (dataValidateResult.errors.length > 0) {
         callback('insufficiency-form-data');
         return;
@@ -208,4 +210,45 @@ exports.getDetails = function(moimIds, callback) {
             });
         }
     });
+}
+
+
+/**
+ * 모임 참여자의 위치 정보 broadcast 기능 활성화
+ */
+exports.enableLocationBroadcast = function(moimId, callback) {
+    if (isNaN(moimId)) {
+        return callback('invalid-moim-id');
+    }
+
+    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 1 WHERE id = '+ connection.escape(moimId);
+
+    connection.query(sql, function(err, result) {
+        if (err) console.error(err);
+
+        callback(err, err ? false : true);
+    });
+}
+/**
+ * 모임 참여자의 위치 정보 broadcast 기능 비활성화
+ */
+exports.disableLocationBroadcast = function(moimId, callback) {
+    if (isNaN(moimId)) {
+        return callback('invalid-moim-id');
+    }
+
+    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 0 WHERE id = '+ connection.escape(moimId);
+
+    connection.query(sql, function(err, result) {
+        if (err) console.error(err);
+
+        callback(err, err ? false : true);
+    });
+}
+
+/**
+ * Location 정보 Notification이 활성화 된 모임 정보 조회
+ */
+exports.getAvailableLocationBroadcast = function(callback) {
+
 }

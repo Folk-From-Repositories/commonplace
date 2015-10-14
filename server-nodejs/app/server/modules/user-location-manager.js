@@ -2,21 +2,29 @@ var AM = require('./account-manager');
 var GM = require('./gcm-sender');
 var connection = require('./database-connector').connection;
 var utils = require('./utils');
+var schemaValidate = require('jsonschema').validate;
+
+// load json schema for validate request parameter
+var locationSchema = require('../schema/user-location-schema.json');
 
 /**
  * 사용자 위치 정보 등록
  */
 exports.update = function(data, callback) {
+    var dataValidateResult = schemaValidate(data, locationSchema);
+
+    // TODO 상세한 에러 원인 전달 - dataValidateResult.errors[x].argument
+
+    if (dataValidateResult.errors.length > 0) {
+        callback('insufficiency-form-data');
+        return;
+    }
+
     var sql = 'INSERT INTO `commonplace`.`userLocation` (`phone`, `latitude`, `longitude`, `update`) VALUES (?, ?, ?, NOW())' + 'ON DUPLICATE KEY UPDATE `latitude` = ?, `longitude` = ?, `update` = NOW()';
 
     var phone = utils.phoneToDbFormat(data.phone);
     var latitude = data.latitude;
     var longitude = data.longitude;
-
-    if (typeof phone !== 'string' || typeof latitude !== 'string' || typeof longitude !== 'string') {
-        callback('invalid-form-data');
-        return;
-    }
 
     connection.query(sql, [phone, latitude, longitude, latitude, longitude], function(err, result) {
         if (err) {
