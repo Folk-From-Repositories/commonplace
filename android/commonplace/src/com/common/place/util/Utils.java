@@ -16,6 +16,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import com.common.place.db.Provider;
+import com.common.place.model.Member;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -27,15 +29,16 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
 import android.telephony.TelephonyManager;
 
 public class Utils {
@@ -283,5 +286,42 @@ public class Utils {
 	    } 
 	}
 	
+	public static int deleteAllMemberListInDB(Context context){
+		return context.getContentResolver().delete(Provider.RECIPIENT_CONTENT_URI, null, null);
+	}
+	
+	public static Cursor getMemberListFromDB(Context context){
+		return context.getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
+	}
+	
+	public static ArrayList<Member> getSelectedMemberList(Context context){
+		Cursor memberCursor = getMemberListFromDB(context);
+		ArrayList<Member> memberArr = new ArrayList<Member>();
+		if(memberCursor != null && memberCursor.getCount() > 0){
+			if(memberCursor.moveToFirst()){
+				do{
+					Member member = new Member(memberCursor.getString(memberCursor.getColumnIndex(Provider.PHONE_NUMBER)), memberCursor.getString(memberCursor.getColumnIndex(Provider.RECIPIENT)));
+					memberArr.add(member);
+				}while(memberCursor.moveToNext());
+			}
+		}
+		return memberArr;
+	}
+	
+	public static String[] getPhoneNumArr(Context context){
+		ArrayList<Member> arr = getSelectedMemberList(context);
+		if(arr != null && arr.size() > 0){
+			String[] phoneNums = new String[arr.size()];
+			for(int i = 0 ; i < arr.size() ; i++){
+				phoneNums[i] = arr.get(i).getPhoneNumber();
+			}
+			return phoneNums;
+		}else{
+			return new String[0];
+		}
+		
+		
+		
+	}
 	
 }

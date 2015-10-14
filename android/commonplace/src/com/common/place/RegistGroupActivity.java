@@ -4,23 +4,24 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
-import org.apache.http.entity.StringEntity;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
-import com.common.place.db.Provider;
 import com.common.place.model.ContactsModel;
 import com.common.place.model.GroupModel;
+import com.common.place.model.Member;
 import com.common.place.model.RestaurantModel;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.common.place.util.Utils;
-import com.google.gson.Gson;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,13 +35,11 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 public class RegistGroupActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
 	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
 	public ArrayList<ContactsModel> getArrayList;
-	public RestaurantModel restaurant;
 	
 	private GroupModel group;
 	
@@ -56,6 +55,9 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	ImageView item_icon;
 	
 	int year, month, day, hour, minute;
+	String dateString, timeString;
+	
+	EditText groupName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,23 +75,23 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		item_icon = (ImageView) findViewById(R.id.item_icon);
 		item_title = (TextView) findViewById(R.id.item_title);
 		item_vicinity = (TextView) findViewById(R.id.item_vicinity);
-		retaurant_no_select= (TextView)findViewById(R.id.retaurant_no_select);
+		retaurant_no_select = (TextView)findViewById(R.id.retaurant_no_select);
+		groupName = (EditText)findViewById(R.id.name_edit);
 
 		findViewById(R.id.seachAddr).setOnClickListener(this);
 		findViewById(R.id.searchMap).setOnClickListener(this);
 		findViewById(R.id.btn_contacts).setOnClickListener(this);
 		findViewById(R.id.btn_regist_group).setOnClickListener(this);
 		
-		restaurant = null;
 		selectedRestaurantImage = null;
 		selectedRestaurant = null;
 		
-		deleteAllMemberListInDB();
+		Utils.deleteAllMemberListInDB(RegistGroupActivity.this);
 	}
 
 	@Override
 	protected void onDestroy() {
-		deleteAllMemberListInDB();
+		Utils.deleteAllMemberListInDB(RegistGroupActivity.this);
 		super.onDestroy();
 	}
 
@@ -105,10 +107,8 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			retaurant_no_select.setVisibility(View.GONE);
 			restaurant_area.setVisibility(View.VISIBLE);
 
-			restaurant = (RestaurantModel)selectedRestaurant;
-			
-			item_title.setText(restaurant.getName());
-			item_vicinity.setText(restaurant.getVicinity());
+			item_title.setText(selectedRestaurant.getName());
+			item_vicinity.setText(selectedRestaurant.getVicinity());
 			
 			if(selectedRestaurantImage != null){
 				item_icon.setImageBitmap(selectedRestaurantImage);
@@ -120,16 +120,12 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	}
 	
 	public void createMemberList(){
-		Cursor memberCursor = getMemberListFromDB();
-		if(memberCursor != null && memberCursor.getCount() > 0){
+		ArrayList<Member> arr = Utils.getSelectedMemberList(RegistGroupActivity.this);
+		if(arr != null && arr.size() > 0){
 			contact_list.setText("");
 			contact_list.setGravity(Gravity.LEFT);
-			Toast.makeText(this, memberCursor.getCount() + " selected!!!!", Toast.LENGTH_SHORT).show();
-			
-			if(memberCursor.moveToFirst()){
-				do{
-					contact_list.append(memberCursor.getString(memberCursor.getColumnIndex(Provider.RECIPIENT)) + "  " + memberCursor.getString(memberCursor.getColumnIndex(Provider.PHONE_NUMBER)) + "\n");
-				}while(memberCursor.moveToNext());
+			for(int i = 0 ; i < arr.size() ; i++){
+				contact_list.append(arr.get(i).getName() + "  " + arr.get(i).getPhoneNumber() + "\n");
 			}
 		}else{
 			contact_list.setGravity(Gravity.CENTER);
@@ -137,13 +133,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		}
 	}
 
-	public int deleteAllMemberListInDB(){
-		return getContentResolver().delete(Provider.RECIPIENT_CONTENT_URI, null, null);
-	}
-	// you can use member list like this...
-	public Cursor getMemberListFromDB(){
-		return getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
-	}
+	
 	
 	public void getCurrentCalendar(){
 		GregorianCalendar calendar = new GregorianCalendar();
@@ -174,70 +164,76 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			startActivity(new Intent(getApplicationContext(), MemberActivity.class));
 			break;
 		case R.id.btn_regist_group:
-			/*
-			 * you must save data to server
-			 */		
-			group = new GroupModel();
 			
-			EditText groupName=(EditText)findViewById(R.id.name_edit);
-			//EditText meetTime=(EditText)findViewById(R.id.time_edit);
+			String title = groupName.getText().toString();
+			String dateTime = dateString+" "+timeString;
+			String locationName = selectedRestaurant.getName();
+			String locationImageUrl = selectedRestaurant.getPhotoReference();
+			String locationLat = selectedRestaurant.getLocationLat();
+			String locationLon = selectedRestaurant.getLocationLon();
+			String locationPhone = "";
+			String locationDesc = selectedRestaurant.getVicinity();
+			String owner = Utils.getPhoneNumber(RegistGroupActivity.this);
+			String[] member = Utils.getPhoneNumArr(RegistGroupActivity.this); //Arrays.toString(member)
 			
-			group.setTitle(groupName.getText().toString());
-			//group.setTime(meetTime.getText().toString());
-			group.setId(String.valueOf(id_count));
-			group.setLocationDesc(restaurant.getRating());
-			//group.setLocationImageUrl(String.valueOf(restaurant.getIcon()));
-			group.setLocationLat(restaurant.getLocationLat());
-			group.setLocationLon(restaurant.getLocationLon());
-			group.setLocationName(restaurant.getName());
-			group.setLocationPhone(restaurant.getPhone());
-			group.setMemeber(getArrayList);
-			group.setOwner(Utils.getPhoneNumber(RegistGroupActivity.this));
+			List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
 			
-			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainActivity.class);
-			intentGroupMain.putExtra("group",group);
-			
-			Logger.d( "groupName: " + groupName);
-				
-    		registerInBackground();
-    		
-			setResult(Constants.GROUP_MAIN_VIEW_REQ_CODE, intentGroupMain);
-			
-			finish();
+//			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainActivity.class);
+//			intentGroupMain.putExtra("group",group);
+//			
+    		try {
+				registerInBackground(new UrlEncodedFormEntity(nameValuePairs));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+//    		
+//			setResult(Constants.GROUP_MAIN_VIEW_REQ_CODE, intentGroupMain);
+//			
+//			finish();
 		}	
 	}
-	private void registerInBackground() {
-        new AsyncTask<Void, Void, Void>() {
+	private void registerInBackground(HttpEntity entity) {
+        new AsyncTask<HttpEntity, Void, String>() {
             @Override
-            protected Void doInBackground(Void... params) {
+            protected String doInBackground(HttpEntity... params) {
                 try {
-                	String groupInfo = new Gson().toJson(group);
-                    sendReatuanrantDataToBackend(groupInfo);
+                    sendReatuanrantDataToBackend(params[0]);
                 } catch (Exception e) {
                 	Logger.e(e.getMessage());
                 }
 				return null;
             }
-        }.execute(null, null, null);
+
+			@Override
+			protected void onPostExecute(String result) {
+				super.onPostExecute(result);
+			}
+            
+        }.execute(entity, null, null);
     }
 	
 	//Transfer Data to Server(httpRequest)
-    private void sendReatuanrantDataToBackend(String groupInfo) {
-    	try {
-			Utils.callToServer(Constants.SVR_MOIM_REGIST_URL, new StringEntity(groupInfo));
-		} catch (UnsupportedEncodingException e) {
-			Logger.e(e.getMessage());
-		}
+    private void sendReatuanrantDataToBackend(HttpEntity entity) {
+    	Utils.callToServer(Constants.SVR_MOIM_REGIST_URL, entity);
     }
 
     @Override
     public void onDateSet(DatePicker arg0, int year, int monthOfYear, int dayOfMonth) {
-    	Toast.makeText(RegistGroupActivity.this, year+"/"+monthOfYear+"/"+dayOfMonth, Toast.LENGTH_SHORT).show();
+    	dateString = year+leadingZero(monthOfYear+1)+leadingZero(dayOfMonth);
+    	btn_date.setText(dateString);
     }
     
 	@Override
 	public void onTimeSet(TimePicker arg0, int hourOfDay, int minute) {
-        Toast.makeText(RegistGroupActivity.this, hourOfDay+":"+minute, Toast.LENGTH_SHORT).show();
+		timeString = leadingZero(hourOfDay)+":"+leadingZero(minute);
+		btn_time.setText(timeString);
+	}
+	
+	public String leadingZero(int raw){
+		if(raw < 10){
+			return "0"+raw;
+		}
+		return ""+raw;
 	}
 
 }
