@@ -329,7 +329,7 @@ module.exports = function(app) {
      * @param {string} locationLat 모임장소 위도
      * @param {string} locationLon 모임장소 경도
      * @param {string} locationPhone 모임장소 연락처
-     * @param {string} locationDesc 모임장소 기타정보
+     * @param {string} locationDesc 모임장소 주소
      * @param {string} owner 모임 만든이 연락처
      * @param {string[]} member 모임 참여자 연락처 리스트
      * @response {int} moimId 신규 생성된 모임 ID
