@@ -10,7 +10,12 @@
     "url": "Not prepared"
   },
   "scripts": {
+    "start": "node app.js",
     "test": "mocha test"
+  },
+  "port": {
+    "web": 58000,
+    "hippie": 7891
   },
   "repository": {
     "type": "git",

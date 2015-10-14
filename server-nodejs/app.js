@@ -11,10 +11,10 @@ var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
 var cookieParser = require('cookie-parser');
 var FileStore = require('session-file-store')(session);
-
+var packageInfo = require('./package.json');
 var app = express();
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', packageInfo.port.web || 3000);
 app.set('views', __dirname + '/app/server/views');
 app.set('view engine', 'jade');
 app.use(cookieParser());
@@ -47,4 +47,4 @@ module.exports = app;
 /**
  * Export the configured port.
  */
-module.exports.PORT = process.env.HIPPIE_PORT || 7891;
+module.exports.PORT = packageInfo.port.hippie || 7891;
