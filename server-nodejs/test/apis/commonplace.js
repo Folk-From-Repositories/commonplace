@@ -1,5 +1,5 @@
 var hippie = require('hippie');
-var server = require('../app');
+var server = require('../../app');
 
 hippie.assert.showDiff = true;
 
@@ -30,6 +30,7 @@ var valid_param_for_user_location = {
 
 var valid_param_for_moim_creation = {
     "title"            : '테스트 모임',
+    "dateTime"         : '20151023 19:00',
     "locationName"     : '광화문 광장',
     "locationImageUrl" : 'https://geo1.ggpht.com/cbk?photoid=evqsbHDXmIMAAAQINlDYrA&output=photo&cb_client=search.TACTILE.gps&minw=408&minh=256',
     "locationLat"      : valid_param_for_user_location.latitude,
@@ -199,7 +200,7 @@ describe('CommonPlace - Moim', function() {
     describe('Create Moim(' + url_createMoim + ')', function() {
         var params = JSON.parse(JSON.stringify(valid_param_for_moim_creation));
 
-        it('work fine with valid form data - ' + JSON.stringify(params), function(done) {
+        it('work fine with valid form data', function(done) {
             hippie(server)
                 .json()
                 .form()
@@ -234,7 +235,6 @@ describe('CommonPlace - Moim', function() {
                 .expectStatus(200)
                 .end(function(err, res, body) {
                     if (err) throw err;
-                    //console.log(body);
                     done();
                 });
         });

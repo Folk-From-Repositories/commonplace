@@ -1,0 +1,42 @@
+{
+    "id": "/Moim",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "dateTime": {
+            "type": "string"
+        },
+        "locationName": {
+            "type": "string"
+        },
+        "locationImageUrl": {
+            "type": "string"
+        },
+        "locationLat": {
+            "type": "string"
+        },
+        "locationLon": {
+            "type": "string"
+        },
+        "locationPhone": {
+            "type": "string"
+        },
+        "locationDesc": {
+            "type": "string"
+        },
+        "owner": {
+            "type": "string"
+        },
+        "member": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    },
+    "required": ["title", "dateTime", "locationName", "locationImageUrl", "locationLat", "locationLon", "locationPhone", "locationDesc", "owner", "member"]
+}

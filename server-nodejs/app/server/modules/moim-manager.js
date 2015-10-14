@@ -2,20 +2,25 @@ var AM = require('./account-manager');
 var GCM = require('./gcm-sender');
 var connection = require('./database-connector').connection;
 var utils = require('./utils');
+var schemaValidate = require('jsonschema').validate;
+
+// load json schema for validate request parameter
+var moimSchema = require('../schema/moim-schema.json');
+
 /**
  * 신규 모임 정보 정보
  */
 exports.createNewMoim = function(data, callback) {
-    if (typeof data.title !== 'string' || typeof data.locationName !== 'string' || typeof data.locationImageUrl !== 'string' ||
-        typeof data.locationLat !== 'string' || typeof data.locationLon !== 'string' || typeof data.locationPhone !== 'string' ||
-        typeof data.owner !== 'string' || Object.prototype.toString.call(data.member) !== '[object Array]') {
+    var dataValidateResult = schemaValidate(data, moimSchema);
 
+    if (dataValidateResult.errors.length > 0) {
         callback('insufficiency-form-data');
         return;
     }
 
     var moimObj = {
         title: data.title,
+        dateTime: data.dateTime,
         locationName: data.locationName,
         locationImageUrl: data.locationImageUrl,
         locationLat: data.locationLat,
@@ -165,9 +170,42 @@ exports.getDetails = function(moimIds, callback) {
         moimIds = [moimIds];
     }
 
-    var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` IN (' + connection.escape(moimIds) + ')';
+    var moimSql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` IN (' + connection.escape(moimIds) + ')';
+    var userMoimSql = 'SELECT * FROM `commonplace`.`userMoim` WHERE `moimId` IN (' + connection.escape(moimIds) + ')';
 
-    connection.query(sql, function(err, result) {
-        callback(err, result);
+    connection.query(moimSql, function(err, moim) {
+        if (err) {
+            callback('Moim 정보 조회 실패');
+            return;
+        } else {
+            connection.query(userMoimSql, function(err, userMoim) {
+                if (err) {
+                    callback('Moim 참여자 정보 조회 실패');
+                    return;
+                } else {
+                    var memberInMoim = {};
+                    var i, moimId;
+
+                    // make member list per moim
+                    for (i = 0; i < userMoim.length; i++) {
+                        moimId = userMoim[i].moimId;
+
+                        if (!memberInMoim[moimId]) {
+                            memberInMoim[moimId] = [];
+                        }
+
+                        memberInMoim[moimId].push(userMoim[i].phone);
+                    }
+
+                    // add member into moim object
+                    for (i = 0; i < moim.length; i++) {
+                        moimId = moim[i].id;
+                        moim[i].member = memberInMoim[moimId];
+                    }
+
+                    callback(null, moim);
+                }
+            });
+        }
     });
 }

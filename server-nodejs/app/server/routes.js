@@ -6,6 +6,8 @@ var GCM  = require('./modules/gcm-sender');
 var ULM  = require('./modules/user-location-manager');
 var MM   = require('./modules/moim-manager');
 var UTIL = require('./modules/utils');
+
+// etc
 var tag  = '[routes.js] ';
 
 module.exports = function(app) {
@@ -321,6 +323,7 @@ module.exports = function(app) {
      * @url /commonplace/moim/regist
      * method POST
      * @param {string} title 모임명
+     * @param {string} dateTime 모임시각 (YYYYMMDD HH:MM 의 formatted string)
      * @param {string} locationName 모임장소명
      * @param {string} locationImageUrl 모임장소 이미지 주소
      * @param {string} locationLat 모임장소 위도
@@ -334,23 +337,23 @@ module.exports = function(app) {
      **/
     app.post('/commonplace/moim/regist', function(req, res) {
         var data = {
-            title                 : req.body['title'],
-            locationName         : req.body['locationName'],
-            locationImageUrl     : req.body['locationImageUrl'],
-            locationLat         : req.body['locationLat'],
-            locationLon         : req.body['locationLon'],
-            locationPhone         : req.body['locationPhone'],
-            locationDesc         : req.body['locationDesc'],
-            owner                 : req.body['owner'],
-            member                 : req.body['member']
+            title            : req.body['title'],
+            dateTime         : req.body['dateTime'],
+            locationName     : req.body['locationName'],
+            locationImageUrl : req.body['locationImageUrl'],
+            locationLat      : req.body['locationLat'],
+            locationLon      : req.body['locationLon'],
+            locationPhone    : req.body['locationPhone'],
+            locationDesc     : req.body['locationDesc'],
+            owner            : req.body['owner'],
+            member           : req.body['member']
         };
 
         MM.createNewMoim(data, function(e, result) {
-            //TODO 에러 메시지 처리
             if (e){
                 res.status(400).send(e);
             } else {
-                 res.status(200).send(result);
+                res.status(200).send(result);
             }
         });
     });
