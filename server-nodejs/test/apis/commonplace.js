@@ -12,6 +12,7 @@ var url_myMoim = '/commonplace/moim/my';    // 내 모임 정보 조회
 var url_moimDetail = '/commonplace/moim/details';   // 모임 상세 정보 조회
 var url_moimNotiEnable = '/commonplace/moim/broadcast/enable';  // 모임 참여자 위치 정보 전송 활성화
 var url_moimNotiDisable = '/commonplace/moim/broadcast/disable'; // 모임 참여자 위치 정보 전송 비활성화
+var url_deleteMoim = '/commonplace/moim/delete'; // 모임 삭제
 
 var valid_param_for_user_creation = {
     phone: '01012340000',
@@ -44,9 +45,9 @@ var valid_param_for_moim_creation = {
     "member"           : ['01012340001', '01012340002']
 };
 
-describe('CommonPlace - Account', function() {
+describe('CommonPlace - Account (1/2)', function () {
 
-    describe('Create Account (' + url_createAccount + ')', function() {
+    describe('Create Account (' + url_createAccount + ')', function () {
 
         var params = valid_param_for_user_creation;
 
@@ -105,7 +106,7 @@ describe('CommonPlace - Account', function() {
         });
     });
 
-    describe('Update User Location(' + url_userLocation + ')', function() {
+    describe('Update User Location(' + url_userLocation + ')', function () {
         var params = valid_param_for_user_location;
 
         it('work fine with valid form data - ' + JSON.stringify(params), function(done) {
@@ -135,64 +136,6 @@ describe('CommonPlace - Account', function() {
         });
     });
 
-    describe('Delete Account (' + url_deleteAccount + ')', function() {
-        var params = valid_param_for_user_creation;
-
-        it('work fine with valid form data - ' + JSON.stringify(params), function(done) {
-            hippie(server)
-                .form()
-                .post(url_deleteAccount)
-                .send(params)
-                .expectStatus(200)
-                .end(function(err, res, body) {
-                    if (err) throw err;
-                    done();
-                });
-        });
-
-        it('returns fail with empty form data', function(done) {
-            hippie(server)
-                .form()
-                .post(url_deleteAccount)
-                .send()
-                .expectStatus(400)
-                .end(function(err, res, body) {
-                    if (err) throw err;
-                    done();
-                });
-        });
-
-        it('returns fail with invalid phone number - +82-10-1234-0000', function(done) {
-            var param = JSON.parse(JSON.stringify(params));
-            param.phone = '+82-10-1234-0000';
-
-            hippie(server)
-                .form()
-                .post(url_deleteAccount)
-                .send()
-                .expectStatus(400)
-                .end(function(err, res, body) {
-                    if (err) throw err;
-                    done();
-                });
-        });
-
-        it('returns fail with invalid phone number - 210-1234-0000', function(done) {
-            var param = JSON.parse(JSON.stringify(params));
-            param.phone = '210-1234-0000';
-
-            hippie(server)
-                .form()
-                .post(url_deleteAccount)
-                .send()
-                .expectStatus(400)
-                .end(function(err, res, body) {
-                    if (err) throw err;
-                    done();
-                });
-        });
-    });
-
 });
 
 
@@ -200,7 +143,7 @@ describe('CommonPlace - Moim', function() {
 
     var testMoimId; // for test
 
-    describe('Create Moim(' + url_createMoim + ')', function() {
+    describe('Create Moim(' + url_createMoim + ')', function () {
         var params = JSON.parse(JSON.stringify(valid_param_for_moim_creation));
 
         it('work fine with valid form data', function(done) {
@@ -294,4 +237,97 @@ describe('CommonPlace - Moim', function() {
                 });
         });
     });
+
+    describe('Delete Moim(' + url_deleteMoim + ')', function () {
+        var memberPhone1 = valid_param_for_moim_creation.member[0];
+        var moimOwnerPhone = valid_param_for_moim_creation.owner;
+
+        it('모임 참여 삭제 - ' + memberPhone1, function(done) {
+            hippie(server)
+                .json()
+                .form()
+                .post(url_deleteMoim)
+                .send({id: testMoimId, phone: memberPhone1})
+                .expectStatus(200)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+
+         it('모임 삭제 - ' + moimOwnerPhone, function(done) {
+            hippie(server)
+                .json()
+                .form()
+                .post(url_deleteMoim)
+                .send({id: testMoimId, phone: moimOwnerPhone})
+                .expectStatus(200)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+    });
+});
+
+describe('CommonPlace - Account (2/2)', function() {
+
+    describe('Delete Account (' + url_deleteAccount + ')', function () {
+        var params = valid_param_for_user_creation;
+
+        it('work fine with valid form data - ' + JSON.stringify(params), function(done) {
+            hippie(server)
+                .form()
+                .post(url_deleteAccount)
+                .send(params)
+                .expectStatus(200)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+
+        it('returns fail with empty form data', function(done) {
+            hippie(server)
+                .form()
+                .post(url_deleteAccount)
+                .send()
+                .expectStatus(400)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+
+        it('returns fail with invalid phone number - +82-10-1234-0000', function(done) {
+            var param = JSON.parse(JSON.stringify(params));
+            param.phone = '+82-10-1234-0000';
+
+            hippie(server)
+                .form()
+                .post(url_deleteAccount)
+                .send()
+                .expectStatus(400)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+
+        it('returns fail with invalid phone number - 210-1234-0000', function(done) {
+            var param = JSON.parse(JSON.stringify(params));
+            param.phone = '210-1234-0000';
+
+            hippie(server)
+                .form()
+                .post(url_deleteAccount)
+                .send()
+                .expectStatus(400)
+                .end(function(err, res, body) {
+                    if (err) throw err;
+                    done();
+                });
+        });
+    });
+
 });

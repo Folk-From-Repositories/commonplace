@@ -427,7 +427,7 @@ module.exports = function(app) {
      * 모임 참여자 위치 정보의 브로드캐스트 비활성화
      *
      * @url /commonplace/moim/broadcast/disable
-     * method POST
+     * @method POST
      * @param {int} id 모임 ID
      * @return {boolean} result
      **/
@@ -437,6 +437,31 @@ module.exports = function(app) {
 
         MM.disableLocationBroadcast(moimId, function(e, result) {
             //TODO 에러 메시지 처리
+            if (e){
+                res.status(400).send(e);
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    });
+
+    /**
+     * 모임 삭제
+     * - 개설자 요청시 모임 및 참여자 정보 삭제
+     * - 참여자 요청시 첨여 정보 삭제
+     *
+     * @url /commonplace/moim/broadcast/disable
+     * @ method POST
+     * @param {int} id 모임 ID
+     * @param {string} phone 요청자 전화번호
+     * @return {boolean} result
+     **/
+    app.post('/commonplace/moim/delete', function(req, res) {
+
+        var moimId = req.body['id'];
+        var phone  = req.body['phone'];
+
+        MM.deleteMoim(moimId, phone, function(e, result) {
             if (e){
                 res.status(400).send(e);
             } else {

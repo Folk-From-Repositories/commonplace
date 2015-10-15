@@ -154,6 +154,10 @@ exports.getMyMoims = function(phone, callback) {
     connection.query(sql, phone, function(err, result) {
         if (err) return callback(err);
 
+        if (result.length === 0) {
+            return callback(null, []);
+        }
+
         var moimIds = [];
 
         for (var i = 0; i < result.length; i++) {
@@ -212,6 +216,65 @@ exports.getDetails = function(moimIds, callback) {
     });
 }
 
+/**
+ * 모임 삭제 (owner만 삭제 가능, 참석자가 요청시 참여 정보에서만 삭제)
+ */
+exports.deleteMoim = function (moimId, phone, callback) {
+    phone = utils.phoneToDbFormat(phone);
+    if (isNaN(moimId)) {
+        return callback('invalid-moim-id');
+    } else if (typeof phone !== 'string') {
+        return callback('invalid-phone-number');
+    }
+
+    var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` = ' + connection.escape(moimId) + ' AND `owner` = ' + connection.escape(phone);
+
+    connection.query(sql, function (err, result) {
+        if (err) return callback('database-error');
+
+        if (result.length > 0) { // owner 가 모임 삭제
+            var moimDeleteSql = 'DELETE FROM `commonplace`.`moim` WHERE `id` = ' + connection.escape(moimId) + ' AND `owner` = ' + connection.escape(phone);
+            var userMoimDeleteSql = 'DELETE FROM `commonplace`.`userMoim` WHERE `moimId` = ' + connection.escape(moimId);
+
+            connection.beginTransaction(function (err) {
+                if (err) {
+                    return callback('트랜잭션 생성 실패');
+                }
+
+                connection.query(userMoimDeleteSql, function (err, userMoimDeleteResult) {
+                    if (err) {
+                        connection.rollback();
+                        return callback('모임 참여자 정보 삭제 실패');
+                    }
+
+                    connection.query(moimDeleteSql, function (err, moimDeleteResult) {
+                        if (err) {
+                            connection.rollback();
+                            return callback('모임 삭제 실패');
+                        }
+
+                        connection.commit(function(err) {
+                            if (err) {
+                                console.error('트랜잭션 커밋 에러', err);
+                            } else {
+                                callback(null, '모임 삭제 완료');
+                            }
+                        }); // commit                        
+                        
+                    });                    
+                });
+            });
+        } else { // 참여자 정보만 삭제
+            var memberDeleteSql = 'DELETE FROM `commonplace`.`userMoim` WHERE `moimId` = ' + connection.escape(moimId) + ' AND `phone` = ' + connection.escape(phone);
+            connection.query(memberDeleteSql, function (err, deleteResult) {
+                if (err) callback('모임 참여 정보 삭제 실패');
+                else callback(null, '모임 참여 정보 삭제 성공');
+            });
+        }
+    });
+
+
+}
 
 /**
  * 모임 참여자의 위치 정보 broadcast 기능 활성화
