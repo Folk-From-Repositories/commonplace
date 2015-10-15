@@ -2,6 +2,7 @@ package com.common.place;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -176,45 +177,50 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			String owner = Utils.getPhoneNumber(RegistGroupActivity.this);
 			String[] member = Utils.getPhoneNumArr(RegistGroupActivity.this); //Arrays.toString(member)
 			
-			List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
+			List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(10);
+			nameValuePairs.add(new BasicNameValuePair("title", title));
+			nameValuePairs.add(new BasicNameValuePair("dateTime", dateTime));
+			nameValuePairs.add(new BasicNameValuePair("locationName", locationName));
+			nameValuePairs.add(new BasicNameValuePair("locationImageUrl", locationImageUrl));
+			nameValuePairs.add(new BasicNameValuePair("locationLat", locationLat));
+			nameValuePairs.add(new BasicNameValuePair("locationLon", locationLon));
+			nameValuePairs.add(new BasicNameValuePair("locationPhone", locationPhone));
+			nameValuePairs.add(new BasicNameValuePair("locationDesc", locationDesc));
+			nameValuePairs.add(new BasicNameValuePair("owner", owner));
+			nameValuePairs.add(new BasicNameValuePair("member", Arrays.toString(member)));
 			
-//			Intent intentGroupMain = new Intent(getApplicationContext(), GroupMainActivity.class);
-//			intentGroupMain.putExtra("group",group);
-//			
     		try {
 				registerInBackground(new UrlEncodedFormEntity(nameValuePairs));
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				Logger.e(e.getMessage());
 			}
-//    		
-//			setResult(Constants.GROUP_MAIN_VIEW_REQ_CODE, intentGroupMain);
-//			
-//			finish();
 		}	
 	}
 	private void registerInBackground(HttpEntity entity) {
         new AsyncTask<HttpEntity, Void, String>() {
             @Override
             protected String doInBackground(HttpEntity... params) {
+            	String response = "";
                 try {
-                    sendReatuanrantDataToBackend(params[0]);
+                    response = sendReatuanrantDataToBackend(params[0]);
                 } catch (Exception e) {
                 	Logger.e(e.getMessage());
                 }
-				return null;
+				return response;
             }
 
 			@Override
 			protected void onPostExecute(String result) {
 				super.onPostExecute(result);
+				Logger.d(result);
 			}
             
         }.execute(entity, null, null);
     }
 	
 	//Transfer Data to Server(httpRequest)
-    private void sendReatuanrantDataToBackend(HttpEntity entity) {
-    	Utils.callToServer(Constants.SVR_MOIM_REGIST_URL, entity);
+    private String sendReatuanrantDataToBackend(HttpEntity entity) {
+    	return Utils.callToServer(Constants.SVR_MOIM_REGIST_URL, entity);
     }
 
     @Override

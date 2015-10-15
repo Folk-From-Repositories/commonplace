@@ -1,9 +1,11 @@
 package com.common.place;
 
-import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import org.apache.http.message.BasicNameValuePair;
 
 import com.common.place.model.ContactsModel;
 import com.common.place.model.GroupModel;
@@ -11,20 +13,23 @@ import com.common.place.service.GPSService;
 import com.common.place.uicomponents.CustomGridAdapter;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
+import com.common.place.util.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +38,9 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 
 	GridView grid;
 	TextView warningText;
+	
+	Button btn_1, btn_3;
+	
 	int count = 1;
 	
 	ArrayList<String> groupNameList = new ArrayList<String>();
@@ -42,8 +50,10 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 	
 	public static GroupModel group;
 	Intent serviceIntent;
+
+	ProgressDialog dialog;
 	
-	private final int PLACE_PICKER_REQUEST = 1;
+	private List<ActivityManager.RunningServiceInfo> runningServices;
 	
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
         @SuppressWarnings("deprecation")
@@ -106,39 +116,84 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
         
         warningText=(TextView)findViewById(R.id.group_warning);
            
-        findViewById(R.id.nextBtn2).setOnClickListener(this);
-        findViewById(R.id.nextBtn3).setOnClickListener(this);
+        btn_1 = (Button) findViewById(R.id.nextBtn1);
+        btn_3 = (Button) findViewById(R.id.nextBtn3);
+        
+        btn_1.setOnClickListener(this);
+        btn_3.setOnClickListener(this);
         
 		grid = (GridView)findViewById(R.id.grid);
         grid.setOnItemClickListener(this);
         
         IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
         registerReceiver(receiver, filter);
-        
-        serviceIntent = new Intent(this, GPSService.class);
-        startService(serviceIntent);
     }
     
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    Logger.d("GrouopMainView's onActivityResult: " + resultCode);
-	    switch(resultCode){
-	    	case Constants.GROUP_MAIN_VIEW_REQ_CODE:
-	    		Serializable groupInfo = data.getSerializableExtra("group");
-	    		group = (GroupModel)groupInfo;
-	    		groupList.add(group);
-	    		addGroup(group.getLocationName(),R.drawable.soju);
-	    		break;
-	    	case PLACE_PICKER_REQUEST:
-	    		if (resultCode == RESULT_OK) {
-	    	        Place place = PlacePicker.getPlace(data, this);
-	    	        String toastMsg = String.format("Place: %s", place.getName());
-	    	        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-	    	    }
-	    		break;
-	    }
-	    setGridViewAndText();
+	protected void onResume() {
+		super.onResume();
+		
+		if(isRunning()){
+        	btn_1.setText(GroupMainActivity.this.getResources().getString(R.string.btn_stop_service));
+        }else{
+        	btn_1.setText(GroupMainActivity.this.getResources().getString(R.string.btn_start_service));
+        }
+		
+		dialog = ProgressDialog.show(GroupMainActivity.this, "", GroupMainActivity.this.getResources().getText(R.string.loading), true);
+		retrieveGroupList();
 	}
+
+	private void retrieveGroupList(){
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    retrieveGroupListInBackground();
+                } catch (Exception e) {
+                	Logger.e(e.getMessage());
+                }
+				return null;
+            }
+			@Override
+			protected void onPostExecute(Void result) {
+				super.onPostExecute(result);
+				dialog.dismiss();
+			}
+        }.execute(null, null, null);
+	}
+	
+	private void retrieveGroupListInBackground() {
+		
+		List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
+		nameValuePairs.add(new BasicNameValuePair("phone", Utils.getPhoneNumber(GroupMainActivity.this)));
+		
+    	String response = Utils.callToServer(Constants.SVR_RETRIEVE_GROUP, nameValuePairs);
+    	Logger.d(response);
+    }
+	
+	
+	
+	
+//	@Override
+//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//	    Logger.d("GrouopMainView's onActivityResult: " + resultCode);
+//	    switch(resultCode){
+//	    	case Constants.GROUP_MAIN_VIEW_REQ_CODE:
+//	    		Serializable groupInfo = data.getSerializableExtra("group");
+//	    		group = (GroupModel)groupInfo;
+//	    		groupList.add(group);
+//	    		addGroup(group.getLocationName(),R.drawable.soju);
+//	    		break;
+//	    	case PLACE_PICKER_REQUEST:
+//	    		if (resultCode == RESULT_OK) {
+//	    	        Place place = PlacePicker.getPlace(data, this);
+//	    	        String toastMsg = String.format("Place: %s", place.getName());
+//	    	        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+//	    	    }
+//	    		break;
+//	    }
+//	    setGridViewAndText();
+//	}
 	
 	public void setGridViewAndText(){
     	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText(R.string.grouplist_not_regist);
@@ -181,18 +236,21 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 
 	@Override
 	protected void onDestroy() {
-//		GPSService.shouldContinue = false;
-		stopService(serviceIntent);
 		super.onDestroy();
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-		case R.id.nextBtn2:
-			removeAllGroup();
-			setGridViewAndText();
-			Logger.d("REMOVE ALL GROUP");
+		case R.id.nextBtn1:
+			serviceIntent = new Intent(getApplication(), GPSService.class);
+	        if(isRunning()){
+	        	stopService(serviceIntent);
+	        	btn_1.setText(GroupMainActivity.this.getResources().getString(R.string.btn_start_service));
+	        }else{
+		        startService(serviceIntent);
+		        btn_1.setText(GroupMainActivity.this.getResources().getString(R.string.btn_stop_service));
+	        }
 			break;
 		case R.id.nextBtn3:
 			Logger.d("REGISTER GROUP");
@@ -209,5 +267,16 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 		startActivityForResult(intent,Constants.MEMBER_ACTIVITY_REQ_CODE);
 	}
     
-    
+    private boolean isRunning(){
+    	boolean isRunning = false;
+		ActivityManager activityManager = (ActivityManager)getSystemService("activity");
+
+        runningServices = activityManager.getRunningServices(100);
+        for(int inj = 0 ; inj < runningServices.size() ; inj ++){
+            if(runningServices.get(inj).service.getClassName().equals(GPSService.class.getName())){
+            	isRunning = true;
+            }
+        }
+        return isRunning;
+    }
 }

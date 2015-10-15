@@ -8,8 +8,9 @@ public class Constants {
 	public static final String GOOGLE_API_KEY = "AIzaSyDDlcMIjePsgpoGy9MmVpZJVV6veblp9xU";
 	//public static final String GOOGLE_API_KEY = "AIzaSyALxswOwsqnWslA65rqrQ2qJ8peKsC0aG4";
 	
-	public static final String HOST                = "http://54.64.165.15:58000/";
+	public static final String HOST                = "http://54.64.165.15:58000";
 	public static final String SVR_REGIST_URL      = HOST + "/commonplace/regist";
+	public static final String SVR_RETRIEVE_GROUP  = HOST + "/commonplace/moim/my";
 	public static final String SVR_MOIM_REGIST_URL = HOST + "/commonplace/moim/regist";
 	public static final String TEST_URL            = HOST + "/test/commonplace/gcm/send";
 	public static final String SVR_USER_LOCATION   = HOST + "/commonplace/user/location";

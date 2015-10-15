@@ -35,5 +35,7 @@
     <string name="txt_dialog_body">어플리케이션에서 사용할 이름을 입력하세요.</string>
     <string name="btn_user_name_confirm">시작하기</string>
     
+    <string name="btn_start_service">위치 전송</string>
+    <string name="btn_stop_service">위치 중지</string>
     
 </resources>
