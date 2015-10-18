@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import com.common.place.model.ContactsModel;
 import com.common.place.model.Group;
 import com.common.place.model.Member;
+import com.common.place.model.NetworkResponse;
 import com.common.place.model.Restaurant;
 import com.common.place.sms.SmsSender;
 import com.common.place.util.Constants;
@@ -218,28 +219,29 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		}	
 	}
 	private void registerInBackground(HttpEntity entity) {
-        new AsyncTask<HttpEntity, Void, HttpResponse>() {
+        new AsyncTask<HttpEntity, Void, NetworkResponse>() {
             @Override
-            protected HttpResponse doInBackground(HttpEntity... params) {
-            	HttpResponse response = null;
+            protected NetworkResponse doInBackground(HttpEntity... params) {
+            	NetworkResponse nResponse = null;
                 try {
-                    response = sendReatuanrantDataToBackend(params[0]);
+                	HttpResponse response = sendReatuanrantDataToBackend(params[0]);
+                	nResponse = new NetworkResponse(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity(), HTTP.UTF_8));
                 } catch (Exception e) {
                 	e.printStackTrace();
                 }
-				return response;
+				return nResponse;
             }
 
 			@Override
-			protected void onPostExecute(HttpResponse response) {
+			protected void onPostExecute(NetworkResponse response) {
 				super.onPostExecute(response);
-				Logger.d("registerInBackground() onPostExecute:"+response.getStatusLine().getStatusCode());
+				Logger.d("registerInBackground() onPostExecute:"+response.getResponseCode());
 				
-				int responseCode = response.getStatusLine().getStatusCode();
+				int responseCode = response.getResponseCode();
 				
 				if(responseCode == 200){
 					try {
-						String responseBody = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+						String responseBody = response.getReponseString();
 						
 						JSONObject object = Utils.getJsonObjectFromString(responseBody);
 						

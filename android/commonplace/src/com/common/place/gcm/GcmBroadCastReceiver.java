@@ -30,4 +30,6 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         Intent i = new Intent(Constants.INNER_BROADCAST_RECEIVER);
         context.sendBroadcast(i);
 	}
+	
+	
 }

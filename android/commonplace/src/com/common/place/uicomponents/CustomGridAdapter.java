@@ -47,6 +47,7 @@ public class CustomGridAdapter extends BaseAdapter{
 	private class ViewHolder {
 		ImageView locationImage;
         TextView title;
+        TextView item_vicinity;
     }    
         
 	@SuppressLint("InflateParams")
@@ -58,8 +59,9 @@ public class CustomGridAdapter extends BaseAdapter{
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.grid_single, null);
 			holder = new ViewHolder();
-			holder.title = (TextView) convertView.findViewById(R.id.grid_text);
 			holder.locationImage = (ImageView) convertView.findViewById(R.id.grid_image);
+			holder.title = (TextView) convertView.findViewById(R.id.title);
+			holder.item_vicinity = (TextView) convertView.findViewById(R.id.item_vicinity);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -67,6 +69,7 @@ public class CustomGridAdapter extends BaseAdapter{
  
 		Group group = groupList.get(position);
 		holder.title.setText(group.getTitle());
+		holder.item_vicinity.setText(group.getLocationDesc());
 		
 		holder.locationImage.setImageResource(R.drawable.icon);
         if(group.getLocationImageUrl() != null && !"".equals(group.getLocationImageUrl())){

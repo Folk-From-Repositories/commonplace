@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.common.place.db.Provider;
+import com.common.place.model.ContactsModel;
 import com.common.place.model.Group;
 import com.common.place.model.Member;
 import com.google.android.gms.common.ConnectionResult;
@@ -463,7 +464,18 @@ String projectname = data.getString("name"); // get the name from data.
 	    return icon;
 	}
 	
-	
+	public static void updateMemberLocation(Context context, ContactsModel contact){
+		
+		ContentValues values = new ContentValues();
+		values.put(Provider.NAME, contact.getName());
+		//values.put(Provider.PHONE_NUMBER, contact.getPhone());
+		values.put(Provider.LOCATION_LAT, contact.getLocationLat());
+		values.put(Provider.LOCATION_LON, contact.getLocationLon());
+		
+		context.getContentResolver().update(Provider.MEMBER_CONTENT_URI, values, Provider.PHONE_NUMBER + " = " + contact.getPhone(), null);
+		
+		
+	}
 	
 	
 	
