@@ -2,7 +2,7 @@ package com.common.place.model;
 
 import java.io.Serializable;
 
-public class RestaurantModel implements Serializable{
+public class Restaurant implements Serializable{
 	 
     /**
 	 * 
@@ -26,11 +26,11 @@ public class RestaurantModel implements Serializable{
 	}
 	private boolean isGroupHeader = false;
  
-    public RestaurantModel(String title) {
+    public Restaurant(String title) {
         isGroupHeader = true;
     }
     
-	public RestaurantModel(String photo_reference, String name, String rating, String imageUrl, String phone, String locationLat,
+	public Restaurant(String photo_reference, String name, String rating, String imageUrl, String phone, String locationLat,
 			String locationLon, boolean isGroupHeader, String vicinity) {
 		super();
 		this.photo_reference = photo_reference;

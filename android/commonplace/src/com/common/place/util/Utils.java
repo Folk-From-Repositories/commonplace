@@ -1,6 +1,5 @@
 package com.common.place.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,14 +14,21 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.common.place.db.Provider;
+import com.common.place.model.Group;
 import com.common.place.model.Member;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -35,6 +41,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -53,14 +60,16 @@ public class Utils {
         nameValuePairs.add(new BasicNameValuePair("name", Utils.getPhoneNumber(context)));
 
 		try {
-			return callToServer(Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs));
-		} catch (UnsupportedEncodingException e) {
-			Logger.e(e.getMessage());
+			HttpResponse response = callToServer(Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs));
+			String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+			return responseString;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
     }
 	
-	public static String callToServer(String url, HttpEntity entity){
+	public static HttpResponse callToServer(String url, HttpEntity entity){
 		HttpClient httpClient = new DefaultHttpClient();
         try {
             HttpPost httpPost = new HttpPost();
@@ -68,14 +77,11 @@ public class Utils {
             httpPost.setEntity(entity);
 
             HttpResponse response = httpClient.execute(httpPost);
-            String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
             
-            Logger.d("response from ["+url+"]:"+responseString);
-            
-            return responseString;
+            return response;
             
         } catch (Exception e) {
-            Logger.e(e.getMessage());
+            e.printStackTrace();
         }
         return null;
 	}
@@ -94,7 +100,7 @@ public class Utils {
             //Logger.d("response from ["+url+"]:"+responseString);
             return responseString;
         } catch (Exception e) {
-            Logger.e(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
@@ -319,9 +325,159 @@ public class Utils {
 		}else{
 			return new String[0];
 		}
+	}
+	
+	/*
+	 * JSONObject jObject  = new JSONObject(output); // json
+JSONObject data = jObject.getJSONObject("data"); // get data object
+String projectname = data.getString("name"); // get the name from data.
+	 */
+	public static JSONObject getJsonObjectFromString(String orgText){
+		try {
+			return new JSONObject(orgText);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void deleteGroupList(Context context){
+		context.getContentResolver().delete(Provider.GROUP_CONTENT_URI, null, null);
+	}
+	
+	public static ArrayList<Group> makeGroupListToDb(Context context, String orgText){
 		
+		ArrayList<Group> groupList = new ArrayList<Group>();
 		
+		JSONArray groupListJson = null;
+		try {
+			groupListJson = new JSONArray(orgText);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		for(int i = 0 ; groupListJson != null && i < groupListJson.length() ; i++){
+			
+			try {
+				JSONObject groupObject = (JSONObject) groupListJson.get(i);
+				
+				JSONArray memberArrayObject = groupObject.getJSONArray("member");
+				
+				ArrayList<String> memberArr = new ArrayList<String>(); 
+				
+				for(int j = 0 ; j < memberArrayObject.length() ; j++){
+					memberArr.add(memberArrayObject.get(j).toString());
+				}
+				
+				Group group = new Group(
+						groupObject.getString("id"),
+						groupObject.getString("title"),
+						groupObject.getString("owner"),
+						groupObject.getString("dateTime"),
+						groupObject.getString("locationName"),
+						groupObject.getString("locationImageUrl"),
+						groupObject.getString("locationLat"),
+						groupObject.getString("locationLon"),
+						groupObject.getString("locationPhone"),
+						groupObject.getString("locationDesc"),
+						memberArr
+						); 
+				
+				groupList.add(group);
+				
+				Logger.d(group.toString());
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		storeGroupListToDb(context, groupList);
+		
+		return groupList;
+	}
+	
+	public static void storeGroupListToDb(Context context, ArrayList<Group> groupList){
+		
+		if(groupList != null && groupList.size() > 0){
+			for(int i = 0 ; i < groupList.size() ; i++){
+				Group group = groupList.get(i);
+				
+				ContentValues groupValues = new ContentValues();
+				groupValues.put(Provider.GROUP_ID, group.getId());
+				groupValues.put(Provider.TITLE, group.getTitle());
+				groupValues.put(Provider.OWNER, group.getOwner());
+				groupValues.put(Provider.TIME, group.getTime());
+				groupValues.put(Provider.LOCATION_NAME, group.getLocationName());
+				groupValues.put(Provider.LOCATION_IMAGE_URL, group.getLocationImageUrl());
+				groupValues.put(Provider.LOCATION_LAT, group.getLocationLat());
+				groupValues.put(Provider.LOCATION_LON, group.getLocationLon());
+				groupValues.put(Provider.LOCATION_PHONE, group.getLocationPhone());
+				groupValues.put(Provider.LOCATION_DESC, group.getLocationDesc());
+				
+				context.getContentResolver().insert(Provider.GROUP_CONTENT_URI, groupValues);
+				
+				ArrayList<String> memberArr = group.getMemeber();
+				
+				for(int j = 0 ; j < memberArr.size() ; j++){
+					
+					String phoneNum = memberArr.get(j);
+					
+					ContentValues memberValues = new ContentValues();
+					memberValues.put(Provider.GROUP_ID, group.getId());
+					memberValues.put(Provider.NAME, "NAME");
+					memberValues.put(Provider.PHONE_NUMBER, phoneNum);
+					memberValues.put(Provider.LOCATION_LAT, "0");
+					memberValues.put(Provider.LOCATION_LON, "0");
+					
+					context.getContentResolver().insert(Provider.MEMBER_CONTENT_URI, memberValues);
+				}
+				
+			}
+			
+		}
 		
 	}
+	
+	public static BitmapDescriptor getTextMarker(String text) {
+
+	    Paint paint = new Paint();
+	    /* Set text size, color etc. as needed */
+	    paint.setTextSize(24);
+
+	    int width = (int)paint.measureText(text);
+	    int height = (int)paint.getTextSize();
+
+	    paint.setTextAlign(Align.CENTER);
+	    // Create a transparent bitmap as big as you need
+	    Bitmap image = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+	    Canvas canvas = new Canvas(image);
+	    // During development the following helps to see the full
+	    // drawing area:
+	    canvas.drawColor(0x50A0A0A0);
+	    // Start drawing into the canvas
+	    canvas.translate(width / 2f, height);
+	    canvas.drawText(text, 0, 0, paint);
+	    BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(image);
+	    return icon;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

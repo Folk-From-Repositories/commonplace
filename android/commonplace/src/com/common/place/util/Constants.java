@@ -22,8 +22,8 @@ public class Constants {
 	public static final int RESTAURANT_LIST_REQ_CODE = 300;
 	public static final int GROUP_MAIN_VIEW_REQ_CODE = 400;
 	
-	public static final String REQUEST_TYPE_GPS_GETHERING = "gethering";
-	public static final String REQUEST_TYPE_MAP_CREATE = "create";
+	public static final int REQUEST_TYPE_GPS_GETHERING = 7777;
+	public static final int REQUEST_TYPE_MAP_CREATE    = 8888;
 	
 	public final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     
@@ -37,5 +37,7 @@ public class Constants {
     public static final String SHARED_PREFERENCE_FILE_NAME = "commonPlaceSpref";
     
     public static String PHONE_NUMBER = "";
+    
+    public static String INNER_BROADCAST_RECEIVER = "com.common.place.innerbroadcast";
     
 }

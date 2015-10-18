@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.common.place.db.Provider;
-import com.common.place.model.ContactsModel;
-import com.common.place.util.Constants;
-import com.common.place.util.Logger;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -47,7 +44,6 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
     private Button confirm, selectAll;
     
     ArrayList<HashMap<String, String>> contactArrayList;
-    ArrayList<ContactsModel> personList = new ArrayList<ContactsModel>();
     SimpleAdapter adapter;
     ListAdapter recipientAdapter;
     Cursor recipientCursor;
@@ -110,26 +106,14 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
     
     @Override
     public void onClick(View v) {
-        
         switch(v.getId()){
-                
-            case R.id.btn_confirm:
-            	Logger.d( "Select Restaurant: " + recipientCursor);
-				//initGroup();
-				Intent intent = new Intent(getApplicationContext(), RegistGroupActivity.class);
-				intent.putExtra("contactArrayList", personList);
-				MemberActivity.this.setResult(Constants.MEMBER_ACTIVITY_REQ_CODE, intent);
-                MemberActivity.this.finish();
-                
-                break;
-                
-            case R.id.btn_select_all:
-                
-                addFromSearched(search_text.getText().toString());
-                
-                break;
-                
-                
+        case R.id.btn_confirm:
+            MemberActivity.this.finish();
+            break;
+            
+        case R.id.btn_select_all:
+            addFromSearched(search_text.getText().toString());
+            break;
         }
         
     }
@@ -295,9 +279,6 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
         ContentValues values = new ContentValues();
         values.put(Provider.RECIPIENT, recipient);
         values.put(Provider.PHONE_NUMBER, phoneNumber);
-        
-        ContactsModel model = new ContactsModel(recipient,phoneNumber,"","");
-		personList.add(model);
         
         Cursor cursor = getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, Provider.PHONE_NUMBER+" = \'"+phoneNumber+"\'", null, null);
         if(cursor.getCount() > 0){

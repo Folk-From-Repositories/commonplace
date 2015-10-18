@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 
-import com.common.place.model.RestaurantModel;
+import com.common.place.model.Restaurant;
 import com.common.place.uicomponents.RestaurantArrayAdapter;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
@@ -33,7 +33,7 @@ import android.widget.ListView;
 public class RestaurantListActivity extends Activity implements View.OnClickListener {
 
 	public RestaurantArrayAdapter adapter;
-	private ArrayList<RestaurantModel> models;
+	private ArrayList<Restaurant> models;
 	
 	LatLng selectedlatLng;
 	ProgressDialog dialog;
@@ -46,7 +46,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_restaurant_list_view);
 		
-		models = new ArrayList<RestaurantModel>();
+		models = new ArrayList<Restaurant>();
 		
 		Intent intent = getIntent();
 		selectedlatLng = intent.getParcelableExtra("location");
@@ -90,7 +90,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
     	try {
     		pipe = URLEncoder.encode("|","UTF-8");
     	} catch (Exception e) {
-    		Logger.e(e.getMessage());
+    		e.printStackTrace();
     	}
     	List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("key", Constants.GOOGLE_API_KEY));
@@ -108,7 +108,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
     	try {
     		responseString = Utils.callToServer(Constants.RESTAURANT_URL, nameValuePairs);
 		} catch (Exception e) {
-			Logger.e(e.getMessage());
+			e.printStackTrace();
 		}
     	requestCount++;
     	
@@ -188,10 +188,10 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 	                    nameValuePairs.add(new BasicNameValuePair("photoreference", photo_reference));
 	                    url = "https://maps.googleapis.com/maps/api/place/photo" + Utils.makeGetParams(nameValuePairs);
                 	}
-                	models.add(new RestaurantModel(url, name, rating, icon, "02-927-3745", lat, lon, false, vicinity));
+                	models.add(new Restaurant(url, name, rating, icon, "02-927-3745", lat, lon, false, vicinity));
             	}
         	}catch(Exception e){
-        		Logger.e(e.getMessage());
+        		e.printStackTrace();
         	}
         }
         if(pageToken != null && requestCount < 3){

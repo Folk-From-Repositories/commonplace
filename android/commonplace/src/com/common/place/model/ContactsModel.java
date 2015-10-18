@@ -1,24 +1,25 @@
 package com.common.place.model;
 
-import java.io.Serializable;
-
-public class ContactsModel implements Serializable{
+public class ContactsModel{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private String groupId;
 	private String name;
 	private String phone;
 	private String locationLat;
 	private String locationLon;
-	
-	public ContactsModel(String name, String phone, String locationLat, String locationLon) {
+	public ContactsModel(String groupId, String name, String phone, String locationLat, String locationLon) {
 		super();
+		this.groupId = groupId;
 		this.name = name;
 		this.phone = phone;
 		this.locationLat = locationLat;
 		this.locationLon = locationLon;
+	}
+	public String getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 	public String getName() {
 		return name;
@@ -44,9 +45,7 @@ public class ContactsModel implements Serializable{
 	public void setLocationLon(String locationLon) {
 		this.locationLon = locationLon;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+	
 	
 	
 }

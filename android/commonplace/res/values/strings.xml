@@ -25,6 +25,8 @@
     <string name="group_not_regist">등록된 모임이 없습니다.</string>
     <string name="memeber_not_regist">등록된 인원이 없습니다.</string>
     <string name="grouplist_not_regist">등록된 모임 그룹이 없습니다.</string>
+    <string name="regist_error">모임 등록에 실패하였습니다!</string>
+    <string name="regist_success">모임 등록에 성공하였습니다!</string>
     
     <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!!</string>
     

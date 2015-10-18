@@ -1,13 +1,10 @@
 package com.common.place.service;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -18,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.common.place.util.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -31,8 +29,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.telephony.TelephonyManager;
-import android.widget.Toast;
 
 public class GPSService extends Service implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
@@ -49,9 +45,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 	public void onStart(Intent intent, int startId) {
 		Logger.w("START SERVICE!!!!");
 		
-		TelephonyManager telManager = (TelephonyManager)getApplicationContext().getSystemService(GPSService.TELEPHONY_SERVICE); 
-        String orgNum = telManager.getLine1Number();
-        phoneNum = orgNum.substring(orgNum.length() - 11);
+        phoneNum = Utils.getPhoneNumber(this);
 		
 		buildGoogleApiClient();
 		mGoogleApiClient.connect();
@@ -93,11 +87,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 		
 		Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (loc != null) {
-        	
-        	Toast.makeText(getApplicationContext(), loc.getLatitude()+"\n"+loc.getLongitude(), Toast.LENGTH_LONG).show();
-        	
-        	Logger.i("[Position Service] latitude :"+loc.getLatitude());
-        	Logger.i("[Position Service] longitude:"+loc.getLongitude());
+        	Logger.d("CHANGED:"+loc.getLatitude()+", "+loc.getLongitude());
         	saveUserLocationToServer(loc);
         } else {
             Logger.w("[Position Service] Getting location failed....");
@@ -116,8 +106,10 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 
 	@Override
 	public void onLocationChanged(Location location) {
-		Toast.makeText(getApplicationContext(), "CHANGED:\n"+location.getLatitude()+"\n"+location.getLongitude(), Toast.LENGTH_LONG).show();
-		//saveUserLocationToServer(location);
+		//Toast.makeText(getApplicationContext(), "CHANGED:\n"+location.getLatitude()+"\n"+location.getLongitude(), Toast.LENGTH_LONG).show();
+		
+		Logger.d("CHANGED:"+location.getLatitude()+", "+location.getLongitude());
+		saveUserLocationToServer(location);
 	}
 
 	@Override
@@ -154,7 +146,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
                     Logger.d("SERVER RESPONE: "+responseString);
 
                 } catch (Exception e) {
-                    Logger.e(e.getMessage());
+                    e.printStackTrace();
                 }                
             }
         };

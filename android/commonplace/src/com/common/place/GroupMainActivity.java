@@ -1,112 +1,55 @@
 package com.common.place;
 
-import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
-import com.common.place.model.ContactsModel;
-import com.common.place.model.GroupModel;
+import com.common.place.db.Provider;
+import com.common.place.model.Group;
 import com.common.place.service.GPSService;
 import com.common.place.uicomponents.CustomGridAdapter;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.common.place.util.Utils;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class GroupMainActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener{
 
 	GridView grid;
 	TextView warningText;
-	
+	LinearLayout gridLayout;
 	Button btn_1, btn_3;
 	
 	int count = 1;
-	
-	ArrayList<String> groupNameList = new ArrayList<String>();
-	ArrayList<Integer> groupIdList = new ArrayList<Integer>();
-	
-	public static ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
-	
-	public static GroupModel group;
-	Intent serviceIntent;
 
 	ProgressDialog dialog;
 	
+	CustomGridAdapter adapter;
+	
+	ArrayList<Group> groupList;
+	
+	Intent serviceIntent;
 	private List<ActivityManager.RunningServiceInfo> runningServices;
 	
-	private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @SuppressWarnings("deprecation")
-		@Override
-        public void onReceive(Context context, Intent intent) {
-        	
-        	Bundle bundle = intent.getExtras();
-    		Iterator<String> iterator = bundle.keySet().iterator();
-            Toast.makeText(getApplicationContext(), "received", Toast.LENGTH_SHORT).show();
-    		Logger.d("KMC TEST AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaa");
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                String value = bundle.get(key).toString();
-                Logger.d("onMessage :: key = ^" + key 
-                        + "^, value = ^" + URLDecoder.decode(value) + "^");
-                
-                if(key.compareTo("member")==0){
-                	Logger.d("KMC TEST 01");
-                	//new Gson().fromJson(, ContactsModel.class);
-                	//ArrayList<ContactsModel> memeber = new Gson().fromJson(value, ArrayList<ContactsModel>);
-                	
-                	JsonElement jelement = new JsonParser().parse(value);
-                    JsonArray  json = jelement.getAsJsonArray();
-                   
-                    
-                    ArrayList<ContactsModel> aaa = new ArrayList<ContactsModel>();
-                    
-                    
-                    for(int i=0;i<json.size();i++){
-                    	
-                    	ContactsModel a = new ContactsModel("",json.get(i).getAsJsonObject().get("phone").getAsString(), 
-                    			json.get(i).getAsJsonObject().get("latitude").getAsString(), 
-                    			json.get(i).getAsJsonObject().get("longitude").getAsString()
-                    			);
-                    	aaa.add(a);
-                    }
-                    //if(groupList.size() > 0){
-                    	groupList.get(0).setMemeber(aaa);
-                    //}
-                	
-                	//CreateMapView.group = 
-//                	Intent i = new Intent(CreateMapView.context, CreateMapView.class);
-//                	i.putExtra("requestType", Constants.REQUEST_TYPE_GPS_GETHERING);
-//                	i.putExtra("memeber", value);
-//                	Logger.d("KMC TEST 02");
-//                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    Logger.d("KMC TEST 03");
-//                    context.startActivity(i);
-//                    Logger.d("KMC TEST 04");
-                }
-            }
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,13 +68,17 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 		grid = (GridView)findViewById(R.id.grid);
         grid.setOnItemClickListener(this);
         
-        IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
-        registerReceiver(receiver, filter);
+        gridLayout = (LinearLayout) findViewById(R.id.gridLayout);
+        
+        adapter = new CustomGridAdapter(GroupMainActivity.this, new ArrayList<Group>());
+        grid.setAdapter(adapter);
     }
     
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		setGridVisible(false);
 		
 		if(isRunning()){
         	btn_1.setText(GroupMainActivity.this.getResources().getString(R.string.btn_stop_service));
@@ -150,13 +97,22 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
                 try {
                     retrieveGroupListInBackground();
                 } catch (Exception e) {
-                	Logger.e(e.getMessage());
+                	e.printStackTrace();
                 }
+                
+                groupList = getMemberListFromDB();
+                
 				return null;
             }
 			@Override
 			protected void onPostExecute(Void result) {
 				super.onPostExecute(result);
+				
+				adapter.setArr(groupList);
+				adapter.notifyDataSetChanged();
+				
+				setGridVisible(true);
+				
 				dialog.dismiss();
 			}
         }.execute(null, null, null);
@@ -167,73 +123,68 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 		List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
 		nameValuePairs.add(new BasicNameValuePair("phone", Utils.getPhoneNumber(GroupMainActivity.this)));
 		
-    	String response = Utils.callToServer(Constants.SVR_RETRIEVE_GROUP, nameValuePairs);
-    	Logger.d(response);
-    }
-	
-	
-	
-	
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//	    Logger.d("GrouopMainView's onActivityResult: " + resultCode);
-//	    switch(resultCode){
-//	    	case Constants.GROUP_MAIN_VIEW_REQ_CODE:
-//	    		Serializable groupInfo = data.getSerializableExtra("group");
-//	    		group = (GroupModel)groupInfo;
-//	    		groupList.add(group);
-//	    		addGroup(group.getLocationName(),R.drawable.soju);
-//	    		break;
-//	    	case PLACE_PICKER_REQUEST:
-//	    		if (resultCode == RESULT_OK) {
-//	    	        Place place = PlacePicker.getPlace(data, this);
-//	    	        String toastMsg = String.format("Place: %s", place.getName());
-//	    	        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
-//	    	    }
-//	    		break;
-//	    }
-//	    setGridViewAndText();
-//	}
-	
-	public void setGridViewAndText(){
-    	if(groupIdList.size() > 0) warningText.setText(""); else warningText.setText(R.string.grouplist_not_regist);
+    	HttpResponse response = null;
+		try {
+			response = Utils.callToServer(Constants.SVR_RETRIEVE_GROUP, new UrlEncodedFormEntity(nameValuePairs));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		
-		CustomGridAdapter adapter = new CustomGridAdapter(GroupMainActivity.this, groupNameList, groupIdList);
-        grid.setAdapter(adapter);
+		int statusCode = response.getStatusLine().getStatusCode();
+		
+		if(statusCode == 200){
+			try {
+				Utils.deleteGroupList(GroupMainActivity.this);
+				Utils.makeGroupListToDb(GroupMainActivity.this, EntityUtils.toString(response.getEntity(), HTTP.UTF_8));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+    	//String test = "[{\"id\":1,\"title\":\"테스트 모임\",\"dateTime\":\"20151023 19:00\",\"locationName\":\"광화문 광장\",\"locationImageUrl\":\"https://geo1.ggpht.com/cbk?photoid=evqsbHDXmIMAAAQINlDYrA&output=photo&cb_client=search.TACTILE.gps&minw=408&minh=256\",\"locationLat\":\"37.574255\",\"locationLon\":\"126.976754\",\"locationPhone\":\"02-120\",\"locationDesc\":\"세종대왕 동상 앞에서 봅니다.\",\"broadcast\":0,\"owner\":\"01012340000\",\"member\":[\"01012340000\",\"01012340001\",\"01012340002\"]},{\"id\":2,\"title\":\"테스트 모임\",\"dateTime\":\"20151023 19:00\",\"locationName\":\"광화문 광장\",\"locationImageUrl\":\"https://geo1.ggpht.com/cbk?photoid=evqsbHDXmIMAAAQINlDYrA&output=photo&cb_client=search.TACTILE.gps&minw=408&minh=256\",\"locationLat\":\"37.574255\",\"locationLon\":\"126.976754\",\"locationPhone\":\"02-120\",\"locationDesc\":\"세종대왕 동상 앞에서 봅니다.\",\"broadcast\":1,\"owner\":\"01012340000\",\"member\":[\"01012340000\",\"01012340001\",\"01012340002\"]},{\"id\":3,\"title\":\"테스트 모임\",\"dateTime\":\"20151023 19:00\",\"locationName\":\"광화문 광장\",\"locationImageUrl\":\"https://geo1.ggpht.com/cbk?photoid=evqsbHDXmIMAAAQINlDYrA&output=photo&cb_client=search.TACTILE.gps&minw=408&minh=256\",\"locationLat\":\"37.574255\",\"locationLon\":\"126.976754\",\"locationPhone\":\"02-120\",\"locationDesc\":\"세종대왕 동상 앞에서 봅니다.\",\"broadcast\":1,\"owner\":\"01012340000\",\"member\":[\"01012340000\",\"01012340001\",\"01012340002\"]},{\"id\":4,\"title\":\"테스트 모임\",\"dateTime\":\"20151023 19:00\",\"locationName\":\"광화문 광장\",\"locationImageUrl\":\"https://geo1.ggpht.com/cbk?photoid=evqsbHDXmIMAAAQINlDYrA&output=photo&cb_client=search.TACTILE.gps&minw=408&minh=256\",\"locationLat\":\"37.574255\",\"locationLon\":\"126.976754\",\"locationPhone\":\"02-120\",\"locationDesc\":\"세종대왕 동상 앞에서 봅니다.\",\"broadcast\":0,\"owner\":\"01012340000\",\"member\":[\"01012340000\",\"01012340001\",\"01012340002\"]}]";
     }
 	
-    public void addGroup(String groupName, int imageId){
-    	groupNameList.add(groupName);
-    	groupIdList.add(imageId);
-    }
-    
-    public void removeGroup(int position){
-    	groupNameList.remove(position);
-		groupIdList.remove(position);
-    }
-    
-    public void removeGroupByName(String groupName){
-    	for (int index =0 ;index < groupNameList.size() ; index++) {
-			if(groupNameList.get(index) == groupName){
-				removeGroup(index);
+	private ArrayList<Group> getMemberListFromDB(){
+		ArrayList<Group> groupList = new ArrayList<Group>();
+		
+		Cursor cursor = getContentResolver().query(Provider.GROUP_CONTENT_URI, null, null, null, null);
+		
+		if(cursor != null && cursor.getCount() > 0){
+			if(cursor.moveToFirst()){
+				do{
+					Group group = new Group(cursor.getString(cursor.getColumnIndex(Provider.GROUP_ID)), 
+							cursor.getString(cursor.getColumnIndex(Provider.TITLE)), 
+							cursor.getString(cursor.getColumnIndex(Provider.OWNER)), 
+							cursor.getString(cursor.getColumnIndex(Provider.TIME)), 
+							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_NAME)), 
+							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_IMAGE_URL)), 
+							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LAT)), 
+							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LON)), 
+							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_PHONE)), 
+							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_DESC)), 
+							new ArrayList<String>());
+					Logger.d("getMemberListFromDB() group title:"+group.getTitle());
+					groupList.add(group);
+				}while(cursor.moveToNext());
 			}
-		}	
-    }
-    
-    public void removeGroupById(int groupId){
-    	for (int index =0 ;index < groupIdList.size() ; index++) {
-			if(groupIdList.get(index) == groupId){
-				removeGroup(index);
-			}
-		}	
-    }
-    
-    public void removeAllGroup(){
-    	groupNameList.removeAll(groupNameList);
-    	groupIdList.removeAll(groupIdList);
-    	groupList.removeAll(groupList);
-    }
-
+		}
+		
+		return groupList;
+		
+	}
+	
+	private void setGridVisible(boolean visible){
+		if(visible){
+			gridLayout.setVisibility(View.VISIBLE);
+			warningText.setVisibility(View.GONE);
+		}else{
+			gridLayout.setVisibility(View.GONE);
+			warningText.setVisibility(View.VISIBLE);
+		}
+		
+	}
+	
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -261,10 +212,14 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Intent intent = new Intent(getApplicationContext(), MapActivity.class);
-		intent.putExtra("requestType",Constants.REQUEST_TYPE_GPS_GETHERING);
-		intent.putExtra("group", groupList.get(position));
-		startActivityForResult(intent,Constants.MEMBER_ACTIVITY_REQ_CODE);
+
+		Group selectedGroup = groupList.get(position);
+		
+		Intent intent = new Intent(GroupMainActivity.this, MapActivity.class);
+		intent.putExtra("requestType", Constants.REQUEST_TYPE_GPS_GETHERING);
+		intent.putExtra("groupId", selectedGroup.getId());
+		
+		startActivity(intent);
 	}
     
     private boolean isRunning(){

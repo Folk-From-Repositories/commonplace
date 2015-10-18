@@ -61,13 +61,16 @@ public class ImageDownloader {
      * @param imageView The ImageView to bind the downloaded image to.
      */
     public void download(String url, ImageView imageView, Context context) {
+    	download(url, imageView, context, true);
+    }
+    public void download(String url, ImageView imageView, Context context, boolean isCircle) {
         resetPurgeTimer();
         Bitmap bitmap = getBitmapFromCache(url);
         
         this.context = context;
         
         if (bitmap == null) {
-            forceDownload(url, imageView);
+            forceDownload(url, imageView, isCircle);
         } else {
             cancelPotentialDownload(url, imageView);
             imageView.setImageBitmap(bitmap);
@@ -86,7 +89,7 @@ public class ImageDownloader {
      * Same as download but the image is always downloaded and the cache is not used.
      * Kept private at the moment as its interest is not clear.
      */
-    private void forceDownload(String url, ImageView imageView) {
+    private void forceDownload(String url, ImageView imageView, boolean isCircle) {
         // State sanity: url is guaranteed to never be null in DownloadedDrawable and cache keys.
         if (url == null) {
             imageView.setImageDrawable(null);
@@ -103,12 +106,12 @@ public class ImageDownloader {
 
                 case NO_DOWNLOADED_DRAWABLE:
                     imageView.setMinimumHeight(156);
-                    BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
+                    BitmapDownloaderTask task = new BitmapDownloaderTask(imageView, isCircle);
                     task.execute(url);
                     break;
 
                 case CORRECT:
-                    task = new BitmapDownloaderTask(imageView);
+                    task = new BitmapDownloaderTask(imageView, isCircle);
                     DownloadedDrawable downloadedDrawable = new DownloadedDrawable(task);
                     imageView.setImageDrawable(downloadedDrawable);
                     //imageView.setMinimumHeight(156);
@@ -206,9 +209,10 @@ public class ImageDownloader {
     class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         private String url;
         private final WeakReference<ImageView> imageViewReference;
-
-        public BitmapDownloaderTask(ImageView imageView) {
+        private boolean isCircle = false;
+        public BitmapDownloaderTask(ImageView imageView, boolean isCircle) {
             imageViewReference = new WeakReference<ImageView>(imageView);
+            this.isCircle = isCircle;
         }
 
         /**
@@ -229,7 +233,7 @@ public class ImageDownloader {
                 bitmap = null;
             }
 
-            if(bitmap != null){
+            if(bitmap != null && isCircle){
             	bitmap = Utils.getCircularBitmap(bitmap);
             }
             

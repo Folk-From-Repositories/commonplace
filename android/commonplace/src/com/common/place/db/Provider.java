@@ -22,7 +22,7 @@ public class Provider extends ContentProvider{
     private PhotoDatabaseHelper dbHelper;
     
     private static final String DATABASE_NAME     = "commonplace.db";
-    private static final int    DATABASE_VERSION  = 1;
+    private static final int    DATABASE_VERSION  = 2;
     
     private static final String RECIPIENT_TABLE_NAME = "Recipient";
     private static final String GROUP_TABLE_NAME     = "Moim";
@@ -75,6 +75,7 @@ public class Provider extends ContentProvider{
     private static final String CREATE_GROUP_TABLE 
 		    = "CREATE TABLE IF NOT EXISTS " + Provider.GROUP_TABLE_NAME +
 		    "("+_ID+"                  integer primary key autoincrement, " +
+		    " "+GROUP_ID+"             text NOT NULL," +            
 		    " "+TITLE+"                text NOT NULL," +            
 		    " "+OWNER+"                text NOT NULL," +            
 		    " "+TIME+"                 text NOT NULL," +            

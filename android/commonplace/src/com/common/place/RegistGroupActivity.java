@@ -8,13 +8,19 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.common.place.model.ContactsModel;
-import com.common.place.model.GroupModel;
+import com.common.place.model.Group;
 import com.common.place.model.Member;
-import com.common.place.model.RestaurantModel;
+import com.common.place.model.Restaurant;
+import com.common.place.sms.SmsSender;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.common.place.util.Utils;
@@ -36,13 +42,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class RegistGroupActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
-	public ArrayList<GroupModel> groupList = new ArrayList<GroupModel>();
+	public ArrayList<Group> groupList = new ArrayList<Group>();
 	public ArrayList<ContactsModel> getArrayList;
-	
-	private GroupModel group;
 	
 	RelativeLayout restaurant_area;
 	TextView retaurant_no_select, contact_list, item_title, item_vicinity;
@@ -51,7 +56,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	int id_count = 1;
 	
 	public static Bitmap selectedRestaurantImage;
-	public static RestaurantModel selectedRestaurant;
+	public static Restaurant selectedRestaurant;
 	
 	ImageView item_icon;
 	
@@ -172,10 +177,10 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			String locationImageUrl = selectedRestaurant.getPhotoReference();
 			String locationLat = selectedRestaurant.getLocationLat();
 			String locationLon = selectedRestaurant.getLocationLon();
-			String locationPhone = "";
+			String locationPhone = "02-345-6789";
 			String locationDesc = selectedRestaurant.getVicinity();
 			String owner = Utils.getPhoneNumber(RegistGroupActivity.this);
-			String[] member = Utils.getPhoneNumArr(RegistGroupActivity.this); //Arrays.toString(member)
+			String[] member = Utils.getPhoneNumArr(RegistGroupActivity.this);
 			
 			List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(10);
 			nameValuePairs.add(new BasicNameValuePair("title", title));
@@ -187,39 +192,85 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			nameValuePairs.add(new BasicNameValuePair("locationPhone", locationPhone));
 			nameValuePairs.add(new BasicNameValuePair("locationDesc", locationDesc));
 			nameValuePairs.add(new BasicNameValuePair("owner", owner));
-			nameValuePairs.add(new BasicNameValuePair("member", Arrays.toString(member)));
+			
+//			nameValuePairs.add(new BasicNameValuePair("member", Arrays.toString(member)));
+			
+			for (int i = 0; i < member.length; i++) {
+	             nameValuePairs.add(new BasicNameValuePair("member[]",member[i]));
+	        }
+			
+			Logger.d(title);
+			Logger.d(dateTime);
+			Logger.d(locationName);
+			Logger.d(locationImageUrl);
+			Logger.d(locationLat);
+			Logger.d(locationLon);
+			Logger.d(locationPhone);
+			Logger.d(locationDesc);
+			Logger.d(owner);
+			Logger.d(Arrays.toString(member));
 			
     		try {
 				registerInBackground(new UrlEncodedFormEntity(nameValuePairs));
 			} catch (UnsupportedEncodingException e) {
-				Logger.e(e.getMessage());
+				e.printStackTrace();
 			}
 		}	
 	}
 	private void registerInBackground(HttpEntity entity) {
-        new AsyncTask<HttpEntity, Void, String>() {
+        new AsyncTask<HttpEntity, Void, HttpResponse>() {
             @Override
-            protected String doInBackground(HttpEntity... params) {
-            	String response = "";
+            protected HttpResponse doInBackground(HttpEntity... params) {
+            	HttpResponse response = null;
                 try {
                     response = sendReatuanrantDataToBackend(params[0]);
                 } catch (Exception e) {
-                	Logger.e(e.getMessage());
+                	e.printStackTrace();
                 }
 				return response;
             }
 
 			@Override
-			protected void onPostExecute(String result) {
-				super.onPostExecute(result);
-				Logger.d(result);
+			protected void onPostExecute(HttpResponse response) {
+				super.onPostExecute(response);
+				Logger.d("registerInBackground() onPostExecute:"+response.getStatusLine().getStatusCode());
+				
+				int responseCode = response.getStatusLine().getStatusCode();
+				
+				if(responseCode == 200){
+					try {
+						String responseBody = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+						
+						JSONObject object = Utils.getJsonObjectFromString(responseBody);
+						
+						//{"sms":["01099503903","01036912752"],"moimId":11}
+						String[] targets = null;
+						JSONArray smsArr = object.getJSONArray("sms");
+						if(smsArr != null){
+							targets = new String[smsArr.length()];
+							for(int i = 0 ; i < smsArr.length() ; i++){
+								targets[i] = smsArr.get(i).toString();
+							}
+							SmsSender.sendSmsMessage(RegistGroupActivity.this, targets);
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Toast.makeText(RegistGroupActivity.this, getResources().getText(R.string.regist_success), Toast.LENGTH_SHORT).show();
+					RegistGroupActivity.this.finish();
+					
+				}else{
+					Toast.makeText(RegistGroupActivity.this, getResources().getText(R.string.regist_error), Toast.LENGTH_SHORT).show();
+				}
+				
 			}
             
         }.execute(entity, null, null);
     }
 	
 	//Transfer Data to Server(httpRequest)
-    private String sendReatuanrantDataToBackend(HttpEntity entity) {
+    private HttpResponse sendReatuanrantDataToBackend(HttpEntity entity) {
     	return Utils.callToServer(Constants.SVR_MOIM_REGIST_URL, entity);
     }
 

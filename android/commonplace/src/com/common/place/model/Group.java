@@ -1,44 +1,34 @@
 package com.common.place.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GroupModel implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class Group{
 	private String id;
 	private String title;
 	private String owner;
-	private String time;
+	private String dateTime;
 	private String locationName;
 	private String locationImageUrl;
 	private String locationLat;
 	private String locationLon;
 	private String locationPhone;
 	private String locationDesc;
-
-	private ArrayList<ContactsModel> memeber = new ArrayList<ContactsModel>();
+	private ArrayList<String> member = new ArrayList<String>();
 	
-	public GroupModel(){
-		
-	}
-	
-	public GroupModel(String id, String title, String owner, String time, String locationName, String locationImageUrl,String locationLat,
-			String locationLon, String locationPhone, String locationDesc, ArrayList<ContactsModel> memeber) {
+	public Group(String id, String title, String owner, String time, String locationName, String locationImageUrl,String locationLat,
+			String locationLon, String locationPhone, String locationDesc, ArrayList<String> member) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.owner = owner;
-		this.time = time;
+		this.dateTime = time;
 		this.locationName = locationName;
 		this.locationImageUrl = locationImageUrl;
 		this.locationLat = locationLat;
 		this.locationLon = locationLon;
 		this.locationPhone = locationPhone;
 		this.locationDesc = locationDesc;
-		this.memeber = memeber;
+		this.member = member;
 	}
 
 
@@ -76,11 +66,11 @@ public class GroupModel implements Serializable{
 	}
 
 	public String getTime() {
-		return time;
+		return dateTime;
 	}
 
 	public void setTime(String time) {
-		this.time = time;
+		this.dateTime = time;
 	}
 
 	public String getLocationName() {
@@ -123,33 +113,33 @@ public class GroupModel implements Serializable{
 		this.locationDesc = locationDesc;
 	}
 
-	public ArrayList<ContactsModel> getMemeber() {
-		return memeber;
+	public ArrayList<String> getMemeber() {
+		return member;
 	}
 
-	public void setMemeber(ArrayList<ContactsModel> memeber) {
-		this.memeber = memeber;
+	public void setMemeber(ArrayList<String> member) {
+		this.member = member;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
 
-//	public class Member{
-//		
-//		private String phone;
-//
-//		public Member(String phone) {
-//			super();
-//			this.phone = phone;
-//		}
-//
-//		public String getPhone() {
-//			return phone;
-//		}
-//
-//		public void setPhone(String phone) {
-//			this.phone = phone;
-//		}
-//	}
+
+	@Override
+	public String toString() {
+		String memberList = "[";
+		for(int i = 0 ; i < member.size() ; i++){
+			memberList += member.get(i);
+			if(i < member.size() - 1){
+				memberList += ", ";
+			}
+		}
+		memberList += "]";
+		return "id="+id+"/title="+title+"/owner="+owner+"/dateTime="+dateTime
+				+"/locationName="+locationName+"/locationImageUrl="+locationImageUrl
+				+"/locationLat="+locationLat+"/locationLon="+locationLon
+				+"/locationPhone="+locationPhone+"/locationDesc="+locationDesc
+				+"/memeber="+memberList;
+	}
+	
+	
+
 }

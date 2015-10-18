@@ -3,7 +3,7 @@ package com.common.place.uicomponents;
 import java.util.ArrayList;
 
 import com.common.place.R;
-import com.common.place.model.RestaurantModel;
+import com.common.place.model.Restaurant;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,15 +16,15 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
  
-public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
+public class RestaurantArrayAdapter extends ArrayAdapter<Restaurant> {
  
         Context context;
-        ArrayList<RestaurantModel> modelsArrayList;
+        ArrayList<Restaurant> modelsArrayList;
         public int selected_position = -1;
  
         private final ImageDownloader imageDownloader = new ImageDownloader();
         
-        public RestaurantArrayAdapter(Context context, ArrayList<RestaurantModel> modelsArrayList) {
+        public RestaurantArrayAdapter(Context context, ArrayList<Restaurant> modelsArrayList) {
  
             super(context, R.layout.restaurant_list_item, modelsArrayList);
  
@@ -68,7 +68,7 @@ public class RestaurantArrayAdapter extends ArrayAdapter<RestaurantModel> {
                 holder = (ViewHolder) convertView.getTag();
             }
         	
-            RestaurantModel restaurant = (RestaurantModel) getItem(position);
+            Restaurant restaurant = (Restaurant) getItem(position);
             
             holder.image.setImageResource(R.drawable.icon);
             if(restaurant.getPhotoReference() != null && !"".equals(restaurant.getPhotoReference())){
