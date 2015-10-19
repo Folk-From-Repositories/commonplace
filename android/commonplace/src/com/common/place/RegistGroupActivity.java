@@ -16,9 +16,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.common.place.model.ContactsModel;
+import com.common.place.model.GroupMember;
 import com.common.place.model.Group;
-import com.common.place.model.Member;
+import com.common.place.model.Contact;
 import com.common.place.model.NetworkResponse;
 import com.common.place.model.Restaurant;
 import com.common.place.sms.SmsSender;
@@ -48,7 +48,7 @@ import android.widget.Toast;
 public class RegistGroupActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
 	public ArrayList<Group> groupList = new ArrayList<Group>();
-	public ArrayList<ContactsModel> getArrayList;
+	public ArrayList<GroupMember> getArrayList;
 	
 	RelativeLayout restaurant_area;
 	TextView retaurant_no_select, contact_list, item_title, item_vicinity;
@@ -127,7 +127,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	}
 	
 	public void createMemberList(){
-		ArrayList<Member> arr = Utils.getSelectedMemberList(RegistGroupActivity.this);
+		ArrayList<Contact> arr = Utils.getSelectedMemberList(RegistGroupActivity.this);
 		if(arr != null && arr.size() > 0){
 			contact_list.setText("");
 			contact_list.setGravity(Gravity.LEFT);

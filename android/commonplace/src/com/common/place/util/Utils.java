@@ -19,9 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.common.place.db.Provider;
-import com.common.place.model.ContactsModel;
+import com.common.place.model.GroupMember;
 import com.common.place.model.Group;
-import com.common.place.model.Member;
+import com.common.place.model.Contact;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -301,13 +301,13 @@ public class Utils {
 		return context.getContentResolver().query(Provider.RECIPIENT_CONTENT_URI, null, null, null, null);
 	}
 	
-	public static ArrayList<Member> getSelectedMemberList(Context context){
+	public static ArrayList<Contact> getSelectedMemberList(Context context){
 		Cursor memberCursor = getMemberListFromDB(context);
-		ArrayList<Member> memberArr = new ArrayList<Member>();
+		ArrayList<Contact> memberArr = new ArrayList<Contact>();
 		if(memberCursor != null && memberCursor.getCount() > 0){
 			if(memberCursor.moveToFirst()){
 				do{
-					Member member = new Member(memberCursor.getString(memberCursor.getColumnIndex(Provider.PHONE_NUMBER)), memberCursor.getString(memberCursor.getColumnIndex(Provider.RECIPIENT)));
+					Contact member = new Contact(memberCursor.getString(memberCursor.getColumnIndex(Provider.PHONE_NUMBER)), memberCursor.getString(memberCursor.getColumnIndex(Provider.RECIPIENT)));
 					memberArr.add(member);
 				}while(memberCursor.moveToNext());
 			}
@@ -316,7 +316,7 @@ public class Utils {
 	}
 	
 	public static String[] getPhoneNumArr(Context context){
-		ArrayList<Member> arr = getSelectedMemberList(context);
+		ArrayList<Contact> arr = getSelectedMemberList(context);
 		if(arr != null && arr.size() > 0){
 			String[] phoneNums = new String[arr.size()];
 			for(int i = 0 ; i < arr.size() ; i++){
@@ -445,7 +445,7 @@ String projectname = data.getString("name"); // get the name from data.
 
 	    Paint paint = new Paint();
 	    /* Set text size, color etc. as needed */
-	    paint.setTextSize(24);
+	    paint.setTextSize(50);
 
 	    int width = (int)paint.measureText(text);
 	    int height = (int)paint.getTextSize();
@@ -464,7 +464,7 @@ String projectname = data.getString("name"); // get the name from data.
 	    return icon;
 	}
 	
-	public static void updateMemberLocation(Context context, ContactsModel contact){
+	public static void updateMemberLocation(Context context, GroupMember contact){
 		
 		ContentValues values = new ContentValues();
 		values.put(Provider.NAME, contact.getName());

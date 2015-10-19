@@ -1,13 +1,13 @@
 package com.common.place.model;
 
-public class ContactsModel{
+public class GroupMember{
 	
 	private String groupId;
 	private String name;
 	private String phone;
 	private String locationLat;
 	private String locationLon;
-	public ContactsModel(String groupId, String name, String phone, String locationLat, String locationLon) {
+	public GroupMember(String groupId, String name, String phone, String locationLat, String locationLon) {
 		super();
 		this.groupId = groupId;
 		this.name = name;

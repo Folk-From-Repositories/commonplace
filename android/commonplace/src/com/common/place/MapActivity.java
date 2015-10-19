@@ -1,13 +1,13 @@
 package com.common.place;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.common.place.db.Provider;
-import com.common.place.model.ContactsModel;
 import com.common.place.model.Group;
+import com.common.place.model.GroupMember;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
-import com.common.place.util.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -15,12 +15,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -35,11 +38,14 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	
 	int requestType;
 	Button restaurantSearch;
-	public MarkerOptions markerOptions = new MarkerOptions();
+	public MarkerOptions markerOptions;
 	LatLng selectedLatLng;
 	
 	InnerReceiver innerReceiver;
 	IntentFilter filter;
+	
+	Group group;
+	LatLng cameraLatLng;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,48 +74,51 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		
 		innerReceiver = new InnerReceiver();
 		filter = new IntentFilter(Constants.INNER_BROADCAST_RECEIVER);
+		markerOptions = new MarkerOptions();
 	}
 	
 	private void makeCameraMove() {
-
-		Group group = null;
-		Cursor cursor = getContentResolver().query(Provider.GROUP_CONTENT_URI, null, Provider.GROUP_ID + " = " + groupId, null, null);
-		if(cursor != null && cursor.getCount() > 0){
-			if(cursor.moveToFirst()){
-				do{
-					group = new Group(cursor.getString(cursor.getColumnIndex(Provider.GROUP_ID)), 
-							cursor.getString(cursor.getColumnIndex(Provider.TITLE)), 
-							cursor.getString(cursor.getColumnIndex(Provider.OWNER)), 
-							cursor.getString(cursor.getColumnIndex(Provider.TIME)), 
-							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_NAME)), 
-							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_IMAGE_URL)), 
-							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LAT)), 
-							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LON)), 
-							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_PHONE)), 
-							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_DESC)), 
-							new ArrayList<String>());
-					Logger.d("getMemberListFromDB() group title:"+group.getTitle());
-				}while(cursor.moveToNext());
+		makeCameraMove(false);
+	}
+	private void makeCameraMove(boolean isRefresh) {
+		
+		if(!isRefresh){
+			Cursor cursor = getContentResolver().query(Provider.GROUP_CONTENT_URI, null, Provider.GROUP_ID + " = " + groupId, null, null);
+			if(cursor != null && cursor.getCount() > 0){
+				if(cursor.moveToFirst()){
+					do{
+						group = new Group(cursor.getString(cursor.getColumnIndex(Provider.GROUP_ID)), 
+								cursor.getString(cursor.getColumnIndex(Provider.TITLE)), 
+								cursor.getString(cursor.getColumnIndex(Provider.OWNER)), 
+								cursor.getString(cursor.getColumnIndex(Provider.TIME)), 
+								cursor.getString(cursor.getColumnIndex(Provider.LOCATION_NAME)), 
+								cursor.getString(cursor.getColumnIndex(Provider.LOCATION_IMAGE_URL)), 
+								cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LAT)), 
+								cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LON)), 
+								cursor.getString(cursor.getColumnIndex(Provider.LOCATION_PHONE)), 
+								cursor.getString(cursor.getColumnIndex(Provider.LOCATION_DESC)), 
+								new ArrayList<String>());
+						Logger.d("getMemberListFromDB() group title:"+group.getTitle());
+					}while(cursor.moveToNext());
+				}
 			}
 		}
-		
-		LatLng cameraLatLng = null;
 		
 		try {
             if (gmap == null) {
             	gmap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-            	
-            	if(group != null){
-        			cameraLatLng = new LatLng(Double.parseDouble(group.getLocationLat()), 
-        					Double.parseDouble(group.getLocationLon()));
-        			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.goal));
-        			markerOptions.position(cameraLatLng);
-        			gmap.addMarker(markerOptions);
-            	}else{
-            		cameraLatLng = new LatLng(37.541, 126.986);
-            	}
-            	gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, 12));
             }
+        	if(group != null){
+    			cameraLatLng = new LatLng(Double.parseDouble(group.getLocationLat()), 
+    					Double.parseDouble(group.getLocationLon()));
+    			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.goal));
+    			markerOptions.position(cameraLatLng);
+    			gmap.addMarker(markerOptions);
+        	}
+        	Logger.d("isRefresh:"+isRefresh);
+        	if(!isRefresh){
+        		gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, 12));
+        	}
         } catch (Exception e) {
             e.printStackTrace();
         }		
@@ -119,6 +128,9 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	protected void onResume() {
 		super.onResume();
 		getMemberPositions();
+		
+//		dummyData();
+		
 		registerReceiver(innerReceiver, filter);
 	}
 	
@@ -129,24 +141,43 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	}
 	
 	public class InnerReceiver extends BroadcastReceiver{
-		 
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
+	    	Logger.i("InnerReceiver onReceive intent:"+intent);
 	    	getMemberPositions();
 	    }
 	     
 	}
 	
+//	private void dummyData(){
+//		// 
+//		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+//		try{
+//			LatLng latLng = new LatLng(37.574255, 126.976754);
+//			markerOptions.position(latLng);
+////			markerOptions.icon(Utils.getTextMarker("¹ÚÁ¾ÈÆ!"));
+//			
+//			IconGenerator tc = new IconGenerator(this);
+//			tc.setColor(R.style.background_color);
+//			tc.setTextAppearance(R.style.SpecialText);
+//			Bitmap bmp = tc.makeIcon("¹ÚÁ¾ÈÆ");
+//			markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
+//			gmap.addMarker(markerOptions);
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
+//	}
+	
 	private void getMemberPositions(){
-		new AsyncTask<Void, Void, ArrayList<ContactsModel>>() {
+		new AsyncTask<Void, Void, ArrayList<GroupMember>>() {
 			@Override
-			protected ArrayList<ContactsModel> doInBackground(Void... params) {
-				ArrayList<ContactsModel> group = new ArrayList<ContactsModel>();
+			protected ArrayList<GroupMember> doInBackground(Void... params) {
+				ArrayList<GroupMember> group = new ArrayList<GroupMember>();
 				Cursor cursor = getContentResolver().query(Provider.MEMBER_CONTENT_URI, null, Provider.GROUP_ID + " = " + groupId, null, null);
 				if(cursor != null && cursor.getCount() > 0){
 					if(cursor.moveToFirst()){
 						do{
-							ContactsModel contactsModel = new ContactsModel(
+							GroupMember contactsModel = new GroupMember(
 									cursor.getString(cursor.getColumnIndex(Provider.GROUP_ID)), 
 									cursor.getString(cursor.getColumnIndex(Provider.NAME)), 
 									cursor.getString(cursor.getColumnIndex(Provider.PHONE_NUMBER)), 
@@ -160,7 +191,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 				return group;
 			}
 			@Override
-			protected void onPostExecute(ArrayList<ContactsModel> group) {
+			protected void onPostExecute(ArrayList<GroupMember> group) {
 				super.onPostExecute(group);
 				setGpsToMap(group);
 			}
@@ -168,16 +199,27 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		}.execute(null, null, null);
 	}
 	
-    public void setGpsToMap(ArrayList<ContactsModel> group){
-		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+    public void setGpsToMap(ArrayList<GroupMember> group){
+    	
+    	gmap.clear();
+    	makeCameraMove(true);
+    	
 		for(int i = 0; i < group.size(); i++){
+			
+			GroupMember gMember = group.get(i);
+			
 			try{
-				LatLng latLng = new LatLng(Double.parseDouble(group.get(i).getLocationLat()), 
-					Double.parseDouble(group.get(i).getLocationLon()));
+				LatLng latLng = new LatLng(Double.parseDouble(gMember.getLocationLat()), 
+					Double.parseDouble(gMember.getLocationLon()));
+				markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
 				markerOptions.position(latLng);
-//				markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-				markerOptions.icon(Utils.getTextMarker(group.get(i).getName()));
+				IconGenerator tc = new IconGenerator(this);
+				tc.setColor(Color.argb(255, 255, 94, 0));
+				tc.setTextAppearance(R.style.SpecialText);
+				Bitmap bmp = tc.makeIcon(gMember.getName());
+				markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
 				gmap.addMarker(markerOptions);
+				gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, 12));
 			}catch(Exception e){
 				e.printStackTrace();
 			}

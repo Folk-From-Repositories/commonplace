@@ -12,7 +12,6 @@ import org.apache.http.message.BasicNameValuePair;
 import com.common.place.model.Restaurant;
 import com.common.place.uicomponents.RestaurantArrayAdapter;
 import com.common.place.util.Constants;
-import com.common.place.util.Logger;
 import com.common.place.util.Utils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonArray;
@@ -123,7 +122,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
         JsonObject  jobject = jelement.getAsJsonObject();
         JsonArray result = jobject.getAsJsonArray("results");
         
-        Logger.d(rawData);
+        //Logger.d(rawData);
         
         JsonElement nextPageTokenElement = jobject.get("next_page_token");
         if(nextPageTokenElement != null){

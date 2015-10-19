@@ -1,6 +1,6 @@
 package com.common.place.model;
 
-public class Member {
+public class Contact {
 
 	private String phoneNumber;
 	private String name;
@@ -16,7 +16,7 @@ public class Member {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Member(String phoneNumber, String name) {
+	public Contact(String phoneNumber, String name) {
 		super();
 		this.phoneNumber = phoneNumber;
 		this.name = name;
