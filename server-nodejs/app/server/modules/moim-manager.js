@@ -302,6 +302,11 @@ exports.enableLocationBroadcast = function(moimIds, callback) {
         moimIds = [moimIds];
     }
 
+    if (moimIds.length < 1) {
+        console.log('No target to change the broadcast status');
+        return callback(null, true);
+    }
+
     for (var i = 0; i < moimIds.length; i++) {
         if (isNaN(moimIds[i])) {
             return callback('invalid-moim-id');
@@ -316,6 +321,7 @@ exports.enableLocationBroadcast = function(moimIds, callback) {
         callback(err, err ? false : true);
     });
 }
+
 /**
  * 모임 참여자의 위치 정보 broadcast 기능 비활성화
  */
@@ -324,6 +330,11 @@ exports.disableLocationBroadcast = function(moimIds, callback) {
     // Make Array if there is only one.
     if (Object.prototype.toString.call( moimIds ) !== '[object Array]' ) {
         moimIds = [moimIds];
+    }
+
+    if (moimIds.length < 1) {
+        console.log('No target to change the broadcast status');
+        return callback(null, true);
     }
 
     for (var i = 0; i < moimIds.length; i++) {
