@@ -279,12 +279,20 @@ exports.deleteMoim = function (moimId, phone, callback) {
 /**
  * 모임 참여자의 위치 정보 broadcast 기능 활성화
  */
-exports.enableLocationBroadcast = function(moimId, callback) {
-    if (isNaN(moimId)) {
-        return callback('invalid-moim-id');
+exports.enableLocationBroadcast = function(moimIds, callback) {
+
+    // Make Array if there is only one.
+    if (Object.prototype.toString.call( moimIds ) !== '[object Array]' ) {
+        moimIds = [moimIds];
     }
 
-    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 1 WHERE id = '+ connection.escape(moimId);
+    for (var i = 0; i < moimIds.length; i++) {
+        if (isNaN(moimIds[i])) {
+            return callback('invalid-moim-id');
+        }
+    }
+
+    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 1 WHERE id IN ('+ connection.escape(moimIds) + ')';
 
     connection.query(sql, function(err, result) {
         if (err) console.error(err);
@@ -295,12 +303,20 @@ exports.enableLocationBroadcast = function(moimId, callback) {
 /**
  * 모임 참여자의 위치 정보 broadcast 기능 비활성화
  */
-exports.disableLocationBroadcast = function(moimId, callback) {
-    if (isNaN(moimId)) {
-        return callback('invalid-moim-id');
+exports.disableLocationBroadcast = function(moimIds, callback) {
+
+    // Make Array if there is only one.
+    if (Object.prototype.toString.call( moimIds ) !== '[object Array]' ) {
+        moimIds = [moimIds];
     }
 
-    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 0 WHERE id = '+ connection.escape(moimId);
+    for (var i = 0; i < moimIds.length; i++) {
+        if (isNaN(moimIds[i])) {
+            return callback('invalid-moim-id');
+        }
+    }
+
+    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 0 WHERE id IN ('+ connection.escape(moimIds) + ')';
 
     connection.query(sql, function(err, result) {
         if (err) console.error(err);

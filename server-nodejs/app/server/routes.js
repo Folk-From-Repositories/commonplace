@@ -406,14 +406,14 @@ module.exports = function(app) {
      *
      * @url /commonplace/moim/broadcast/enable
      * @method POST
-     * @param {int} id 모임 ID
+     * @param {integer array} ids 모임 ID list
      * @return {boolean} result
      **/
     app.post('/commonplace/moim/broadcast/enable', function(req, res) {
 
-        var moimId = req.body['id'];
+        var moimIds = req.body['ids'];
 
-        MM.enableLocationBroadcast(moimId, function(e, result) {
+        MM.enableLocationBroadcast(moimIds, function(e, result) {
             //TODO 에러 메시지 처리
             if (e){
                 res.status(400).send(e);
@@ -428,14 +428,14 @@ module.exports = function(app) {
      *
      * @url /commonplace/moim/broadcast/disable
      * @method POST
-     * @param {int} id 모임 ID
+     * @param {integer array} ids 모임 ID list
      * @return {boolean} result
      **/
     app.post('/commonplace/moim/broadcast/disable', function(req, res) {
 
-        var moimId = req.body['id'];
+        var moimIds = req.body['ids'];
 
-        MM.disableLocationBroadcast(moimId, function(e, result) {
+        MM.disableLocationBroadcast(moimIds, function(e, result) {
             //TODO 에러 메시지 처리
             if (e){
                 res.status(400).send(e);
