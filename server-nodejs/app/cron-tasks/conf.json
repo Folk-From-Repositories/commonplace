@@ -1,0 +1,8 @@
+{
+	"timezone": "Asia/Seoul",
+	"dateTimeFormat": "YYYYMMDD HH:mm",
+	"enableNotiBeforeMin": -120,
+	"disableNotiAfterMin": 60,
+	"userLocationBroadCastActivatorCronTime": "0 5,15,25,35,45,55 * * * *",
+	"userLocationBroadCasterCronTime": "0, * * * * * *"
+}

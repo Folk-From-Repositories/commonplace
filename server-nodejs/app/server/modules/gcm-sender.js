@@ -86,6 +86,28 @@ exports.sendMessage = function(phones, data, callback) {
             data: data
         });
 
-        sender.send(gcmMsg, tokens, 4, callback);
+
+        // console.info('---------------GCM Message--------------------');
+        // console.dir(JSON.stringify(gcmMsg));
+        // console.info('----------------------------------------------');
+        // console.info('---------------phones-------------------------')
+        // console.dir(phones);
+        // console.info('----------------------------------------------');
+        // console.info('---------------tokens-------------------------')
+        // console.dir(tokens);
+        // console.info('----------------------------------------------');
+
+        if (tokens.length < 1) {
+            return callback('No target for sending GCM');
+        }
+
+        sender.send(gcmMsg, tokens, 4, function(err, result) {
+            if (err) {
+                console.error('-----------------------GCM ERROR------------------------')
+                console.dir(err);
+                console.error('--------------------------------------------------------');
+            }
+            callback(err, result);
+        });
     });
 }

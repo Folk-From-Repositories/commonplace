@@ -7,6 +7,18 @@ var schemaValidate = require('jsonschema').validate;
 // load json schema for validate request parameter
 var moimSchema = require('../schema/moim-schema.json');
 
+
+/**
+ * All records
+ */
+exports.getAll = function(callback) {
+
+    var sql = 'SELECT * FROM `commonplace`.`moim`';
+
+    connection.query(sql, callback);
+}
+
+
 /**
  * 신규 모임 정보 정보
  */
@@ -328,9 +340,20 @@ exports.disableLocationBroadcast = function(moimIds, callback) {
 /**
  * Location 정보 Notification이 활성화 된 모임 정보 조회
  */
-exports.getAvailableLocationBroadcast = function(callback) {
+exports.getEnabledLocationBroadcast = function(callback) {
 
-    var sql = 'SELECT id FROM `commonplace`.`moim` WHERE `broadcast` = 1';
+    var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `broadcast` = 1';
+
+    connection.query(sql, callback);
+}
+
+
+/**
+ * Location 정보 Notification이 비활성화 된 모임 정보 조회
+ */
+exports.getDisabledLocationBroadcast = function(callback) {
+
+    var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `broadcast` = 0';
 
     connection.query(sql, callback);
 }

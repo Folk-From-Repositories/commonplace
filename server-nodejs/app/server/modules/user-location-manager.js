@@ -60,9 +60,9 @@ exports.gets = function(phones, callback) {
         }
     }
 
-    var sql = 'SELECT a.phone, a.name, l.latitude, l.longitude'
-            + 'FROM user a, userLocation l'
-            + 'WHERE a.phone = l.phone'
+    var sql = 'SELECT a.phone, a.name, l.latitude, l.longitude '
+            + 'FROM user a, userLocation l '
+            + 'WHERE a.phone = l.phone '
             + 'AND a.phone IN (' + connection.escape(phones) + ')';
 
     connection.query(sql, function(err, result) {
