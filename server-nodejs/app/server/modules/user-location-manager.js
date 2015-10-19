@@ -60,7 +60,10 @@ exports.gets = function(phones, callback) {
         }
     }
 
-    var sql = 'SELECT * FROM `commonplace`.`userLocation` WHERE `phone` IN (' + connection.escape(phones) + ')';
+    var sql = 'SELECT a.phone, a.name, l.latitude, l.longitude'
+            + 'FROM user a, userLocation l'
+            + 'WHERE a.phone = l.phone'
+            + 'AND a.phone IN (' + connection.escape(phones) + ')';
 
     connection.query(sql, function(err, result) {
         callback(err, result);
@@ -115,6 +118,9 @@ function sendUserLocation() {
     });
 }
 
+/**
+ * @depreciated
+ */
 exports.enableGPSNotification = function() {
 
     if (!notiThread) {
@@ -128,6 +134,9 @@ exports.enableGPSNotification = function() {
     }
 }
 
+/**
+ * @depreciated
+ */
 exports.disableGPSNotification = function() {
 
     if (notiThread) {
