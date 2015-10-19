@@ -11,11 +11,11 @@ var bodyParser = require('body-parser');
 var errorHandler = require('errorhandler');
 var cookieParser = require('cookie-parser');
 var FileStore = require('session-file-store')(session);
-var packageInfo = require('./package.json');
+var packageInfo = require('../package.json');
 var app = express();
 
 app.set('port', packageInfo.port.web || 3000);
-app.set('views', __dirname + '/app/server/views');
+app.set('views', __dirname + '/server/views');
 app.set('view engine', 'jade');
 app.use(cookieParser());
 app.use(session({
@@ -28,15 +28,15 @@ app.use(session({
 );
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(require('stylus').middleware({ src: __dirname + '/app/public' }));
-app.use(express.static(__dirname + '/app/public'));
+app.use(require('stylus').middleware({ src: __dirname + '/public' }));
+app.use(express.static(__dirname + '/public'));
 
-require('./app/server/routes')(app);
+require(__dirname + '/server/routes')(app);
 
 if (app.get('env') == 'development') app.use(errorHandler());
 
 http.createServer(app).listen(app.get('port'), function(){
-	console.log('Express server listening on port ' + app.get('port'));
+	process.send('Express server listening on port ' + app.get('port'));
 });
 
 /**
@@ -48,3 +48,4 @@ module.exports = app;
  * Export the configured port.
  */
 module.exports.PORT = packageInfo.port.hippie || 7891;
+

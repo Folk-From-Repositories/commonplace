@@ -10,7 +10,7 @@
     "url": "Not prepared"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node main",
     "test": "mocha test"
   },
   "port": {
