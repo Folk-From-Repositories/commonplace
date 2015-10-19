@@ -212,7 +212,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			Logger.d(Arrays.toString(member));
 			
     		try {
-				registerInBackground(new UrlEncodedFormEntity(nameValuePairs));
+				registerInBackground(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

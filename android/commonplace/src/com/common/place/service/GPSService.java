@@ -137,7 +137,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
                     nameValuePairs.add(new BasicNameValuePair("longitude", ""+location.getLongitude()));
                     nameValuePairs.add(new BasicNameValuePair("latitude", ""+location.getLatitude()));
 
-                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 
 
                     HttpResponse response = httpClient.execute(httpPost);

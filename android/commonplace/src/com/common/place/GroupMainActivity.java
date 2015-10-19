@@ -125,7 +125,7 @@ public class GroupMainActivity extends Activity implements AdapterView.OnItemCli
 		
     	HttpResponse response = null;
 		try {
-			response = Utils.callToServer(Constants.SVR_RETRIEVE_GROUP, new UrlEncodedFormEntity(nameValuePairs));
+			response = Utils.callToServer(Constants.SVR_RETRIEVE_GROUP, new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

@@ -61,7 +61,7 @@ public class Utils {
         nameValuePairs.add(new BasicNameValuePair("name", Utils.getPhoneNumber(context)));
 
 		try {
-			HttpResponse response = callToServer(Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse response = callToServer(Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
 			String responseString = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
 			return responseString;
 		} catch (Exception e) {
