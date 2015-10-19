@@ -188,6 +188,10 @@ exports.getDetails = function(moimIds, callback) {
         moimIds = [moimIds];
     }
 
+    if (moimIds.length < 1) {
+        callback('모임 상세 조회 파라미터 없음');
+    }
+
     var moimSql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` IN (' + connection.escape(moimIds) + ')';
     var userMoimSql = 'SELECT * FROM `commonplace`.`userMoim` WHERE `moimId` IN (' + connection.escape(moimIds) + ')';
 
