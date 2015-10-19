@@ -314,4 +314,7 @@ exports.disableLocationBroadcast = function(moimId, callback) {
  */
 exports.getAvailableLocationBroadcast = function(callback) {
 
+    var sql = 'SELECT id FROM `commonplace`.`moim` WHERE `broadcast` = 1';
+
+    connection.query(sql, callback);
 }
