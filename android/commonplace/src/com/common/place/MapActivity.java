@@ -155,12 +155,12 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 //		try{
 //			LatLng latLng = new LatLng(37.574255, 126.976754);
 //			markerOptions.position(latLng);
-////			markerOptions.icon(Utils.getTextMarker("¹ÚÁ¾ÈÆ!"));
+////			markerOptions.icon(Utils.getTextMarker("ë°•ì¢…í›ˆ!"));
 //			
 //			IconGenerator tc = new IconGenerator(this);
 //			tc.setColor(R.style.background_color);
 //			tc.setTextAppearance(R.style.SpecialText);
-//			Bitmap bmp = tc.makeIcon("¹ÚÁ¾ÈÆ");
+//			Bitmap bmp = tc.makeIcon("ë°•ì¢…í›ˆ");
 //			markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
 //			gmap.addMarker(markerOptions);
 //		}catch(Exception e){
