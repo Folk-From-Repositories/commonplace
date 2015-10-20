@@ -450,11 +450,11 @@ module.exports = function(app) {
      * - 개설자 요청시 모임 및 참여자 정보 삭제
      * - 참여자 요청시 첨여 정보 삭제
      *
-     * @url /commonplace/moim/broadcast/disable
+     * @url /commonplace/moim/delete
      * @ method POST
      * @param {int} id 모임 ID
      * @param {string} phone 요청자 전화번호
-     * @return {boolean} result
+     * @return {string} result 처리 결과 (에러일 경우 400, 성공시 200 http status code)
      **/
     app.post('/commonplace/moim/delete', function(req, res) {
 
@@ -471,9 +471,6 @@ module.exports = function(app) {
     });
 
     /**
-     * // TODO delete
-     * @private 테스트용
-     *
      * Phone Number Array로 GCM 메시지 전송
      *
      * @url /test/commonplace/gcm/send
@@ -481,7 +478,7 @@ module.exports = function(app) {
      * @param {string[]} phones 전송 대상 전화번호 리스트
      * @param {json} message 전송 메시지
      **/
-     app.post('/test/commonplace/gcm/send', function(req, res) {
+     app.post('/commonplace/gcm/send', function(req, res) {
         var phones = req.body['phones'];
         var message = req.body['message'] || {};
 
