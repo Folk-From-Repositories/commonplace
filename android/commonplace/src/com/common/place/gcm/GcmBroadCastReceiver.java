@@ -12,6 +12,7 @@ import com.common.place.db.Provider;
 import com.common.place.model.GroupMember;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.common.place.util.Utils;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -62,10 +63,16 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         		try {
         			JSONArray memberArr = new JSONArray(memberVal);
         			
+        			Logger.i("## "+memberArr.toString());
+        			
         			for(int i = 0 ; i < memberArr.length() ; i++){
         				JSONObject member = (JSONObject) memberArr.get(i);
         				
-        				GroupMember gMember = new GroupMember("", member.getString("name"), member.getString("phone"), member.getString("latitude"), member.getString("longitude"));
+        				Logger.i("## "+Double.parseDouble(member.getString("latitude")));
+        				Logger.i("## "+Double.parseDouble(member.getString("longitude")));
+        				
+        				GroupMember gMember = new GroupMember("", member.getString("name"), member.getString("phone"), 
+        						Double.parseDouble(member.getString("latitude")), Double.parseDouble(member.getString("longitude")));
         				members.add(gMember);
         			}
         		} catch (JSONException e) {
@@ -85,14 +92,8 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
 		
 		if(members != null && members.size() > 0){
 			for(int i = 0 ; i < members.size() ; i++){
-				
 				GroupMember member = members.get(i);
-				
-				ContentValues values = new ContentValues();
-				values.put(Provider.LOCATION_LAT, member.getLocationLat());
-				values.put(Provider.LOCATION_LON, member.getLocationLon());
-				
-				context.getContentResolver().update(Provider.MEMBER_CONTENT_URI, values, Provider.PHONE_NUMBER + " = " + member.getPhone(), null);
+				Utils.updateMemberLocation(context, member);
 			}
 		}
 	}

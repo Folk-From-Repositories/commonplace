@@ -92,8 +92,8 @@ public class Provider extends ContentProvider{
 		    " "+GROUP_ID+"             text NOT NULL," +            
 		    " "+NAME+"                 text NOT NULL," +            
 		    " "+PHONE_NUMBER+"         text NOT NULL," +            
-		    " "+LOCATION_LAT+"         text NOT NULL," +            
-		    " "+LOCATION_LON+"         text NOT NULL)";
+		    " "+LOCATION_LAT+"         REAL NOT NULL," +            
+		    " "+LOCATION_LON+"         REAL NOT NULL)";
     
     private static class PhotoDatabaseHelper extends SQLiteOpenHelper {
 

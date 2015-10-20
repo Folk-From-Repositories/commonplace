@@ -5,9 +5,9 @@ public class GroupMember{
 	private String groupId;
 	private String name;
 	private String phone;
-	private String locationLat;
-	private String locationLon;
-	public GroupMember(String groupId, String name, String phone, String locationLat, String locationLon) {
+	private Double locationLat;
+	private Double locationLon;
+	public GroupMember(String groupId, String name, String phone, Double locationLat, Double locationLon) {
 		super();
 		this.groupId = groupId;
 		this.name = name;
@@ -33,16 +33,16 @@ public class GroupMember{
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public String getLocationLat() {
+	public Double getLocationLat() {
 		return locationLat;
 	}
-	public void setLocationLat(String locationLat) {
+	public void setLocationLat(Double locationLat) {
 		this.locationLat = locationLat;
 	}
-	public String getLocationLon() {
+	public Double getLocationLon() {
 		return locationLon;
 	}
-	public void setLocationLon(String locationLon) {
+	public void setLocationLon(Double locationLon) {
 		this.locationLon = locationLon;
 	}
 	

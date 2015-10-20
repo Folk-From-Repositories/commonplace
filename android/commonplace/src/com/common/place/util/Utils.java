@@ -151,14 +151,10 @@ public class Utils {
 	
 	
 	public static String getPhoneNumber(Context context){
-		if(Constants.PHONE_NUMBER == null || Constants.PHONE_NUMBER.equals("")){
-			TelephonyManager telManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE); 
-			String phoneNumber = telManager.getLine1Number();
-			phoneNumber = phoneNumber.substring(phoneNumber.length()-10,phoneNumber.length());
-			phoneNumber = "0"+phoneNumber;
-			Constants.PHONE_NUMBER = phoneNumber;
-		}
-		return Constants.PHONE_NUMBER;
+		TelephonyManager telManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE); 
+		String phoneNumber = telManager.getLine1Number();
+		phoneNumber = phoneNumber.substring(phoneNumber.length()-10,phoneNumber.length());
+		return "0"+phoneNumber;
 	}
 	
 	
@@ -423,24 +419,40 @@ String projectname = data.getString("name"); // get the name from data.
 				
 				ArrayList<String> memberArr = group.getMemeber();
 				
+				//Logger.i(group.toString());
+				
 				for(int j = 0 ; j < memberArr.size() ; j++){
 					
 					String phoneNum = memberArr.get(j);
 					
 					ContentValues memberValues = new ContentValues();
 					memberValues.put(Provider.GROUP_ID, group.getId());
-					memberValues.put(Provider.NAME, "NAME");
 					memberValues.put(Provider.PHONE_NUMBER, phoneNum);
-					memberValues.put(Provider.LOCATION_LAT, "0");
-					memberValues.put(Provider.LOCATION_LON, "0");
 					
-					context.getContentResolver().insert(Provider.MEMBER_CONTENT_URI, memberValues);
+					if(!checkMemberExist(context, group.getId(), phoneNum)){
+						memberValues.put(Provider.NAME, phoneNum);
+						memberValues.put(Provider.LOCATION_LAT, 0.0);
+						memberValues.put(Provider.LOCATION_LON, 0.0);
+						context.getContentResolver().insert(Provider.MEMBER_CONTENT_URI, memberValues);
+					}
 				}
 				
 			}
 			
 		}
 		
+	}
+	
+	public static boolean checkMemberExist(Context context, String groupId, String phoneNum){
+		
+		Cursor cursor = context.getContentResolver().query(Provider.MEMBER_CONTENT_URI, null, 
+				Provider.GROUP_ID+"=\'"+groupId+"\' AND "+Provider.PHONE_NUMBER+"=\'"+phoneNum+"\'"
+				, null, null);
+		if(cursor != null && cursor.getCount() > 0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public static BitmapDescriptor getTextMarker(String text) {
@@ -470,11 +482,10 @@ String projectname = data.getString("name"); // get the name from data.
 		
 		ContentValues values = new ContentValues();
 		values.put(Provider.NAME, contact.getName());
-		//values.put(Provider.PHONE_NUMBER, contact.getPhone());
 		values.put(Provider.LOCATION_LAT, contact.getLocationLat());
 		values.put(Provider.LOCATION_LON, contact.getLocationLon());
 		
-		context.getContentResolver().update(Provider.MEMBER_CONTENT_URI, values, Provider.PHONE_NUMBER + " = " + contact.getPhone(), null);
+		context.getContentResolver().update(Provider.MEMBER_CONTENT_URI, values, Provider.PHONE_NUMBER+"=\'"+contact.getPhone()+"\'", null);
 		
 		
 	}

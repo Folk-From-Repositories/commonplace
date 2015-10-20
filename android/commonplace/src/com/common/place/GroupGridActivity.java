@@ -273,7 +273,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 		return false;
 	}
 	
-	private AlertDialog createDialog(int index) {
+	private AlertDialog createDialog(final int index) {
 		Logger.d("createDialog("+index+")");
         AlertDialog.Builder ab = new AlertDialog.Builder(this);
         ab.setTitle("Watning!");
@@ -286,7 +286,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
             public void onClick(DialogInterface arg0, int arg1) {
             	setDismiss(mDialog);
             	dialog = ProgressDialog.show(GroupGridActivity.this, "", GroupGridActivity.this.getResources().getText(R.string.loading), true);
-            	deleteGroupList(arg1);
+            	deleteGroupList(Integer.parseInt(groupList.get(index).getId()));
             }
         });
           
@@ -300,7 +300,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
         return ab.create();
     }
 	
-	private void deleteGroupList(int groupId){
+	private void deleteGroupList(final int groupId){
         new AsyncTask<Integer, Void, NetworkResponse>() {
             @Override
             protected NetworkResponse doInBackground(Integer... params) {
@@ -309,6 +309,8 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
                 	nameValuePairs.add(new BasicNameValuePair("id", ""+params[0]));
                 	nameValuePairs.add(new BasicNameValuePair("phone", "\""+Utils.getPhoneNumber(GroupGridActivity.this)+"\""));
             		
+                	Logger.i("id:"+params[0]+" phone:"+Utils.getPhoneNumber(GroupGridActivity.this));
+                	
                 	HttpResponse response = null;
             		try {
             			response = Utils.callToServer(Constants.DELETE_GROUP, new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
@@ -329,13 +331,20 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 				dialog.dismiss();
 				if(result != null && result.getResponseCode() == 200){
 					Toast.makeText(GroupGridActivity.this, result.getReponseString(), Toast.LENGTH_SHORT).show();
+					deleteDB(groupId);
 					refreshGrid();
+					
 				}else{
 					Logger.e(result.toString());
 					Toast.makeText(GroupGridActivity.this, "failed", Toast.LENGTH_SHORT).show();
 				}
 			}
         }.execute(groupId, null, null);
+	}
+	
+	private void deleteDB(int groupId){
+		getContentResolver().delete(Provider.GROUP_CONTENT_URI, Provider.GROUP_ID+"=\'"+groupId+"\'", null);
+		getContentResolver().delete(Provider.MEMBER_CONTENT_URI, Provider.GROUP_ID+"=\'"+groupId+"\'", null);
 	}
 	
 	private void setDismiss(Dialog dialog){

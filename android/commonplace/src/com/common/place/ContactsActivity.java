@@ -84,7 +84,7 @@ public class ContactsActivity extends Activity implements OnClickListener, OnIte
             confirm.setVisibility(View.GONE);
         }
         
-        recipientCursor.close();
+        //recipientCursor.close();
         
         search_text.addTextChangedListener(textWatcherInput);
 

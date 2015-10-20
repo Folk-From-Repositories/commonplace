@@ -1,8 +1,7 @@
 package com.common.place;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.HashMap;
 
 import com.common.place.db.Provider;
 import com.common.place.model.Group;
@@ -71,10 +70,10 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		markerOptions = new MarkerOptions();
 		
 		makeCameraMove();
-		updateMemberPositions();
 		
 		if(requestType == Constants.REQUEST_TYPE_GPS_GETHERING){
 			restaurantSearch.setVisibility(View.GONE);
+			updateMemberPositions();
 		}else if(requestType == Constants.REQUEST_TYPE_MAP_CREATE){
 			restaurantSearch.setVisibility(View.VISIBLE);
 			gmap.setOnMapClickListener(this);
@@ -95,7 +94,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	private void makeCameraMove(boolean isRefresh) {
 		
 		if(!isRefresh){
-			Cursor cursor = getContentResolver().query(Provider.GROUP_CONTENT_URI, null, Provider.GROUP_ID + " = " + groupId, null, null);
+			Cursor cursor = getContentResolver().query(Provider.GROUP_CONTENT_URI, null, Provider.GROUP_ID+"=\'"+groupId+"\'", null, null);
 			if(cursor != null && cursor.getCount() > 0){
 				if(cursor.moveToFirst()){
 					do{
@@ -130,8 +129,9 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
     			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.goal));
     			markerOptions.position(cameraLatLng);
     			gmap.addMarker(markerOptions);
+        	}else{
+        		cameraLatLng = new LatLng(37.541, 126.986);
         	}
-        	Logger.d("isRefresh:"+isRefresh);
         	if(!isRefresh){
         		gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, 12));
         	}
@@ -143,25 +143,18 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//getMemberPositions();
+		if(requestType == Constants.REQUEST_TYPE_GPS_GETHERING){
+			registerReceiver(innerReceiver, filter);
+		}
 		
-//		dummyData();
-		
-//		TimerTask adTast = new TimerTask() {
-//			public void run() {
-//				move();
-//			}
-//		};
-//		Timer timer = new Timer();
-//		timer.schedule(adTast, 0, 3000);
-		
-		registerReceiver(innerReceiver, filter);
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		unregisterReceiver(innerReceiver);
+		if(requestType == Constants.REQUEST_TYPE_GPS_GETHERING){
+			unregisterReceiver(innerReceiver);
+		}
 	}
 	
 	public class InnerReceiver extends BroadcastReceiver{
@@ -173,37 +166,14 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	     
 	}
 	
-//	Marker dummyMarker;
-//	private void dummyData(){
-//		// 
-//		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-//		try{
-//			LatLng latLng = new LatLng(37.574255, 126.976754);
-//			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-//			markerOptions.position(latLng);
-//			IconGenerator tc = new IconGenerator(this);
-//			tc.setColor(Color.argb(255, 255, 94, 0));
-//			tc.setTextAppearance(R.style.SpecialText);
-//			Bitmap bmp = tc.makeIcon("박종훈");
-//			markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
-//			dummyMarker = gmap.addMarker(markerOptions);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//	}
-	
 	private void updateMemberPositions(){
 		new AsyncTask<Void, Void, ArrayList<GroupMember>>() {
 			@Override
 			protected ArrayList<GroupMember> doInBackground(Void... params) {
 				ArrayList<GroupMember> group = new ArrayList<GroupMember>();
 				
-				Logger.i(Provider.GROUP_ID + " = " + groupId);
-				
-				Cursor cursor = getContentResolver().query(Provider.MEMBER_CONTENT_URI, null, Provider.GROUP_ID + " = " + groupId, null, null);
+				Cursor cursor = getContentResolver().query(Provider.MEMBER_CONTENT_URI, null, Provider.GROUP_ID+"=\'"+groupId+"\'", null, null);
 				if(cursor != null && cursor.getCount() > 0){
-					
-					Logger.d("cursor.getCount()="+cursor.getCount());
 					
 					if(cursor.moveToFirst()){
 						do{
@@ -211,8 +181,8 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 									cursor.getString(cursor.getColumnIndex(Provider.GROUP_ID)), 
 									cursor.getString(cursor.getColumnIndex(Provider.NAME)), 
 									cursor.getString(cursor.getColumnIndex(Provider.PHONE_NUMBER)), 
-									cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LAT)), 
-									cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LON))
+									cursor.getDouble(cursor.getColumnIndex(Provider.LOCATION_LAT)), 
+									cursor.getDouble(cursor.getColumnIndex(Provider.LOCATION_LON))
 									);
 							Logger.i(member.toString());
 							group.add(member);
@@ -234,6 +204,8 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		}.execute(null, null, null);
 	}
 	
+	private HashMap<String, Marker> memberMarkers = new HashMap<String, Marker>();
+	
     public void setGpsToMap(ArrayList<GroupMember> group){
     	
     	//gmap.clear();
@@ -243,20 +215,38 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 			
 			GroupMember gMember = group.get(i);
 			
-			try{
-				LatLng latLng = new LatLng(Double.parseDouble(gMember.getLocationLat()), 
-					Double.parseDouble(gMember.getLocationLon()));
-				markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-				markerOptions.position(latLng);
-				IconGenerator tc = new IconGenerator(this);
-				tc.setColor(Color.argb(255, 255, 94, 0));
-				tc.setTextAppearance(R.style.SpecialText);
-				Bitmap bmp = tc.makeIcon(gMember.getName());
-				markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
-				gmap.addMarker(markerOptions);
-				//gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, 12));
-			}catch(Exception e){
-				e.printStackTrace();
+			Marker marker = memberMarkers.get(gMember.getPhone());
+			
+			if(marker == null){
+				
+				try{
+					LatLng latLng = new LatLng(gMember.getLocationLat(), gMember.getLocationLon());
+					
+					markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+					markerOptions.position(latLng);
+					
+					IconGenerator tc = new IconGenerator(this);
+					tc.setColor(Color.argb(255, 255, 94, 0));
+					tc.setTextAppearance(R.style.SpecialText);
+					Bitmap bmp = tc.makeIcon(gMember.getName());
+					markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
+					
+					Marker mk = gmap.addMarker(markerOptions);
+					
+					memberMarkers.put(gMember.getPhone(), mk);
+					
+					//gmap.moveCamera(CameraUpdateFactory.newLatLngZoom(cameraLatLng, 12));
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
+			}else{
+				
+				Logger.i("UPDATE USER "+gMember.getName()+" ["+gMember.getPhone()+"]");
+				Logger.i(marker.getPosition().latitude+" > "+gMember.getLocationLat());
+				Logger.i(marker.getPosition().longitude+" > "+gMember.getLocationLon());
+				
+				animateMarker(marker, new LatLng(gMember.getLocationLat(), gMember.getLocationLon()), false);
 			}
 		}
     }

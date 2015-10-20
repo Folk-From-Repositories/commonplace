@@ -197,7 +197,7 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 //			nameValuePairs.add(new BasicNameValuePair("member", Arrays.toString(member)));
 			
 			for (int i = 0; i < member.length; i++) {
-	             nameValuePairs.add(new BasicNameValuePair("member[]",member[i]));
+	             nameValuePairs.add(new BasicNameValuePair("member[]",member[i].replaceAll("-", "")));
 	        }
 			
 			Logger.d(title);
@@ -235,6 +235,10 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 			@Override
 			protected void onPostExecute(NetworkResponse response) {
 				super.onPostExecute(response);
+				if(response == null){
+					return;
+				}
+					
 				Logger.d("registerInBackground() onPostExecute:"+response.getResponseCode());
 				
 				int responseCode = response.getResponseCode();
