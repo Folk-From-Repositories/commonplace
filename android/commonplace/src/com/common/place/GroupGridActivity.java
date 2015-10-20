@@ -92,6 +92,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 		filter = new IntentFilter(Constants.INNER_BROADCAST_RECEIVER);
 		
 		refreshGrid();
+		registerReceiver(mainReceiver, filter);
     }
     
 	@Override
@@ -104,8 +105,6 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
         }else{
         	btn_1.setText(GroupGridActivity.this.getResources().getString(R.string.btn_start_service));
         }
-		
-		registerReceiver(mainReceiver, filter);
 	}
 	
 	public class MainBroadcastReceiver extends BroadcastReceiver{
@@ -119,8 +118,9 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	@Override
 	protected void onPause() {
 		super.onPause();
-		unregisterReceiver(mainReceiver);
 	}
+	
+	
 	
 	private void refreshGrid(){
 		setGridVisible(false);
@@ -244,6 +244,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		unregisterReceiver(mainReceiver);
 	}
 
 	@Override
