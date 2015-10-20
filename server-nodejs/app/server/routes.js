@@ -285,14 +285,14 @@ module.exports = function(app) {
     /**
      * @depreciated
      */
-    app.get('/admin/gcm/gps/on', function(req, res) {
-        ULM.enableGPSNotification();
-        res.status(200).send('ok');
-    });
-    app.get('/admin/gcm/gps/off', function(req, res) {
-        ULM.disableGPSNotification();
-        res.status(200).send('ok');
-    });
+    // app.get('/admin/gcm/gps/on', function(req, res) {
+    //     ULM.enableGPSNotification();
+    //     res.status(200).send('ok');
+    // });
+    // app.get('/admin/gcm/gps/off', function(req, res) {
+    //     ULM.disableGPSNotification();
+    //     res.status(200).send('ok');
+    // });
 
     /**
      * // TODO delete
@@ -383,7 +383,7 @@ module.exports = function(app) {
  * 모임 상세 조회
  *
  * @url /commonplace/moim/details
- * @method GET
+ * @method post
  * @param {array} or {int} id 모임 ID (int 또는 int array)
  * @return {json} Moim 테이블 조회 결과, member field는 사용자 정보 추가된 json
  **/
@@ -451,7 +451,7 @@ module.exports = function(app) {
      * - 참여자 요청시 첨여 정보 삭제
      *
      * @url /commonplace/moim/delete
-     * @ method POST
+     * @method POST
      * @param {int} id 모임 ID
      * @param {string} phone 요청자 전화번호
      * @return {string} result 처리 결과 (에러일 경우 400, 성공시 200 http status code)

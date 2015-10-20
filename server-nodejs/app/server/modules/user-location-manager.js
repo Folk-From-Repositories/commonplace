@@ -97,53 +97,53 @@ exports.getAllUsersLocation = function(callback) {
     });
 }
 
-var notiThread;
+// var notiThread;
 
-function sendUserLocation() {
-    exports.getAllUsersLocation(function(err, phones, locations) {
+// function sendUserLocation() {
+//     exports.getAllUsersLocation(function(err, phones, locations) {
 
-        if (err) return;
+//         if (err) return;
 
-        var message = {
-            category: 'GPS Push',
-            moimId: 1,
-            member: locations
-        };
+//         var message = {
+//             category: 'GPS Push',
+//             moimId: 1,
+//             member: locations
+//         };
 
-        GM.sendMessage(phones, message, function(e, o) {
-            if (e) {
-                console.error(e);
-            }
-        });
-    });
-}
+//         GM.sendMessage(phones, message, function(e, o) {
+//             if (e) {
+//                 console.error(e);
+//             }
+//         });
+//     });
+// }
 
-/**
- * @depreciated
- */
-exports.enableGPSNotification = function() {
+// /**
+//  * @depreciated
+//  */
+// exports.enableGPSNotification = function() {
 
-    if (!notiThread) {
-        console.log('enableGPSNotification()');
+//     if (!notiThread) {
+//         console.log('enableGPSNotification()');
 
-        notiThread = setInterval(function() {
-            sendUserLocation();
-        }, 5000);
-    } else {
-        console.log('enableGPSNotification() - already enabled.');
-    }
-}
+//         notiThread = setInterval(function() {
+//             sendUserLocation();
+//         }, 5000);
+//     } else {
+//         console.log('enableGPSNotification() - already enabled.');
+//     }
+// }
 
-/**
- * @depreciated
- */
-exports.disableGPSNotification = function() {
+// /**
+//  * @depreciated
+//  */
+// exports.disableGPSNotification = function() {
 
-    if (notiThread) {
-        console.log('disableGPSNotification()');
-        clearInterval(notiThread);
-        notiThread = undefined;
-    } else {
-        console.log('disableGPSNotification() - already disabled.');
-    }
-}
+//     if (notiThread) {
+//         console.log('disableGPSNotification()');
+//         clearInterval(notiThread);
+//         notiThread = undefined;
+//     } else {
+//         console.log('disableGPSNotification() - already disabled.');
+//     }
+// }
