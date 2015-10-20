@@ -1,0 +1,26 @@
+[
+  {
+    // server
+    "uid": "commonplace-server",
+    "append": true,
+    "watch": true,
+    "script": "server.js",
+    "sourceDir": "./app"
+  },
+  {
+    // user-location-broadcast-activator
+    "uid": "commonplace-user-location-broadcast-activator",
+    "append": true,
+    "watch": true,
+    "script": "user-location-broadcast-activator.js",
+    "sourceDir": "./app/cron-tasks"
+  },
+  {
+    // user-location-broadcaster
+    "uid": "commonplace-user-location-broadcaster",
+    "append": true,
+    "watch": true,
+    "script": "user-location-broadcaster.js",
+    "sourceDir": "./app/cron-tasks"
+  }
+]
