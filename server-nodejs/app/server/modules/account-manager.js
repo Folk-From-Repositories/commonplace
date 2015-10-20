@@ -1,7 +1,8 @@
-var crypto         = require('crypto');
-var moment         = require('moment');
-var connection     = require('./database-connector').connection;
-var utils         = require('./utils');
+var crypto      = require('crypto');
+var moment      = require('moment');
+var connection  = require('./database-connector').connection;
+var utils       = require('./utils');
+var tag         = '[AccountManager]';
 
 /* login validation methods */
 
