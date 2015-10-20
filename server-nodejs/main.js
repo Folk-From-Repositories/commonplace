@@ -6,3 +6,14 @@ var userLocationBroadcaster = cp.fork(__dirname + '/app/cron-tasks/user-location
 server.on('message', function(m) {
     console.log('server message: ' + m);
 });
+
+
+process.on('SIGINT', function(err) {
+    killChilds();
+});
+
+function killChilds() {
+	server.kill('SIGINT');
+	userLocationBroadcaster.kill('SIGINT');
+	userLocationBroadcastActivator.kill('SIGINT');
+}
