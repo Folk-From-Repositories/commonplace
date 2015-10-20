@@ -60,7 +60,7 @@ public class InitActivity extends Activity {
         hd.postDelayed(new Runnable() {
             @Override
             public void run() {
-        		startActivity(new Intent(InitActivity.this, GroupMainActivity.class));
+        		startActivity(new Intent(InitActivity.this, GroupGridActivity.class));
         		InitActivity.this.finish();
             }
         }, 500);

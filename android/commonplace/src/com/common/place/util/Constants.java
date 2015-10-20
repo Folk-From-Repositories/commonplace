@@ -14,6 +14,7 @@ public class Constants {
 	public static final String SVR_MOIM_REGIST_URL = HOST + "/commonplace/moim/regist";
 	public static final String TEST_URL            = HOST + "/test/commonplace/gcm/send";
 	public static final String SVR_USER_LOCATION   = HOST + "/commonplace/user/location";
+	public static final String DISABLE_GROUP       = HOST + "/commonplace/moim/broadcast/disable";
 	
 	public static final String RESTAURANT_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 	

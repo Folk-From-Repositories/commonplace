@@ -57,7 +57,7 @@
         </activity>
 
         <activity
-            android:name=".GroupMainActivity"
+            android:name=".GroupGridActivity"
             android:label="@string/title_activity_group_main_view"
             android:permission="com.google.android.c2dm.permission.SEND" >
             
