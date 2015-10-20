@@ -24,8 +24,11 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +60,9 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	
 	private AlertDialog mDialog = null;
 	
+	MainBroadcastReceiver mainReceiver;
+	IntentFilter filter;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,23 +86,44 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
         
         adapter = new CustomGridAdapter(GroupGridActivity.this, new ArrayList<Group>());
         grid.setAdapter(adapter);
+        
+        
+        mainReceiver = new MainBroadcastReceiver();
+		filter = new IntentFilter(Constants.INNER_BROADCAST_RECEIVER);
+		
+		refreshGrid();
     }
     
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		refreshGrid();
-	}
-	
-	private void refreshGrid(){
-		setGridVisible(false);
+//		refreshGrid();
 		
 		if(isRunning()){
         	btn_1.setText(GroupGridActivity.this.getResources().getString(R.string.btn_stop_service));
         }else{
         	btn_1.setText(GroupGridActivity.this.getResources().getString(R.string.btn_start_service));
         }
+		
+		registerReceiver(mainReceiver, filter);
+	}
+	
+	public class MainBroadcastReceiver extends BroadcastReceiver{
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	    	Logger.i("InnerReceiver onReceive intent:"+intent);
+	    	refreshGrid();
+	    }
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(mainReceiver);
+	}
+	
+	private void refreshGrid(){
+		setGridVisible(false);
 		
 		dialog = ProgressDialog.show(GroupGridActivity.this, "", GroupGridActivity.this.getResources().getText(R.string.loading), true);
 		

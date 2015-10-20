@@ -264,6 +264,7 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 						e.printStackTrace();
 					}
 					Toast.makeText(GroupRegistActivity.this, getResources().getText(R.string.regist_success), Toast.LENGTH_SHORT).show();
+					Utils.sendBroadcastForGridRefresh(GroupRegistActivity.this);
 					GroupRegistActivity.this.finish();
 					
 				}else{

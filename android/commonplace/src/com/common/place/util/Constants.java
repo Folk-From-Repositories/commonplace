@@ -38,6 +38,7 @@ public class Constants {
     public static final String SHARED_PREFERENCE_FILE_NAME = "commonPlaceSpref";
     
     public static String INNER_BROADCAST_RECEIVER = "com.common.place.innerbroadcast";
+    public static String MAIN_BROADCAST_RECEIVER  = "com.common.place.mainbroadcast";
     
     
     //-- push --

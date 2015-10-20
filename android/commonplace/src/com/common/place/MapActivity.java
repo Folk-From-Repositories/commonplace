@@ -8,6 +8,7 @@ import com.common.place.model.Group;
 import com.common.place.model.GroupMember;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
+import com.common.place.util.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
@@ -164,6 +165,12 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	    	updateMemberPositions();
 	    }
 	     
+	}
+	
+	@Override
+	protected void onDestroy() {
+		Utils.sendBroadcastForGridRefresh(MapActivity.this);
+		super.onDestroy();
 	}
 	
 	private void updateMemberPositions(){

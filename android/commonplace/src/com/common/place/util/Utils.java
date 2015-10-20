@@ -32,6 +32,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -490,7 +491,10 @@ String projectname = data.getString("name"); // get the name from data.
 		
 	}
 	
-	
+	public static void sendBroadcastForGridRefresh(Context context){
+		Intent i = new Intent(Constants.MAIN_BROADCAST_RECEIVER);
+        context.sendBroadcast(i);
+	}
 	
 	
 	

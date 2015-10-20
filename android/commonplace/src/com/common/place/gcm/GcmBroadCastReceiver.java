@@ -8,14 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.common.place.db.Provider;
 import com.common.place.model.GroupMember;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
 import com.common.place.util.Utils;
 
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,7 +48,7 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         }
         
         Logger.i(m);
-        Toast.makeText(context, m, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, m, Toast.LENGTH_SHORT).show();
         
         if(msgMap.get(Constants.MSG_KEY_CATEGORY) != null){
         	
@@ -71,6 +69,9 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         				Logger.i("## "+Double.parseDouble(member.getString("latitude")));
         				Logger.i("## "+Double.parseDouble(member.getString("longitude")));
         				
+        				Toast.makeText(context, member.getString("phone")+"\n("+Double.parseDouble(member.getString("latitude"))+
+        						", "+Double.parseDouble(member.getString("longitude")), Toast.LENGTH_SHORT).show();
+        				
         				GroupMember gMember = new GroupMember("", member.getString("name"), member.getString("phone"), 
         						Double.parseDouble(member.getString("latitude")), Double.parseDouble(member.getString("longitude")));
         				members.add(gMember);
@@ -85,6 +86,8 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         	}
         	
         }
+        
+        Utils.sendBroadcastForGridRefresh(context);
         
 	}
 	
