@@ -205,7 +205,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 		switch (v.getId()) {
 		case R.id.btn_selectRestaurant:
 			dialog = ProgressDialog.show(RestaurantListActivity.this, "", RestaurantListActivity.this.getResources().getText(R.string.loading), true);
-			RegistGroupActivity.selectedRestaurant = models.get(adapter.selected_position);
+			GroupRegistActivity.selectedRestaurant = models.get(adapter.selected_position);
 			downloadImage(models.get(adapter.selected_position).getPhotoReference());
 			break;
 		}	
@@ -233,7 +233,7 @@ public class RestaurantListActivity extends Activity implements View.OnClickList
 			@Override
 			protected void onPostExecute(Bitmap result) {
 				super.onPostExecute(result);
-				RegistGroupActivity.selectedRestaurantImage = result;
+				GroupRegistActivity.selectedRestaurantImage = result;
 				dialog.dismiss();
 				finish();
 			}

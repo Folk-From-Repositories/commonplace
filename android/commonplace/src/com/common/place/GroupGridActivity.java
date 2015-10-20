@@ -12,6 +12,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.common.place.db.Provider;
 import com.common.place.model.Group;
+import com.common.place.model.NetworkResponse;
 import com.common.place.service.GPSService;
 import com.common.place.uicomponents.CustomGridAdapter;
 import com.common.place.util.Constants;
@@ -85,6 +86,10 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	protected void onResume() {
 		super.onResume();
 		
+		refreshGrid();
+	}
+	
+	private void refreshGrid(){
 		setGridVisible(false);
 		
 		if(isRunning()){
@@ -183,10 +188,14 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_PHONE)), 
 							cursor.getString(cursor.getColumnIndex(Provider.LOCATION_DESC)), 
 							new ArrayList<String>());
-					Logger.d("getMemberListFromDB() group title:"+group.getTitle());
+					Logger.d("getMemberListFromDB() group title:"+group.getTitle()+"["+group.getId()+"]");
 					groupList.add(group);
 				}while(cursor.moveToNext());
 			}
+		}
+		
+		if(cursor != null){
+			cursor.close();
 		}
 		
 		return groupList;
@@ -225,7 +234,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 			break;
 		case R.id.nextBtn3:
 			Logger.d("REGISTER GROUP");
-			startActivityForResult(new Intent(getApplicationContext(), RegistGroupActivity.class),0);
+			startActivityForResult(new Intent(getApplicationContext(), GroupRegistActivity.class),0);
 			break;
 		}
 	}
@@ -268,7 +277,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 		Logger.d("createDialog("+index+")");
         AlertDialog.Builder ab = new AlertDialog.Builder(this);
         ab.setTitle("Watning!");
-        ab.setMessage("Delete "+groupList.get(index).getTitle() + "?");
+        ab.setMessage("Delete "+groupList.get(index).getTitle() + "?\n(groupId:"+groupList.get(index).getId()+")");
         ab.setCancelable(false);
         ab.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
           
@@ -292,30 +301,39 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
     }
 	
 	private void deleteGroupList(int groupId){
-        new AsyncTask<Integer, Void, Boolean>() {
+        new AsyncTask<Integer, Void, NetworkResponse>() {
             @Override
-            protected Boolean doInBackground(Integer... params) {
+            protected NetworkResponse doInBackground(Integer... params) {
                 try {
                 	List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
-            		nameValuePairs.add(new BasicNameValuePair("id", "\""+params[0]+"\""));
+                	nameValuePairs.add(new BasicNameValuePair("id", ""+params[0]));
+                	nameValuePairs.add(new BasicNameValuePair("phone", "\""+Utils.getPhoneNumber(GroupGridActivity.this)+"\""));
             		
                 	HttpResponse response = null;
             		try {
-            			response = Utils.callToServer(Constants.DISABLE_GROUP, new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            			response = Utils.callToServer(Constants.DELETE_GROUP, new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            			return new NetworkResponse(response.getStatusLine().getStatusCode(),
+            					EntityUtils.toString(response.getEntity(), HTTP.UTF_8));
             		} catch (UnsupportedEncodingException e) {
             			e.printStackTrace();
             		}
-            		Logger.d(response.toString());
+            		//Logger.d(response.toString());
                 } catch (Exception e) {
                 	e.printStackTrace();
                 }
 				return null;
             }
 			@Override
-			protected void onPostExecute(Boolean result) {
+			protected void onPostExecute(NetworkResponse result) {
 				super.onPostExecute(result);
-				Logger.d("onPostExecute:"+result);
 				dialog.dismiss();
+				if(result != null && result.getResponseCode() == 200){
+					Toast.makeText(GroupGridActivity.this, result.getReponseString(), Toast.LENGTH_SHORT).show();
+					refreshGrid();
+				}else{
+					Logger.e(result.toString());
+					Toast.makeText(GroupGridActivity.this, "failed", Toast.LENGTH_SHORT).show();
+				}
 			}
         }.execute(groupId, null, null);
 	}

@@ -45,7 +45,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class RegistGroupActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
+public class GroupRegistActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
 	public ArrayList<Group> groupList = new ArrayList<Group>();
 	public ArrayList<GroupMember> getArrayList;
@@ -93,12 +93,12 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		selectedRestaurantImage = null;
 		selectedRestaurant = null;
 		
-		Utils.deleteAllMemberListInDB(RegistGroupActivity.this);
+		Utils.deleteAllMemberListInDB(GroupRegistActivity.this);
 	}
 
 	@Override
 	protected void onDestroy() {
-		Utils.deleteAllMemberListInDB(RegistGroupActivity.this);
+		Utils.deleteAllMemberListInDB(GroupRegistActivity.this);
 		super.onDestroy();
 	}
 
@@ -127,7 +127,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 	}
 	
 	public void createMemberList(){
-		ArrayList<Contact> arr = Utils.getSelectedMemberList(RegistGroupActivity.this);
+		ArrayList<Contact> arr = Utils.getSelectedMemberList(GroupRegistActivity.this);
 		if(arr != null && arr.size() > 0){
 			contact_list.setText("");
 			contact_list.setGravity(Gravity.LEFT);
@@ -156,11 +156,11 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 		switch (v.getId()) {
 		case R.id.btn_date:
 			getCurrentCalendar();
-			new DatePickerDialog(RegistGroupActivity.this, RegistGroupActivity.this, year, month, day).show();
+			new DatePickerDialog(GroupRegistActivity.this, GroupRegistActivity.this, year, month, day).show();
 			break;
 		case R.id.btn_time:
 			getCurrentCalendar();
-			new TimePickerDialog(RegistGroupActivity.this, RegistGroupActivity.this, hour, minute, false).show();
+			new TimePickerDialog(GroupRegistActivity.this, GroupRegistActivity.this, hour, minute, false).show();
 			break;
 		case R.id.searchMap:
 			Intent intent = new Intent(getApplicationContext(), MapActivity.class);
@@ -168,7 +168,7 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			startActivity(intent);
 			break;
 		case R.id.btn_contacts:
-			startActivity(new Intent(getApplicationContext(), MemberActivity.class));
+			startActivity(new Intent(getApplicationContext(), ContactsActivity.class));
 			break;
 		case R.id.btn_regist_group:
 			
@@ -180,8 +180,8 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 			String locationLon = selectedRestaurant.getLocationLon();
 			String locationPhone = "02-345-6789";
 			String locationDesc = selectedRestaurant.getVicinity();
-			String owner = Utils.getPhoneNumber(RegistGroupActivity.this);
-			String[] member = Utils.getPhoneNumArr(RegistGroupActivity.this);
+			String owner = Utils.getPhoneNumber(GroupRegistActivity.this);
+			String[] member = Utils.getPhoneNumArr(GroupRegistActivity.this);
 			
 			List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(10);
 			nameValuePairs.add(new BasicNameValuePair("title", title));
@@ -253,17 +253,17 @@ public class RegistGroupActivity extends Activity implements OnClickListener, Da
 							for(int i = 0 ; i < smsArr.length() ; i++){
 								targets[i] = smsArr.get(i).toString();
 							}
-							SmsSender.sendSmsMessage(RegistGroupActivity.this, targets);
+							SmsSender.sendSmsMessage(GroupRegistActivity.this, targets);
 						}
 						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					Toast.makeText(RegistGroupActivity.this, getResources().getText(R.string.regist_success), Toast.LENGTH_SHORT).show();
-					RegistGroupActivity.this.finish();
+					Toast.makeText(GroupRegistActivity.this, getResources().getText(R.string.regist_success), Toast.LENGTH_SHORT).show();
+					GroupRegistActivity.this.finish();
 					
 				}else{
-					Toast.makeText(RegistGroupActivity.this, getResources().getText(R.string.regist_error), Toast.LENGTH_SHORT).show();
+					Toast.makeText(GroupRegistActivity.this, getResources().getText(R.string.regist_error), Toast.LENGTH_SHORT).show();
 				}
 				
 			}

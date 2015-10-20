@@ -58,7 +58,7 @@ public class Utils {
         
         nameValuePairs.add(new BasicNameValuePair("phone", Utils.getPhoneNumber(context)));
         nameValuePairs.add(new BasicNameValuePair("token", regId));
-        nameValuePairs.add(new BasicNameValuePair("name", Utils.getPhoneNumber(context)));
+        nameValuePairs.add(new BasicNameValuePair("name", Utils.getUserName(context)));
 
 		try {
 			HttpResponse response = callToServer(Constants.SVR_REGIST_URL, new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
@@ -153,8 +153,10 @@ public class Utils {
 	public static String getPhoneNumber(Context context){
 		if(Constants.PHONE_NUMBER == null || Constants.PHONE_NUMBER.equals("")){
 			TelephonyManager telManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE); 
-			String phoneNum = telManager.getLine1Number();
-			Constants.PHONE_NUMBER = phoneNum.substring(phoneNum.length() - 11);
+			String phoneNumber = telManager.getLine1Number();
+			phoneNumber = phoneNumber.substring(phoneNumber.length()-10,phoneNumber.length());
+			phoneNumber = "0"+phoneNumber;
+			Constants.PHONE_NUMBER = phoneNumber;
 		}
 		return Constants.PHONE_NUMBER;
 	}
@@ -386,7 +388,7 @@ String projectname = data.getString("name"); // get the name from data.
 				
 				groupList.add(group);
 				
-				Logger.d(group.toString());
+				//Logger.d(group.toString());
 				
 			} catch (JSONException e) {
 				e.printStackTrace();

@@ -1,6 +1,8 @@
 package com.common.place;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.common.place.db.Provider;
 import com.common.place.model.Group;
@@ -66,7 +68,10 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 //		contactArray = request.getSerializableExtra("groupId");
 		groupId = request.getStringExtra("groupId");
 		
+		markerOptions = new MarkerOptions();
+		
 		makeCameraMove();
+		updateMemberPositions();
 		
 		if(requestType == Constants.REQUEST_TYPE_GPS_GETHERING){
 			restaurantSearch.setVisibility(View.GONE);
@@ -80,12 +85,13 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		
 		innerReceiver = new InnerReceiver();
 		filter = new IntentFilter(Constants.INNER_BROADCAST_RECEIVER);
-		markerOptions = new MarkerOptions();
+		
 	}
 	
 	private void makeCameraMove() {
 		makeCameraMove(false);
 	}
+	
 	private void makeCameraMove(boolean isRefresh) {
 		
 		if(!isRefresh){
@@ -108,7 +114,11 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 					}while(cursor.moveToNext());
 				}
 			}
+			if(cursor != null){
+				cursor.close();
+			}
 		}
+		
 		
 		try {
             if (gmap == null) {
@@ -133,9 +143,17 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	@Override
 	protected void onResume() {
 		super.onResume();
-		getMemberPositions();
+		//getMemberPositions();
 		
 //		dummyData();
+		
+//		TimerTask adTast = new TimerTask() {
+//			public void run() {
+//				move();
+//			}
+//		};
+//		Timer timer = new Timer();
+//		timer.schedule(adTast, 0, 3000);
 		
 		registerReceiver(innerReceiver, filter);
 	}
@@ -150,50 +168,61 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
 	    	Logger.i("InnerReceiver onReceive intent:"+intent);
-	    	getMemberPositions();
+	    	updateMemberPositions();
 	    }
 	     
 	}
 	
+//	Marker dummyMarker;
 //	private void dummyData(){
 //		// 
 //		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
 //		try{
 //			LatLng latLng = new LatLng(37.574255, 126.976754);
+//			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
 //			markerOptions.position(latLng);
-////			markerOptions.icon(Utils.getTextMarker("박종훈!"));
-//			
 //			IconGenerator tc = new IconGenerator(this);
-//			tc.setColor(R.style.background_color);
+//			tc.setColor(Color.argb(255, 255, 94, 0));
 //			tc.setTextAppearance(R.style.SpecialText);
 //			Bitmap bmp = tc.makeIcon("박종훈");
 //			markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bmp));
-//			gmap.addMarker(markerOptions);
+//			dummyMarker = gmap.addMarker(markerOptions);
 //		}catch(Exception e){
 //			e.printStackTrace();
 //		}
 //	}
 	
-	private void getMemberPositions(){
+	private void updateMemberPositions(){
 		new AsyncTask<Void, Void, ArrayList<GroupMember>>() {
 			@Override
 			protected ArrayList<GroupMember> doInBackground(Void... params) {
 				ArrayList<GroupMember> group = new ArrayList<GroupMember>();
+				
+				Logger.i(Provider.GROUP_ID + " = " + groupId);
+				
 				Cursor cursor = getContentResolver().query(Provider.MEMBER_CONTENT_URI, null, Provider.GROUP_ID + " = " + groupId, null, null);
 				if(cursor != null && cursor.getCount() > 0){
+					
+					Logger.d("cursor.getCount()="+cursor.getCount());
+					
 					if(cursor.moveToFirst()){
 						do{
-							GroupMember contactsModel = new GroupMember(
+							GroupMember member = new GroupMember(
 									cursor.getString(cursor.getColumnIndex(Provider.GROUP_ID)), 
 									cursor.getString(cursor.getColumnIndex(Provider.NAME)), 
 									cursor.getString(cursor.getColumnIndex(Provider.PHONE_NUMBER)), 
 									cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LAT)), 
 									cursor.getString(cursor.getColumnIndex(Provider.LOCATION_LON))
 									);
-							group.add(contactsModel);
+							Logger.i(member.toString());
+							group.add(member);
 						}while(cursor.moveToNext());
 					}
 				}
+				if(cursor != null){
+					cursor.close();
+				}
+				
 				return group;
 			}
 			@Override
@@ -207,8 +236,8 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	
     public void setGpsToMap(ArrayList<GroupMember> group){
     	
-    	gmap.clear();
-    	makeCameraMove(true);
+    	//gmap.clear();
+    	//makeCameraMove(true);
     	
 		for(int i = 0; i < group.size(); i++){
 			
@@ -232,6 +261,13 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 		}
     }
     
+//    private void move(){
+//    	LatLng oldLatLng = dummyMarker.getPosition();
+//    	double switcher = 1.0;
+//    	LatLng newLatLng = new LatLng(oldLatLng.latitude, oldLatLng.longitude + 1.0);
+//    	switcher = (-1) * switcher;
+//    	animateMarker(dummyMarker, newLatLng, false);
+//    }
     public void animateMarker(final Marker marker, final LatLng toPosition,
             final boolean hideMarker) {
         final Handler handler = new Handler();

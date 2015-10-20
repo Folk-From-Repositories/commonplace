@@ -46,6 +46,9 @@ public class GroupMember{
 		this.locationLon = locationLon;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "["+groupId+"]"+name+" "+phone+" "+locationLat+" "+locationLon;
+	}
 	
 }

@@ -21,6 +21,10 @@ public class NetworkResponse {
 	public void setReponseString(String reponseString) {
 		this.reponseString = reponseString;
 	}
+	@Override
+	public String toString() {
+		return "["+responseCode+"]"+reponseString;
+	}
 	
 	
 }

@@ -32,7 +32,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MemberActivity extends Activity implements OnClickListener, OnItemClickListener{
+public class ContactsActivity extends Activity implements OnClickListener, OnItemClickListener{
 
     Intent mIntent;
     
@@ -84,12 +84,12 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
             confirm.setVisibility(View.GONE);
         }
         
-        //recipientCursor.close();
+        recipientCursor.close();
         
         search_text.addTextChangedListener(textWatcherInput);
 
         contactArrayList = getContacts("");
-        adapter = new SimpleAdapter(MemberActivity.this, contactArrayList,
+        adapter = new SimpleAdapter(ContactsActivity.this, contactArrayList,
                 android.R.layout.simple_list_item_2, new String[] {
                         "name", "phone_number"
                 }, new int[] {
@@ -108,7 +108,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
     public void onClick(View v) {
         switch(v.getId()){
         case R.id.btn_confirm:
-            MemberActivity.this.finish();
+            ContactsActivity.this.finish();
             break;
             
         case R.id.btn_select_all:
@@ -178,7 +178,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
             
             refreshFooter();
             
-            Toast.makeText(MemberActivity.this, ""+msg.what+" "+getText(R.string.multiinsert), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ContactsActivity.this, ""+msg.what+" "+getText(R.string.multiinsert), Toast.LENGTH_SHORT).show();
         }
     };
     
@@ -318,7 +318,7 @@ public class MemberActivity extends Activity implements OnClickListener, OnItemC
             String edit = s.toString();
             contactArrayList = getContacts(edit);
 
-            adapter = new SimpleAdapter(MemberActivity.this, contactArrayList,
+            adapter = new SimpleAdapter(ContactsActivity.this, contactArrayList,
                     android.R.layout.simple_list_item_2, new String[] {
                             "name", "phone_number"
                     }, new int[] {

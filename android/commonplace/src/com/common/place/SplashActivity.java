@@ -19,7 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class InitActivity extends Activity {
+public class SplashActivity extends Activity {
     
     GoogleCloudMessaging gcm;
     String regId;
@@ -39,7 +39,7 @@ public class InitActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 
-		String userName = Utils.getUserName(InitActivity.this);
+		String userName = Utils.getUserName(SplashActivity.this);
 		if(userName == null || userName.equals("")){
 			showDialog(0);
 		}else{
@@ -52,7 +52,7 @@ public class InitActivity extends Activity {
             gcm = GoogleCloudMessaging.getInstance(this);
             registerInBackground();
         } else {
-            Utils.createCloseApplicationDialog(InitActivity.this, getResources().getString(R.string.fail_to_google_play_service));
+            Utils.createCloseApplicationDialog(SplashActivity.this, getResources().getString(R.string.fail_to_google_play_service));
         }
 	}
 	
@@ -60,8 +60,8 @@ public class InitActivity extends Activity {
         hd.postDelayed(new Runnable() {
             @Override
             public void run() {
-        		startActivity(new Intent(InitActivity.this, GroupGridActivity.class));
-        		InitActivity.this.finish();
+        		startActivity(new Intent(SplashActivity.this, GroupGridActivity.class));
+        		SplashActivity.this.finish();
             }
         }, 500);
 	}
@@ -72,10 +72,10 @@ public class InitActivity extends Activity {
             protected Void doInBackground(Void... params) {
                 try {
                     if (gcm == null || gcm.equals("")) {
-                        gcm = GoogleCloudMessaging.getInstance(InitActivity.this);
+                        gcm = GoogleCloudMessaging.getInstance(SplashActivity.this);
                     }
                     regId = gcm.register(Constants.SENDER_ID);
-                    String response = Utils.sendRegistrationIdToBackend(InitActivity.this, regId);
+                    String response = Utils.sendRegistrationIdToBackend(SplashActivity.this, regId);
                     if(response != null && !response.equals("")){
                     	isSuccessfullyRegistered = true;
                     }
@@ -107,7 +107,7 @@ public class InitActivity extends Activity {
 		View dialogview = inflater.inflate(R.layout.dialog_user_name, null);
 
 		AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
-		dialogbuilder.setTitle(InitActivity.this.getResources().getString(R.string.txt_dialog_title));
+		dialogbuilder.setTitle(SplashActivity.this.getResources().getString(R.string.txt_dialog_title));
 		dialogbuilder.setView(dialogview);
 		
 		dialogDetails = dialogbuilder.create();
@@ -128,10 +128,10 @@ public class InitActivity extends Activity {
     	  public void onClick(View v) {
     		  String newName = userName.getText().toString();
     		  if(newName == null || newName.equals("")){
-    			  Toast.makeText(InitActivity.this, InitActivity.this.getResources().getString(R.string.txt_dialog_body), Toast.LENGTH_SHORT).show();
+    			  Toast.makeText(SplashActivity.this, SplashActivity.this.getResources().getString(R.string.txt_dialog_body), Toast.LENGTH_SHORT).show();
     			  return;
     		  }
-    		  Utils.setUserName(InitActivity.this, newName);
+    		  Utils.setUserName(SplashActivity.this, newName);
     		  checkPlayService();
     		  alertDialog.dismiss();
     	  }
