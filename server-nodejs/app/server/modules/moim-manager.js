@@ -32,6 +32,10 @@ exports.createNewMoim = function(data, callback) {
         return;
     }
 
+    for (var i = 0; i < data.member.length; i++) {
+        data.member[i] = utils.phoneToDbFormat(data.member[i]);
+    }
+
     var moimObj = {
         title: data.title,
         dateTime: data.dateTime,
@@ -155,6 +159,8 @@ exports.createNewMoim = function(data, callback) {
  * 나의 모임 정보 조회
  */
 exports.getMyMoims = function(phone, callback) {
+    phone = utils.phoneToDbFormat(phone);
+
     // validate data
     if (!phone) {
         callback('error-phone-number');

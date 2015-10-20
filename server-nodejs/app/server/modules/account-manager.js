@@ -48,7 +48,11 @@ exports.manualLogin = function(user, pass, callback)
 exports.addNewAccount = function(newData, callback)
 {
 
+    // convert phone number to database format
+    newData.phone = utils.phoneToDbFormat(newData.phone);
+
     console.log(tag + 'add new account from Web', newData.user);
+
 
     if (!newData.user || !newData.phone || !newData.email || !newData.pass) {
         callback('insufficient-params'); return;
@@ -96,6 +100,8 @@ exports.addNewAccount = function(newData, callback)
 
 exports.updateAccount = function(newData, callback)
 {
+    console.log(tag + 'update account', newData.user);
+
     var sql = 'UPDATE `commonplace`.`user`' +
                 'SET' +
                 '`name` = ?,' +
@@ -105,8 +111,6 @@ exports.updateAccount = function(newData, callback)
                 '`country` = ?,' +
                 '`update` = NOW()' +
                 'WHERE `user` = ?';
-
-    console.log(tag + 'update account', newData.user);
 
     findByUserId(newData.user, function(e, o) {
         if (e || typeof o !== 'object') {

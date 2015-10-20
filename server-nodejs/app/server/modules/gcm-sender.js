@@ -1,6 +1,7 @@
 var gcm = require('node-gcm');
 var fs = require('fs');
 var AM = require('./account-manager');
+var utils = require('./utils');
 var server_api_key = fs.readFileSync(__dirname + '/../conf/gcm-server-key', 'utf8');
 
 if (typeof server_api_key !== 'string') {
@@ -58,6 +59,10 @@ exports.sendMessage = function(phones, data, callback) {
     if (Object.prototype.toString.call(phones) !== '[object Array]') {
         callback('error-request-parameter(phones is not array.)');
         return;
+    }
+
+    for (var i=0; i< phones.length; i++) {
+        phones[i] = utils.phoneToDbFormat(phones[i]);
     }
 
     AM.getGcmTokens(phones, function(err, res) {

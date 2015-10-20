@@ -3,6 +3,6 @@
 	"dateTimeFormat": "YYYYMMDD HH:mm",
 	"enableNotiBeforeMin": -120,
 	"disableNotiAfterMin": 60,
-	"userLocationBroadCastActivatorCronTime": "10 5,15,25,35,45,55 * * * *",
-	"userLocationBroadCasterCronTime": "0 * * * * *"
+	"userLocationBroadCastActivatorCronTime": "0,10,20,30,40,50 * * * * *",
+	"userLocationBroadCasterCronTime": "5,15,25,35,45,55 * * * * *"
 }
