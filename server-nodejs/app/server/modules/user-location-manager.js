@@ -13,7 +13,7 @@ var locationSchema = require('../schema/user-location-schema.json');
 exports.update = function(data, callback) {
 
 
-    var sql = 'INSERT INTO `commonplace`.`userLocation` (`phone`, `latitude`, `longitude`, `update`) VALUES (?, ?, ?, NOW())' + 'ON DUPLICATE KEY UPDATE `latitude` = ?, `longitude` = ?, `update` = NOW()';
+    var sql = 'INSERT INTO `commonplace`.`userLocation` (`phone`, `latitude`, `longitude`, `crawled`,`update`) VALUES (?, ?, ?, 0, NOW())' + 'ON DUPLICATE KEY UPDATE `latitude` = ?, `longitude` = ?, `crawled` = 0, `update` = NOW()';
 
     var phone = utils.phoneToDbFormat(data.phone);
     var latitude = data.latitude;
@@ -99,53 +99,51 @@ exports.getAllUsersLocation = function(callback) {
     });
 }
 
-// var notiThread;
 
-// function sendUserLocation() {
-//     exports.getAllUsersLocation(function(err, phones, locations) {
+/*
+ * 위치 정보가 변경된 사용자 정보 조회 (참여 모임 포함)
+ * 한번 조회된 정보는 다시 조회도록 crawled 필드 업데이트
+ */ 
+exports.findNewLocationMember = function(callback) {
+    var selectSql = 'SELECT um.moimId, um.phone, u.name, ul.latitude, ul.longitude '
+            + 'FROM `commonplace`.`userMoim` um, '
+            + '     `commonplace`.`moim` m, '
+            + '     `commonplace`.`user` u, '
+            + '     `commonplace`.`userLocation` ul '
+            + 'WHERE um.moimId = m.id '
+            + 'AND um.phone = ul.phone '
+            + 'AND um.phone = u.phone '
+            + 'AND m.`broadcast` = 1 '
+            + 'AND ul.`crawled` = 0 '
+            + 'ORDER BY um.moimId, um.phone ';
 
-//         if (err) return;
+    connection.query(selectSql, function(err, result) {
+        if (err) return callback(err);
 
-//         var message = {
-//             category: 'GPS Push',
-//             moimId: 1,
-//             member: locations
-//         };
+        if (result) {
+            var phones = [];
 
-//         GM.sendMessage(phones, message, function(e, o) {
-//             if (e) {
-//                 console.error(e);
-//             }
-//         });
-//     });
-// }
+            for (var i = 0; i < result.length; i++) {
+                if (phones.indexOf(result[i].phone) < 0) {
+                    phones.push(result[i].phone);
+                }
+            }
 
-// /**
-//  * @depreciated
-//  */
-// exports.enableGPSNotification = function() {
+            if (phones.length < 1) {
+                return callback('No changed user');
+            }
 
-//     if (!notiThread) {
-//         console.log('enableGPSNotification()');
+            var updateSql = 'UPDATE `commonplace`.`userLocation` SET `crawled` = 1 WHERE `phone` IN (' + connection.escape(phones) + ')';
 
-//         notiThread = setInterval(function() {
-//             sendUserLocation();
-//         }, 5000);
-//     } else {
-//         console.log('enableGPSNotification() - already enabled.');
-//     }
-// }
+            connection.query(updateSql);
 
-// /**
-//  * @depreciated
-//  */
-// exports.disableGPSNotification = function() {
+            callback(null, result);
 
-//     if (notiThread) {
-//         console.log('disableGPSNotification()');
-//         clearInterval(notiThread);
-//         notiThread = undefined;
-//     } else {
-//         console.log('disableGPSNotification() - already disabled.');
-//     }
-// }
+        } else {
+            callback('No result');
+        }
+
+    });
+};
+
+

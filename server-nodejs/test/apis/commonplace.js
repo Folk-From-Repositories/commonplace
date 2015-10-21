@@ -1,5 +1,5 @@
 var hippie = require('hippie');
-var server = require('../../app');
+var server = require('../../app/server');
 
 hippie.assert.showDiff = true;
 

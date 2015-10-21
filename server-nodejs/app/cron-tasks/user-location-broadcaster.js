@@ -9,12 +9,6 @@ var ULM = require(__dirname + '/../server/modules/user-location-manager');
 
 var job = new CronJob({
     cronTime: conf.userLocationBroadCasterCronTime,
-    // Seconds: 0-59
-    // Minutes: 0-59
-    // Hours: 0-23
-    // Day of Month: 1-31
-    // Months: 0-11
-    // Day of Week: 0-6
     onTick: function() {
         var startTime, endTime;
 
@@ -22,59 +16,82 @@ var job = new CronJob({
 
             function init(callback) {
                 startTime = moment();
-                console.log('[CronJob] START: user-location-broadcaster - ' + startTime.tz(conf.timezone).format());
+                console.log('');
+                console.log('');
+                console.log('[CronJob] START: user-location-broadcaster - ' + startTime.tz(conf.timezone).format(conf.dateTimeFormatForLogging));
                 callback(null);
             },
-            function findEnabledNotificationMoims(callback) {
-                MM.getEnabledLocationBroadcast(function(err, queryResult) {
-                    var ids = [];
-
-                    for (var i = 0; i < queryResult.length; i++) {
-                        ids.push(queryResult[i].id);
+            function findNewLocationMember(callback) {
+                ULM.findNewLocationMember(function(err, result) {
+                    if (err) {
+                        if (err === 'No changed user' || err === 'No result') {
+                            console.log('* There is no user who was changed location info.')
+                        }
+                        return callback('finish');
                     }
 
-                    MM.getDetails(ids, function(err, moims) {
-                        callback(err, moims);
-                    });
+                    var moims = {};
 
+                    for (var i = 0; i < result.length; i++) {
+                        var moimId = result[i].moimId;
+                        var member = {
+                            phone: result[i].phone,
+                            name: result[i].name,
+                            latitude: result[i].latitude,
+                            longitude: result[i].longitude
+                        };
+
+                        if (typeof moims[moimId] === 'object') {
+                            moims[moimId].push(member);
+                        } else {
+                            moims[moimId] = [member];
+                        }
+                    }
+
+                    callback(null, moims);
                 });
             },
             function sendGCMPush(moims, callback) {
 
-                async.eachSeries(moims, function(moim, eachCallback) {
+                var moimIds = Object.keys(moims);
+
+                async.eachSeries(moimIds, function(moimId, eachCallback) {
+
+                    moimId = parseInt(moimId);
 
                     async.waterfall([
 
                         function init(innerWaterFallCB) {
-                            console.log('Processing moim id ' + moim.id);
+                            console.log('* Processing moim id ' + moimId);
                             innerWaterFallCB(null);
                         },
                         function generateData(innerWaterFallCB) {
-                            // gcm message
+
                             var message = {
                                 category: 'GPS Push',
-                                moimId: moim.id,
-                                member: undefined
+                                moimId: moimId,
+                                member: moims[moimId]
                             };
 
-                            // parse phone number per moim
-                            var phones = moim.member;
-
-                            innerWaterFallCB(null, message, phones);
+                            innerWaterFallCB(null, message);
                         },
-                        function retrieveUserLocation(message, phones, innerWaterFallCB) {
-                            ULM.gets(phones, function(err, userLocations) {
-                                message.member = userLocations;
+                        function getMoimMember(message, innerWaterFallCB) {
+
+                            MM.findMemberInMoims([message.moimId], function(err, phones) {
                                 innerWaterFallCB(err, message, phones);
                             });
                         },
                         function sendMessage(message, phones, innerWaterFallCB) {
+
                             GM.sendNoRetry(phones, message, function(e, o) {
                                 if (e && e === 'No target for sending GCM') {
                                     // do next item
                                     innerWaterFallCB();
                                 } else {
-                                    console.log(o);
+                                    console.log('* GCM Pushed.');
+                                    console.log(JSON.stringify(message, null, 4));
+                                    console.log('* GCM Result.');
+                                    console.log(JSON.stringify(o, null, 4));
                                     innerWaterFallCB(e);
                                 }
                             });
@@ -86,7 +103,6 @@ var job = new CronJob({
                 }, function(err) {
                     if (err) {
                         callback('GCM Push for user location are failed.');
-                        console.error(err);
                     } else {
                         callback(null, 'All GCM Push for user location have been processed successfully');
                     }
@@ -95,13 +111,13 @@ var job = new CronJob({
             }
         ], function finish(err, result) {
             if (err) {
-                console.error(err);
-            } else {
-                console.log(result);
+                if (err !== 'finish') {
+                    console.error(err);
+                }
             }
 
             endTime = moment();
-            console.log('[CronJob] END: user-location-broadcaster - ' + endTime.tz(conf.timezone).format() + ' | diff : ' + endTime.diff(startTime) + "ms");
+            console.log('[CronJob] END  : user-location-broadcaster - ' + endTime.tz(conf.timezone).format(conf.dateTimeFormatForLogging) + ' | working time : ' + endTime.diff(startTime) + "ms");
         });
 
     },

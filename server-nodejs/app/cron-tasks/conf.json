@@ -1,6 +1,7 @@
 {
 	"timezone": "Asia/Seoul",
 	"dateTimeFormat": "YYYYMMDD HH:mm",
+	"dateTimeFormatForLogging": "YYYYMMDD HH:mm:ss",
 	"enableNotiBeforeMin": -120,
 	"disableNotiAfterMin": 60,
 	"campain119TargetMoimFrom": "18:00",
