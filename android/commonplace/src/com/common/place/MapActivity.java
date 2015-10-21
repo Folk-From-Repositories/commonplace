@@ -168,7 +168,6 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 	
 	@Override
 	protected void onDestroy() {
-		Utils.sendBroadcastForGridRefresh(MapActivity.this);
 		super.onDestroy();
 	}
 	
@@ -312,6 +311,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
 			Intent i = new Intent(getApplicationContext(), RestaurantListActivity.class);
 			i.putExtra("location", selectedLatLng);
 			startActivity(i);
+			Utils.sendBroadcastForGridRefresh(MapActivity.this);
 			MapActivity.this.finish();
 			break;
 		}	

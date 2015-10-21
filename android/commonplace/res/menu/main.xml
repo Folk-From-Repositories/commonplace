@@ -1,9 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/action_toast"
-        android:orderInCategory="100"
-        android:title="@string/action_toast_on"
-        android:showAsAction="never"/>
-
-</menu>

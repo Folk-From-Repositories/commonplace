@@ -29,6 +29,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -53,6 +54,8 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.PowerManager;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
@@ -62,6 +65,8 @@ public class Utils {
 
 	static NotificationCompat.Builder mBuilder;
 	static NotificationManager mNotificationManager;
+	
+	private static PowerManager.WakeLock sCpuWakeLock;
 	
 	
 	public static String sendRegistrationIdToBackend(Context context, String regId) {
@@ -218,13 +223,23 @@ public class Utils {
 	public static void storeRegistrationId(Context context, String regid) {
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = Utils.getAppVersion(context);
-        Logger.d("Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(Constants.PROPERTY_REG_ID, regid);
         editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
 	
+	public static boolean getBooleanProperty(Context context, String key){
+		final SharedPreferences prefs = getGCMPreferences(context);
+        return prefs.getBoolean(key, false);
+	}
+	
+	public static void setBooleanProperty(Context context, String key, boolean value) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
 	
 	
 	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels)
@@ -508,37 +523,34 @@ String projectname = data.getString("name"); // get the name from data.
 	}
 	
 	
-	public static void showNotification(Context context){
-		createNotification(context);
-		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
-	}
-	
-	public static void hideNotification(Context context){
+	public static void showGPSNotification(Context context){
+		Notification noti = createGPSNotification(context);
+		noti.defaults |= Notification.DEFAULT_SOUND;
+		
 		if(mNotificationManager == null){
 			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		}
-		mNotificationManager.cancel(Constants.NOTIFICATION_ID);
+		mNotificationManager.notify(Constants.NOTIFICATION_ID_GPS, noti);
 	}
 	
-	public static Notification createNotification(Context context){
+	public static void hideGPSNotification(Context context){
+		if(mNotificationManager == null){
+			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		}
+		mNotificationManager.cancel(Constants.NOTIFICATION_ID_GPS);
+	}
+	
+	public static Notification createGPSNotification(Context context){
 		mBuilder =
 		        new NotificationCompat.Builder(context)
 		        .setSmallIcon(R.drawable.icon)
 		        .setContentTitle(context.getResources().getText(R.string.noti_title))
 		        .setContentText(context.getResources().getText(R.string.noti_body))
 		        .setAutoCancel(false);
-		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(context, SplashActivity.class);
 
-		// The stack builder object will contain an artificial back stack for the
-		// started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-		// Adds the back stack for the Intent (but not the Intent itself)
 		stackBuilder.addParentStack(SplashActivity.class);
-		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		PendingIntent resultPendingIntent =
 		        stackBuilder.getPendingIntent(
@@ -546,20 +558,91 @@ String projectname = data.getString("name"); // get the name from data.
 		            PendingIntent.FLAG_UPDATE_CURRENT
 		        );
 		mBuilder.setContentIntent(resultPendingIntent);
-//		NotificationManager mNotificationManager =
-//		    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		
 		return mBuilder.build();
-		// mId allows you to update the notification later on.
-//		mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
 	}
 	
 	
 	public static void makeToast(Context context, String msg){
-		if(Constants.TOAST_SHOW){
+		if(getBooleanProperty(context, Constants.PROPERTY_TOAST_ON)){
 			Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 		}
 	}
+	
+	@SuppressLint("Wakelock")
+	@SuppressWarnings("deprecation")
+	public static void wakeUpPhoneWithVibration(Context context){
+		
+		Vibrator vibe = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+		vibe.vibrate(500);
+		
+		if (sCpuWakeLock != null) {            
+            return;        
+        }       
+		
+		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);         
+        sCpuWakeLock = pm.newWakeLock(                
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK |                
+                PowerManager.ACQUIRE_CAUSES_WAKEUP |                
+                PowerManager.ON_AFTER_RELEASE, "hello");        
+         
+        sCpuWakeLock.acquire();
+	}
+	
+	public static void show119Notification(Context context){
+		Notification noti = createGPSNotification(context);
+		noti.defaults |= Notification.DEFAULT_SOUND;
+		
+		if(mNotificationManager == null){
+			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		}
+		mNotificationManager.notify(Constants.NOTIFICATION_ID_119, noti);
+	}
+	
+	public static Notification create119Notification(Context context, String title, String body){
+		mBuilder =
+		        new NotificationCompat.Builder(context)
+		        .setSmallIcon(R.drawable.icon)
+		        .setContentTitle(title)
+		        .setContentText(body)
+		        .setAutoCancel(true);
+		Intent resultIntent = new Intent(context, SplashActivity.class);
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+		stackBuilder.addParentStack(SplashActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+		        stackBuilder.getPendingIntent(
+		            0,
+		            PendingIntent.FLAG_UPDATE_CURRENT
+		        );
+		mBuilder.setContentIntent(resultPendingIntent);
+		return mBuilder.build();
+	}
+	
+	public static void createDialog(Context context, String title, String body) {
+        AlertDialog.Builder ab = new AlertDialog.Builder(context);
+        ab.setTitle(title);
+        ab.setMessage(body);
+        ab.setCancelable(false);
+        ab.setIcon(context.getResources().getDrawable(R.drawable.icon));
+          
+        ab.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dInterface, int arg1) {
+            	dInterface.dismiss();
+            }
+        });
+        AlertDialog aDialog = ab.create();
+        aDialog.show();
+    }
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -28,8 +28,24 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
 
     // key:registration_id, value:APA91bH7th-R7YF7QRzc9S8FJbQ0OY9iKJ8raDurQQNGJdPQq4aNT1nI0azc2LlaB8XTeOW2mgzAeh5BLefKt_D-uw5IHdjA6QwqMGDmKmq_c30gUMnfNvYRbpBRbcnz19if7FGxAyZi
 	
+	
+	/*{
+category: 'Campaign 119',
+title: '건전한 119 회식 문화',
+message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n119회식 문화를 정착시키기 위해 노력합시다.'
+};*/
+	
+	
+	
+	
+	
+	 
+	
+	
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
+		
 		Bundle bundle = intent.getExtras();
 		Iterator<String> iterator = bundle.keySet().iterator();
 		
@@ -53,7 +69,7 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         	
         	String category = msgMap.get(Constants.MSG_KEY_CATEGORY).toString();
         	
-        	if(category != null && category.equals(Constants.MSG_VALUE_CATEGORY)){
+        	if(category != null && category.equals(Constants.GCM_CATEGORY_GPS_LOCATION)){
         		
         		String memberVal = msgMap.get(Constants.MSG_KEY_MEMBER).toString();
         		ArrayList<GroupMember> members = new ArrayList<GroupMember>();
@@ -86,6 +102,26 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         		sendBroadcastForRefresh(context);
         		
         		return;
+        	}
+        	
+        	
+        	else if(category != null && category.equals(Constants.GCM_CATEGORY_CAMPAIGN_119)){
+        		
+        		String title = "";
+        		if(msgMap.get(Constants.MSG_KEY_TITLE) != null){
+        			title = msgMap.get(Constants.MSG_KEY_TITLE).toString();
+        		}
+        		String body = "";
+        		if(msgMap.get(Constants.MSG_KEY_MESSAGE) != null){
+        			body = msgMap.get(Constants.MSG_KEY_MESSAGE).toString();
+        		}
+        		
+        		Utils.wakeUpPhoneWithVibration(context);
+                
+        		Utils.show119Notification(context);
+        		
+        		Utils.createDialog(context, title, body);
+        		
         	}
         	
         }

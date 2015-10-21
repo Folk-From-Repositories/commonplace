@@ -47,6 +47,7 @@ public class CustomGridAdapter extends BaseAdapter{
 	private class ViewHolder {
 		ImageView locationImage;
         TextView title;
+        TextView group_time;
         TextView item_vicinity;
     }    
         
@@ -57,10 +58,11 @@ public class CustomGridAdapter extends BaseAdapter{
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
  
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.grid_single, null);
+			convertView = inflater.inflate(R.layout.restaurant_grid_item, null);
 			holder = new ViewHolder();
 			holder.locationImage = (ImageView) convertView.findViewById(R.id.grid_image);
 			holder.title = (TextView) convertView.findViewById(R.id.title);
+			holder.group_time = (TextView) convertView.findViewById(R.id.group_time);
 			holder.item_vicinity = (TextView) convertView.findViewById(R.id.item_vicinity);
 			convertView.setTag(holder);
 		} else {
@@ -69,6 +71,7 @@ public class CustomGridAdapter extends BaseAdapter{
  
 		Group group = groupList.get(position);
 		holder.title.setText(group.getTitle());
+		holder.group_time.setText(mContext.getResources().getString(R.string.str_group_time)+" : "+group.getTime());
 		holder.item_vicinity.setText(group.getLocationDesc());
 		
 		holder.locationImage.setImageResource(R.drawable.icon);

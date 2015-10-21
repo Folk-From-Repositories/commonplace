@@ -31,6 +31,7 @@ public class Constants {
 	public static final String PROPERTY_REG_ID               = "registration_id";
     public static final String PROPERTY_APP_VERSION          = "appVersion";
     public static final String PROPERTY_USER_NAME            = "userName";
+    public static final String PROPERTY_TOAST_ON             = "toast_on";
     
     
     public static final String SENDER_ID = "1073384423107";
@@ -42,17 +43,17 @@ public class Constants {
     
     
     //-- push --
-    public static String MSG_KEY_CATEGORY        = "category";
-    public static String MSG_VALUE_CATEGORY      = "GPS Push";
+    public static String MSG_KEY_CATEGORY            = "category";
+    public static String GCM_CATEGORY_GPS_LOCATION   = "GPS Push";
+    public static String GCM_CATEGORY_CAMPAIGN_119   = "Campaign 119";
+    public static String MSG_KEY_TITLE               = "title";
+    public static String MSG_KEY_MESSAGE             = "message";
     
     public static String MSG_KEY_MEMBER          = "member";
     
-    public static int NOTIFICATION_ID = 9999;
+    public static int NOTIFICATION_ID_GPS = 9999;
+    public static int NOTIFICATION_ID_119 = 9991;
     
-    
-    
-    
-    public static boolean TOAST_SHOW = true;
     public static final int MENU_ID_1      = 100;
     
 }

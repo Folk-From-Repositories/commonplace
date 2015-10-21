@@ -312,7 +312,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
         ab.setTitle("Watning!");
         ab.setMessage("Delete "+groupList.get(index).getTitle() + "?\n(groupId:"+groupList.get(index).getId()+")");
         ab.setCancelable(false);
-        ab.setIcon(getResources().getDrawable(R.drawable.ic_launcher));
+        ab.setIcon(getResources().getDrawable(R.drawable.icon));
           
         ab.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
@@ -389,10 +389,9 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		
-		
-		String menuTitle = getResources().getString(R.string.action_toast_off);
+		String menuTitle = getResources().getString(R.string.action_toast_on);
 		int resourceId = android.R.drawable.ic_menu_delete;
-		if(Constants.TOAST_SHOW){
+		if(!Utils.getBooleanProperty(GroupGridActivity.this, Constants.PROPERTY_TOAST_ON)){
 			menuTitle = getResources().getString(R.string.action_toast_on);
 			resourceId = android.R.drawable.ic_menu_add;
 		}
@@ -406,14 +405,13 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
         case Constants.MENU_ID_1:
-        	if(Constants.TOAST_SHOW){
-        		Constants.TOAST_SHOW = false;
+        	if(Utils.getBooleanProperty(GroupGridActivity.this, Constants.PROPERTY_TOAST_ON)){
+        		Utils.setBooleanProperty(GroupGridActivity.this, Constants.PROPERTY_TOAST_ON, false);
         		Toast.makeText(GroupGridActivity.this, "OFF", Toast.LENGTH_SHORT).show();
         	}else{
-        		Constants.TOAST_SHOW = true;
+        		Utils.setBooleanProperty(GroupGridActivity.this, Constants.PROPERTY_TOAST_ON, true);
         		Toast.makeText(GroupGridActivity.this, "ON", Toast.LENGTH_SHORT).show();
         	}
-        	Logger.d("Constants.TOAST_SHOW:"+Constants.TOAST_SHOW);
             break;
         default:
             break;

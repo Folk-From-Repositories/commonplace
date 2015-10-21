@@ -15,6 +15,7 @@
     <string name="title_activity_group_main_view">모임 그룹</string>
     <string name="title_activity_regist_group">그룹 등록</string>
     <string name="title_activity_restaurant_list_view">회식 장소 추천</string>
+    <string name="title_activity_contacts_list_view">주소록에서 선택</string>
     
     <!-- 주소록 화면 -->
     <string name="title_activity_member_activity">주소록에서 가져오</string>
@@ -45,5 +46,22 @@
     
     <string name="noti_title">Common Place</string>
     <string name="noti_body">위치 전송중..</string>
+    
+    
+    
+    <string name="str_group_time">모임시간</string>
+    
+    <string name="str_name_text">그룹 이름</string>
+    <string name="str_name_edit">그룹 이름을 입력하세요</string>
+    <string name="str_time_text">모임 시간</string>
+    <string name="str_btn_date">모임 날짜</string>
+    <string name="str_restaurant_text">모임 장소</string>
+    <string name="str_searchMap">지도 검색</string>
+    <string name="str_contacts_text">모임 인원</string>
+    <string name="str_btn_contacts">주소록에서 가져오기</string>
+    <string name="str_add_restaurant_title">선택한 모임 장소</string>
+    <string name="str_contacts_title">선택한 모임 인원</string>
+    <string name="str_btn_regist_group">그룹 등록</string>
+    
     
 </resources>

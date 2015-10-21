@@ -50,7 +50,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 		buildGoogleApiClient();
 		mGoogleApiClient.connect();
 		
-		Utils.showNotification(GPSService.this);
+		Utils.showGPSNotification(GPSService.this);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 		mGoogleApiClient.disconnect();
 		super.onDestroy();
 		
-		Utils.hideNotification(GPSService.this);
+		Utils.hideGPSNotification(GPSService.this);
 	}
 
 	protected synchronized void buildGoogleApiClient() {

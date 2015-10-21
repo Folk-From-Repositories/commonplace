@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.common.place"
-    android:versionCode="3"
-    android:versionName="1.0.3"
+    android:versionCode="4"
+    android:versionName="1.0.4"
     xmlns:tools="http://schemas.android.com/tools" tools:ignore="OldTargetApi" >
 
     <uses-sdk
@@ -69,7 +69,8 @@
         
         <activity
             android:name=".GroupRegistActivity"
-            android:label="@string/title_activity_regist_group" >
+            android:label="@string/title_activity_regist_group"
+            android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         
         <activity
@@ -79,7 +80,7 @@
         
         <activity
             android:name=".ContactsActivity"
-            android:label="@string/title_activity_restaurant_list_view" >
+            android:label="@string/title_activity_contacts_list_view" >
         </activity>
         
         <meta-data

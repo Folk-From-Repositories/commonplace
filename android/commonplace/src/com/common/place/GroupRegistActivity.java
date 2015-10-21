@@ -84,7 +84,6 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 		retaurant_no_select = (TextView)findViewById(R.id.retaurant_no_select);
 		groupName = (EditText)findViewById(R.id.name_edit);
 
-		findViewById(R.id.seachAddr).setOnClickListener(this);
 		findViewById(R.id.searchMap).setOnClickListener(this);
 		findViewById(R.id.btn_contacts).setOnClickListener(this);
 		findViewById(R.id.btn_regist_group).setOnClickListener(this);
@@ -135,7 +134,7 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 			}
 		}else{
 			contact_list.setGravity(Gravity.CENTER);
-			contact_list.setText("...");
+			contact_list.setText(getResources().getString(R.string.memeber_not_regist));
 		}
 	}
 
