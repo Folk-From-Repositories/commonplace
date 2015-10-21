@@ -3,6 +3,9 @@
 	"dateTimeFormat": "YYYYMMDD HH:mm",
 	"enableNotiBeforeMin": -120,
 	"disableNotiAfterMin": 60,
+	"campain119TargetMoimFrom": "18:00",
+	"campain119TargetMoimTo": "21:00",
 	"userLocationBroadCastActivatorCronTime": "0 */5 * * * *",
-	"userLocationBroadCasterCronTime": "*/5 * * * * *"
+	"userLocationBroadCasterCronTime": "*/5 * * * * *",
+	"campaign119CronTime": "0 50 20 * * 1-5"
 }

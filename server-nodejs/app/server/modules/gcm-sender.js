@@ -3,6 +3,7 @@ var fs = require('fs');
 var AM = require('./account-manager');
 var utils = require('./utils');
 var server_api_key = fs.readFileSync(__dirname + '/../conf/gcm-server-key', 'utf8');
+var collapseKey = 'CommonPlace Notification';
 
 if (typeof server_api_key !== 'string') {
     throw 'GCM Server\'s API key is not exist.'
@@ -78,35 +79,63 @@ exports.sendMessage = function(phones, data, callback) {
             tokens.push(res[idx].token);
         }
 
-        // console.dir({
-        // 	where: 'gcm-sender.js -> sendMessage()',
-        // 	what: 'phone number에 대한 gcm token 조회 결과 (from database)',
-        // 	data: data
-        // });
-
         var gcmMsg = new gcm.Message({
             collapseKey: 'CommonPlace Notification',
-            delayWhileIdle: true,
-            timeToLive: 3,
+            delayWhileIdle: false,
             data: data
         });
-
-
-        // console.info('---------------GCM Message--------------------');
-        // console.dir(JSON.stringify(gcmMsg));
-        // console.info('----------------------------------------------');
-        // console.info('---------------phones-------------------------')
-        // console.dir(phones);
-        // console.info('----------------------------------------------');
-        // console.info('---------------tokens-------------------------')
-        // console.dir(tokens);
-        // console.info('----------------------------------------------');
 
         if (tokens.length < 1) {
             return callback('No target for sending GCM');
         }
 
-        sender.send(gcmMsg, tokens, 4, function(err, result) {
+        sender.send(gcmMsg, tokens, 3, function(err, result) {
+            if (err) {
+                console.error('-----------------------GCM ERROR------------------------')
+                console.dir(err);
+                console.error('--------------------------------------------------------');
+            }
+            callback(err, result);
+        });
+    });
+}
+
+exports.sendNoRetry = function(phones, data, callback) {
+    // validate data
+    if (!phones) {
+        callback('error-request-parameter(phones)');
+        return;
+    }
+    if (Object.prototype.toString.call(phones) !== '[object Array]') {
+        callback('error-request-parameter(phones is not array.)');
+        return;
+    }
+
+    for (var i=0; i< phones.length; i++) {
+        phones[i] = utils.phoneToDbFormat(phones[i]);
+    }
+
+    AM.getGcmTokens(phones, function(err, res) {
+        if (err) return callback(err);
+
+        var tokens = [];
+
+        for (var idx in res) {
+            tokens.push(res[idx].token);
+        }
+
+        var gcmMsg = new gcm.Message({
+            collapseKey: collapseKey,
+            delayWhileIdle: false,
+            timeToLive: 1,
+            data: data
+        });
+
+        if (tokens.length < 1) {
+            return callback('No target for sending GCM');
+        }
+
+        sender.sendNoRetry(gcmMsg, tokens, function(err, result) {
             if (err) {
                 console.error('-----------------------GCM ERROR------------------------')
                 console.dir(err);

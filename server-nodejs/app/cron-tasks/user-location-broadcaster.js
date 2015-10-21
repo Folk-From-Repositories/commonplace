@@ -69,11 +69,12 @@ var job = new CronJob({
                             });
                         },
                         function sendMessage(message, phones, innerWaterFallCB) {
-                            GM.sendMessage(phones, message, function(e, o) {
+                            GM.sendNoRetry(phones, message, function(e, o) {
                                 if (e && e === 'No target for sending GCM') {
                                     // do next item
                                     innerWaterFallCB();
                                 } else {
+                                    console.log(o);
                                     innerWaterFallCB(e);
                                 }
                             });

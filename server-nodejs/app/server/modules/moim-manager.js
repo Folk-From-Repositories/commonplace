@@ -241,7 +241,7 @@ exports.getDetails = function(moimIds, callback) {
 /**
  * 모임 삭제 (owner만 삭제 가능, 참석자가 요청시 참여 정보에서만 삭제)
  */
-exports.deleteMoim = function (moimId, phone, callback) {
+exports.deleteMoim = function(moimId, phone, callback) {
     phone = utils.phoneToDbFormat(phone);
     if (isNaN(moimId)) {
         return callback('invalid-moim-id');
@@ -251,25 +251,25 @@ exports.deleteMoim = function (moimId, phone, callback) {
 
     var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `id` = ' + connection.escape(moimId) + ' AND `owner` = ' + connection.escape(phone);
 
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) return callback('database-error');
 
         if (result.length > 0) { // owner 가 모임 삭제
             var moimDeleteSql = 'DELETE FROM `commonplace`.`moim` WHERE `id` = ' + connection.escape(moimId) + ' AND `owner` = ' + connection.escape(phone);
             var userMoimDeleteSql = 'DELETE FROM `commonplace`.`userMoim` WHERE `moimId` = ' + connection.escape(moimId);
 
-            connection.beginTransaction(function (err) {
+            connection.beginTransaction(function(err) {
                 if (err) {
                     return callback('트랜잭션 생성 실패');
                 }
 
-                connection.query(userMoimDeleteSql, function (err, userMoimDeleteResult) {
+                connection.query(userMoimDeleteSql, function(err, userMoimDeleteResult) {
                     if (err) {
                         connection.rollback();
                         return callback('모임 참여자 정보 삭제 실패');
                     }
 
-                    connection.query(moimDeleteSql, function (err, moimDeleteResult) {
+                    connection.query(moimDeleteSql, function(err, moimDeleteResult) {
                         if (err) {
                             connection.rollback();
                             return callback('모임 삭제 실패');
@@ -282,13 +282,13 @@ exports.deleteMoim = function (moimId, phone, callback) {
                                 callback(null, '모임 삭제 완료');
                             }
                         }); // commit                        
-                        
-                    });                    
+
+                    });
                 });
             });
         } else { // 참여자 정보만 삭제
             var memberDeleteSql = 'DELETE FROM `commonplace`.`userMoim` WHERE `moimId` = ' + connection.escape(moimId) + ' AND `phone` = ' + connection.escape(phone);
-            connection.query(memberDeleteSql, function (err, deleteResult) {
+            connection.query(memberDeleteSql, function(err, deleteResult) {
                 if (err) callback('모임 참여 정보 삭제 실패');
                 else callback(null, '모임 참여 정보 삭제 성공');
             });
@@ -304,7 +304,7 @@ exports.deleteMoim = function (moimId, phone, callback) {
 exports.enableLocationBroadcast = function(moimIds, callback) {
 
     // Make Array if there is only one.
-    if (Object.prototype.toString.call( moimIds ) !== '[object Array]' ) {
+    if (Object.prototype.toString.call(moimIds) !== '[object Array]') {
         moimIds = [moimIds];
     }
 
@@ -319,7 +319,7 @@ exports.enableLocationBroadcast = function(moimIds, callback) {
         }
     }
 
-    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 1 WHERE id IN ('+ connection.escape(moimIds) + ')';
+    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 1 WHERE id IN (' + connection.escape(moimIds) + ')';
 
     connection.query(sql, function(err, result) {
         if (err) console.error(err);
@@ -334,7 +334,7 @@ exports.enableLocationBroadcast = function(moimIds, callback) {
 exports.disableLocationBroadcast = function(moimIds, callback) {
 
     // Make Array if there is only one.
-    if (Object.prototype.toString.call( moimIds ) !== '[object Array]' ) {
+    if (Object.prototype.toString.call(moimIds) !== '[object Array]') {
         moimIds = [moimIds];
     }
 
@@ -349,7 +349,7 @@ exports.disableLocationBroadcast = function(moimIds, callback) {
         }
     }
 
-    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 0 WHERE id IN ('+ connection.escape(moimIds) + ')';
+    var sql = 'UPDATE `commonplace`.`moim` SET `broadcast` = 0 WHERE id IN (' + connection.escape(moimIds) + ')';
 
     connection.query(sql, function(err, result) {
         if (err) console.error(err);
@@ -377,4 +377,39 @@ exports.getDisabledLocationBroadcast = function(callback) {
     var sql = 'SELECT * FROM `commonplace`.`moim` WHERE `broadcast` = 0';
 
     connection.query(sql, callback);
+}
+
+/**
+ *
+ */
+exports.findIdsWithDatetimeFromTo = function(fromDate, toDate, callback) {
+
+    var sql = 'SELECT id, title, dateTime FROM `commonplace`.`moim` WHERE dateTime >= ' + connection.escape(fromDate) + ' AND dateTime <= ' + connection.escape(toDate);
+
+    console.log(sql);
+
+    connection.query(sql, callback);
+}
+
+/**
+ *
+ */
+exports.findMemberInMoims = function(moimIds, callback) {
+    var sql = 'SELECT phone FROM `commonplace`.`userMoim` WHERE moimId IN(' + connection.escape(moimIds) + ') GROUP BY phone';
+
+    if (Object.prototype.toString.call(moimIds) !== '[object Array]' || moimIds.length < 1) {
+        return callback('No moimIds');
+    }
+
+    connection.query(sql, function(err, results) {
+        var phones = [];
+
+        if (results) {
+            for (var i = 0; i < results.length; i++) {
+                phones.push(results[i].phone);
+            }
+        }
+
+        callback(err, phones);
+    });
 }

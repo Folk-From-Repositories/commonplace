@@ -22,5 +22,13 @@
     "watch": true,
     "script": "user-location-broadcaster.js",
     "sourceDir": "./app/cron-tasks"
+  },
+  {
+    // campaign119-notification.js
+    "uid": "campaign119-notification",
+    "append": true,
+    "watch": true,
+    "script": "campaign119-notification.js",
+    "sourceDir": "./app/cron-tasks"
   }
 ]
