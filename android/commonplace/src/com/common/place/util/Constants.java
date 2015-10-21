@@ -50,4 +50,9 @@ public class Constants {
     public static int NOTIFICATION_ID = 9999;
     
     
+    
+    
+    public static boolean TOAST_SHOW = true;
+    public static final int MENU_ID_1      = 100;
+    
 }

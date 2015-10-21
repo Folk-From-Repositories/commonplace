@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.common.place.db.Provider;
+import com.common.place.util.Utils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,7 +31,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ContactsActivity extends Activity implements OnClickListener, OnItemClickListener{
 
@@ -178,7 +178,7 @@ public class ContactsActivity extends Activity implements OnClickListener, OnIte
             
             refreshFooter();
             
-            Toast.makeText(ContactsActivity.this, ""+msg.what+" "+getText(R.string.multiinsert), Toast.LENGTH_SHORT).show();
+            Utils.makeToast(ContactsActivity.this, ""+msg.what+" "+getText(R.string.multiinsert));
         }
     };
     

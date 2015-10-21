@@ -17,7 +17,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 public class GcmBroadCastReceiver extends BroadcastReceiver{
 
@@ -48,7 +47,7 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         }
         
         Logger.i(m);
-        //Toast.makeText(context, m, Toast.LENGTH_SHORT).show();
+        //Utils.makeToast(context, m);
         
         if(msgMap.get(Constants.MSG_KEY_CATEGORY) != null){
         	
@@ -78,7 +77,7 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         						Double.parseDouble(member.getString("latitude")), Double.parseDouble(member.getString("longitude")));
         				members.add(gMember);
         			}
-        			Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
+        			Utils.makeToast(context, toastMsg);
         		} catch (JSONException e) {
         			e.printStackTrace();
         		}

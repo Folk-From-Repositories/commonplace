@@ -32,6 +32,8 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -62,6 +64,9 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	
 	MainBroadcastReceiver mainReceiver;
 	IntentFilter filter;
+	
+	@SuppressWarnings("unused")
+	private Menu menu;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +166,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 				}
 				
 				if(statusCode != 200){
-					Toast.makeText(GroupGridActivity.this, "Server error occurred", Toast.LENGTH_SHORT).show();
+					Utils.makeToast(GroupGridActivity.this, "Server error occurred");
 				}
 				
 				dialog.dismiss();
@@ -358,13 +363,13 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 				super.onPostExecute(result);
 				dialog.dismiss();
 				if(result != null && result.getResponseCode() == 200){
-					Toast.makeText(GroupGridActivity.this, result.getReponseString(), Toast.LENGTH_SHORT).show();
+					Utils.makeToast(GroupGridActivity.this, result.getReponseString());
 					deleteDB(groupId);
 					refreshGrid();
 					
 				}else{
 					Logger.e(result.toString());
-					Toast.makeText(GroupGridActivity.this, "failed", Toast.LENGTH_SHORT).show();
+					Utils.makeToast(GroupGridActivity.this, "failed");
 				}
 			}
         }.execute(groupId, null, null);
@@ -379,6 +384,62 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
         if(dialog != null && dialog.isShowing())
             dialog.dismiss();
     }
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		
+		
+		String menuTitle = getResources().getString(R.string.action_toast_off);
+		int resourceId = android.R.drawable.ic_menu_delete;
+		if(Constants.TOAST_SHOW){
+			menuTitle = getResources().getString(R.string.action_toast_on);
+			resourceId = android.R.drawable.ic_menu_add;
+		}
+		menu.add(0, Constants.MENU_ID_1, Menu.NONE, menuTitle).setIcon(resourceId);
+		
+        this.menu = menu;
+        return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+        case Constants.MENU_ID_1:
+        	if(Constants.TOAST_SHOW){
+        		Constants.TOAST_SHOW = false;
+        		Toast.makeText(GroupGridActivity.this, "OFF", Toast.LENGTH_SHORT).show();
+        	}else{
+        		Constants.TOAST_SHOW = true;
+        		Toast.makeText(GroupGridActivity.this, "ON", Toast.LENGTH_SHORT).show();
+        	}
+        	Logger.d("Constants.TOAST_SHOW:"+Constants.TOAST_SHOW);
+            break;
+        default:
+            break;
+        }
+         
+        return super.onOptionsItemSelected(item);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

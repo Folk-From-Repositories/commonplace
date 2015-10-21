@@ -110,7 +110,7 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 
 	@Override
 	public void onLocationChanged(Location location) {
-		//Toast.makeText(getApplicationContext(), "CHANGED:\n"+location.getLatitude()+"\n"+location.getLongitude(), Toast.LENGTH_LONG).show();
+		//Utils.makeToast(getApplicationContext(), "CHANGED:\n"+location.getLatitude()+"\n"+location.getLongitude());
 		
 		Logger.d("CHANGED:"+location.getLatitude()+", "+location.getLongitude());
 		saveUserLocationToServer(location);

@@ -56,6 +56,7 @@ import android.graphics.RectF;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
+import android.widget.Toast;
 
 public class Utils {
 
@@ -554,7 +555,11 @@ String projectname = data.getString("name"); // get the name from data.
 	}
 	
 	
-	
+	public static void makeToast(Context context, String msg){
+		if(Constants.TOAST_SHOW){
+			Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+		}
+	}
 	
 	
 	

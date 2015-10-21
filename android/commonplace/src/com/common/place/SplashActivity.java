@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.common.place.util.Constants;
 import com.common.place.util.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class SplashActivity extends Activity {
     
@@ -128,7 +128,7 @@ public class SplashActivity extends Activity {
     	  public void onClick(View v) {
     		  String newName = userName.getText().toString();
     		  if(newName == null || newName.equals("")){
-    			  Toast.makeText(SplashActivity.this, SplashActivity.this.getResources().getString(R.string.txt_dialog_body), Toast.LENGTH_SHORT).show();
+    			  Utils.makeToast(SplashActivity.this, SplashActivity.this.getResources().getString(R.string.txt_dialog_body));
     			  return;
     		  }
     		  Utils.setUserName(SplashActivity.this, newName);

@@ -16,9 +16,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.common.place.model.GroupMember;
-import com.common.place.model.Group;
 import com.common.place.model.Contact;
+import com.common.place.model.Group;
+import com.common.place.model.GroupMember;
 import com.common.place.model.NetworkResponse;
 import com.common.place.model.Restaurant;
 import com.common.place.sms.SmsSender;
@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 public class GroupRegistActivity extends Activity implements OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
 
@@ -263,12 +262,12 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					Toast.makeText(GroupRegistActivity.this, getResources().getText(R.string.regist_success), Toast.LENGTH_SHORT).show();
+					Utils.makeToast(GroupRegistActivity.this, getResources().getString(R.string.regist_success));
 					Utils.sendBroadcastForGridRefresh(GroupRegistActivity.this);
 					GroupRegistActivity.this.finish();
 					
 				}else{
-					Toast.makeText(GroupRegistActivity.this, getResources().getText(R.string.regist_error), Toast.LENGTH_SHORT).show();
+					Utils.makeToast(GroupRegistActivity.this, getResources().getString(R.string.regist_error));
 				}
 				
 			}
