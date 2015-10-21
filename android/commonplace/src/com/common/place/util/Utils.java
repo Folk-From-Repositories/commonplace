@@ -509,13 +509,14 @@ String projectname = data.getString("name"); // get the name from data.
 	
 	public static void showNotification(Context context){
 		createNotification(context);
-		
-		NotificationManager mNotificationManager =
-			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
 	}
 	
 	public static void hideNotification(Context context){
+		if(mNotificationManager == null){
+			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		}
 		mNotificationManager.cancel(Constants.NOTIFICATION_ID);
 	}
 	
