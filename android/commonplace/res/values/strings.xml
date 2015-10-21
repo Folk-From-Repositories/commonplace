@@ -40,4 +40,7 @@
     <string name="btn_start_service">위치 전송</string>
     <string name="btn_stop_service">위치 중지</string>
     
+    <string name="noti_title">Common Place</string>
+    <string name="noti_body">위치 전송중..</string>
+    
 </resources>

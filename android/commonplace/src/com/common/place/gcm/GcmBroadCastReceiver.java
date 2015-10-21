@@ -60,29 +60,33 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
         		ArrayList<GroupMember> members = new ArrayList<GroupMember>();
         		try {
         			JSONArray memberArr = new JSONArray(memberVal);
-        			
         			Logger.i("## "+memberArr.toString());
+        			String toastMsg = "";
         			
         			for(int i = 0 ; i < memberArr.length() ; i++){
         				JSONObject member = (JSONObject) memberArr.get(i);
         				
         				Logger.i("## "+Double.parseDouble(member.getString("latitude")));
         				Logger.i("## "+Double.parseDouble(member.getString("longitude")));
-        				
-        				Toast.makeText(context, member.getString("phone")+"\n("+Double.parseDouble(member.getString("latitude"))+
-        						", "+Double.parseDouble(member.getString("longitude")), Toast.LENGTH_SHORT).show();
+        				toastMsg += "["+i+"]"+member.getString("name")+"("+Double.parseDouble(member.getString("latitude"))+
+            					", "+Double.parseDouble(member.getString("longitude"))+")";
+        				if(i < memberArr.length() - 1){
+        					toastMsg += "\n";
+        				}
         				
         				GroupMember gMember = new GroupMember("", member.getString("name"), member.getString("phone"), 
         						Double.parseDouble(member.getString("latitude")), Double.parseDouble(member.getString("longitude")));
         				members.add(gMember);
         			}
+        			Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
         		} catch (JSONException e) {
         			e.printStackTrace();
         		}
         		
         		saveMemberLocationToDb(context, members);
-        		
         		sendBroadcastForRefresh(context);
+        		
+        		return;
         	}
         	
         }

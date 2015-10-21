@@ -18,10 +18,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.common.place.R;
+import com.common.place.SplashActivity;
 import com.common.place.db.Provider;
-import com.common.place.model.GroupMember;
-import com.common.place.model.Group;
 import com.common.place.model.Contact;
+import com.common.place.model.Group;
+import com.common.place.model.GroupMember;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -29,11 +31,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -48,10 +53,15 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 
 public class Utils {
 
+	static NotificationCompat.Builder mBuilder;
+	static NotificationManager mNotificationManager;
+	
 	
 	public static String sendRegistrationIdToBackend(Context context, String regId) {
 		
@@ -496,6 +506,51 @@ String projectname = data.getString("name"); // get the name from data.
         context.sendBroadcast(i);
 	}
 	
+	
+	public static void showNotification(Context context){
+		createNotification(context);
+		
+		NotificationManager mNotificationManager =
+			    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+	}
+	
+	public static void hideNotification(Context context){
+		mNotificationManager.cancel(Constants.NOTIFICATION_ID);
+	}
+	
+	public static Notification createNotification(Context context){
+		mBuilder =
+		        new NotificationCompat.Builder(context)
+		        .setSmallIcon(R.drawable.icon)
+		        .setContentTitle(context.getResources().getText(R.string.noti_title))
+		        .setContentText(context.getResources().getText(R.string.noti_body))
+		        .setAutoCancel(false);
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(context, SplashActivity.class);
+
+		// The stack builder object will contain an artificial back stack for the
+		// started Activity.
+		// This ensures that navigating backward from the Activity leads out of
+		// your application to the Home screen.
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(SplashActivity.class);
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+		        stackBuilder.getPendingIntent(
+		            0,
+		            PendingIntent.FLAG_UPDATE_CURRENT
+		        );
+		mBuilder.setContentIntent(resultPendingIntent);
+//		NotificationManager mNotificationManager =
+//		    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		
+		return mBuilder.build();
+		// mId allows you to update the notification later on.
+//		mNotificationManager.notify(Constants.NOTIFICATION_ID, mBuilder.build());
+	}
 	
 	
 	

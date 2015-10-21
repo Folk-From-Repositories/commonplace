@@ -89,7 +89,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
         
         
         mainReceiver = new MainBroadcastReceiver();
-		filter = new IntentFilter(Constants.INNER_BROADCAST_RECEIVER);
+		filter = new IntentFilter(Constants.MAIN_BROADCAST_RECEIVER);
 		
 		refreshGrid();
 		registerReceiver(mainReceiver, filter);
@@ -110,7 +110,7 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	public class MainBroadcastReceiver extends BroadcastReceiver{
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
-	    	Logger.i("InnerReceiver onReceive intent:"+intent);
+	    	Logger.i("MainBroadcastReceiver onReceive intent:"+intent);
 	    	refreshGrid();
 	    }
 	}

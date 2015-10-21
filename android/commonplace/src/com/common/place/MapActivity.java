@@ -127,7 +127,7 @@ public class MapActivity extends FragmentActivity implements View.OnClickListene
         	if(group != null){
     			cameraLatLng = new LatLng(Double.parseDouble(group.getLocationLat()), 
     					Double.parseDouble(group.getLocationLon()));
-    			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.goal));
+    			markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.pin_goal));
     			markerOptions.position(cameraLatLng);
     			gmap.addMarker(markerOptions);
         	}else{

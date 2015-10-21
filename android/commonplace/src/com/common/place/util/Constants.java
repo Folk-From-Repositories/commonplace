@@ -47,5 +47,7 @@ public class Constants {
     
     public static String MSG_KEY_MEMBER          = "member";
     
+    public static int NOTIFICATION_ID = 9999;
+    
     
 }

@@ -49,6 +49,8 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 		
 		buildGoogleApiClient();
 		mGoogleApiClient.connect();
+		
+		Utils.showNotification(GPSService.this);
 	}
 
 	@Override
@@ -57,6 +59,8 @@ public class GPSService extends Service implements ConnectionCallbacks, OnConnec
 		LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 		mGoogleApiClient.disconnect();
 		super.onDestroy();
+		
+		Utils.hideNotification(GPSService.this);
 	}
 
 	protected synchronized void buildGoogleApiClient() {
