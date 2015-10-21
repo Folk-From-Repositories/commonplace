@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.common.place.DialogActivity;
 import com.common.place.model.GroupMember;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
@@ -69,6 +70,8 @@ message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n11
         	
         	String category = msgMap.get(Constants.MSG_KEY_CATEGORY).toString();
         	
+        	Logger.i("category:"+category);
+        	
         	if(category != null && category.equals(Constants.GCM_CATEGORY_GPS_LOCATION)){
         		
         		String memberVal = msgMap.get(Constants.MSG_KEY_MEMBER).toString();
@@ -107,6 +110,9 @@ message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n11
         	
         	else if(category != null && category.equals(Constants.GCM_CATEGORY_CAMPAIGN_119)){
         		
+        		
+        		
+        		
         		String title = "";
         		if(msgMap.get(Constants.MSG_KEY_TITLE) != null){
         			title = msgMap.get(Constants.MSG_KEY_TITLE).toString();
@@ -116,11 +122,18 @@ message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n11
         			body = msgMap.get(Constants.MSG_KEY_MESSAGE).toString();
         		}
         		
-        		Utils.wakeUpPhoneWithVibration(context);
-                
-        		Utils.show119Notification(context);
+        		Logger.i("title:"+title);
+        		Logger.i("body:"+body);
         		
-        		Utils.createDialog(context, title, body);
+        		//Utils.createDialog(context, title, body);
+        		
+        		Intent i = new Intent(context, DialogActivity.class);
+        		i.putExtra("title", title);
+        		i.putExtra("body", body);
+        		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+        		context.startActivity(i);
+        		
+        		return;
         		
         	}
         	

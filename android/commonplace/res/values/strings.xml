@@ -2,13 +2,10 @@
 <resources>
 
     <string name="contentDescription">image content description</string>
-    
     <string name="app_name">모두의 회식</string>
     <string name="hello_world">Hello world!</string>
-    
     <string name="action_toast_on">Toast on/off</string>
     <string name="action_toast_off">Toast 끄기</string>
-    
     <string name="title_activity_map">지도에서 장소 검색</string>
     <string name="title_activity_gcmhandler">GCMHandler</string>
     <string name="title_activity_get_phone_number_list">GetPhoneNumberList</string>
@@ -16,7 +13,7 @@
     <string name="title_activity_regist_group">그룹 등록</string>
     <string name="title_activity_restaurant_list_view">회식 장소 추천</string>
     <string name="title_activity_contacts_list_view">주소록에서 선택</string>
-    
+
     <!-- 주소록 화면 -->
     <string name="title_activity_member_activity">주소록에서 가져오</string>
     <string name="confirm">선택완료</string>
@@ -31,26 +28,17 @@
     <string name="grouplist_not_regist">등록된 모임 그룹이 없습니다.</string>
     <string name="regist_error">모임 등록에 실패하였습니다!</string>
     <string name="regist_success">모임 등록에 성공하였습니다!</string>
-    
     <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!!</string>
-    
     <string name="fail_to_register">서버에 Push key 저장에 실패하였습니다! 어플리케이션을 종료합니다.</string>
     <string name="fail_to_google_play_service">Google Play Services 가 설치되어 있지 않습니다. 어플리케이션을 종료합니다.</string>
-    
     <string name="txt_dialog_title">사용자 이름</string>
     <string name="txt_dialog_body">어플리케이션에서 사용할 이름을 입력하세요.</string>
     <string name="btn_user_name_confirm">시작하기</string>
-    
     <string name="btn_start_service">위치 전송</string>
     <string name="btn_stop_service">위치 중지</string>
-    
     <string name="noti_title">Common Place</string>
     <string name="noti_body">위치 전송중..</string>
-    
-    
-    
     <string name="str_group_time">모임시간</string>
-    
     <string name="str_name_text">그룹 이름</string>
     <string name="str_name_edit">그룹 이름을 입력하세요</string>
     <string name="str_time_text">모임 시간</string>
@@ -62,6 +50,7 @@
     <string name="str_add_restaurant_title">선택한 모임 장소</string>
     <string name="str_contacts_title">선택한 모임 인원</string>
     <string name="str_btn_regist_group">그룹 등록</string>
-    
-    
+    <string name="title_activity_dialog">DialogActivity</string>
+    <string name="action_settings">Settings</string>
+
 </resources>

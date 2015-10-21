@@ -69,6 +69,27 @@ public class Utils {
 	private static PowerManager.WakeLock sCpuWakeLock;
 	
 	
+    public static void acquireCpuWakeLock(Context context) {        
+        if (sCpuWakeLock != null) {            
+            return;        
+        }         
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);         
+        sCpuWakeLock = pm.newWakeLock(
+        		PowerManager.SCREEN_BRIGHT_WAKE_LOCK | 
+                PowerManager.ACQUIRE_CAUSES_WAKEUP |                
+                PowerManager.ON_AFTER_RELEASE, "hello");        
+         
+        sCpuWakeLock.acquire();        
+    }
+     
+    public static void releaseCpuLock() {        
+        if (sCpuWakeLock != null) {            
+            sCpuWakeLock.release();            
+            sCpuWakeLock = null;        
+        }    
+    }
+	
+	
 	public static String sendRegistrationIdToBackend(Context context, String regId) {
 		
 		List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(2);
@@ -588,8 +609,8 @@ String projectname = data.getString("name"); // get the name from data.
         sCpuWakeLock.acquire();
 	}
 	
-	public static void show119Notification(Context context){
-		Notification noti = createGPSNotification(context);
+	public static void show119Notification(Context context, String title, String body){
+		Notification noti = create119Notification(context, title, body);
 		noti.defaults |= Notification.DEFAULT_SOUND;
 		
 		if(mNotificationManager == null){
@@ -620,20 +641,7 @@ String projectname = data.getString("name"); // get the name from data.
 	}
 	
 	public static void createDialog(Context context, String title, String body) {
-        AlertDialog.Builder ab = new AlertDialog.Builder(context);
-        ab.setTitle(title);
-        ab.setMessage(body);
-        ab.setCancelable(false);
-        ab.setIcon(context.getResources().getDrawable(R.drawable.icon));
-          
-        ab.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dInterface, int arg1) {
-            	dInterface.dismiss();
-            }
-        });
-        AlertDialog aDialog = ab.create();
-        aDialog.show();
+		
     }
 	
 	
