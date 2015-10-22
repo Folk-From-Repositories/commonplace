@@ -122,6 +122,8 @@ exports.createNewMoim = function(data, callback) {
                                 });
                             } else {
                                 console.log('신규 모임 생성 완료 및 GCM 전송 완료');
+				console.log(JSON.stringify(o,null,4));
+
                                 connection.commit(function(err) {
                                     if (err) {
                                         console.error('모임 정보 생성을 위한 트랜잭션 커밋 에러', err);

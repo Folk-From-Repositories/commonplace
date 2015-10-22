@@ -80,7 +80,7 @@ exports.sendMessage = function(phones, data, callback) {
         }
 
         var gcmMsg = new gcm.Message({
-            collapseKey: 'CommonPlace Notification',
+            collapseKey: collapseKey,
             delayWhileIdle: false,
             data: data
         });
@@ -88,6 +88,12 @@ exports.sendMessage = function(phones, data, callback) {
         if (tokens.length < 1) {
             return callback('No target for sending GCM');
         }
+
+	console.log('-----------GCM SendMessage-----');
+	console.log(JSON.stringify(phones,null,4));
+	console.log(JSON.stringify(tokens,null,4));
+	console.log(JSON.stringify(gcmMsg,null,4));
+	console.log('-------------------------------');
 
         sender.send(gcmMsg, tokens, 3, function(err, result) {
             if (err) {
