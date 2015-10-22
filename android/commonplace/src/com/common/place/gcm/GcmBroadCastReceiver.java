@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.common.place.DialogActivity;
+import com.common.place.R;
 import com.common.place.model.GroupMember;
 import com.common.place.util.Constants;
 import com.common.place.util.Logger;
@@ -18,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 public class GcmBroadCastReceiver extends BroadcastReceiver{
 
@@ -28,16 +30,9 @@ public class GcmBroadCastReceiver extends BroadcastReceiver{
     // key:collapse_key, value:CommonPlace Notification 
 
     // key:registration_id, value:APA91bH7th-R7YF7QRzc9S8FJbQ0OY9iKJ8raDurQQNGJdPQq4aNT1nI0azc2LlaB8XTeOW2mgzAeh5BLefKt_D-uw5IHdjA6QwqMGDmKmq_c30gUMnfNvYRbpBRbcnz19if7FGxAyZi
+
 	
-	
-	/*{
-category: 'Campaign 119',
-title: '건전한 119 회식 문화',
-message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n119회식 문화를 정착시키기 위해 노력합시다.'
-};*/
-	
-	
-	
+	Handler hd = new Handler();
 	
 	
 	 
@@ -137,6 +132,21 @@ message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n11
         		
         	}
         	
+        	
+        	
+        	else if(category != null && category.equals(Constants.GCM_CATEGORY_NEW_MOIM)){
+        		
+        		Utils.acquireCpuWakeLock(context);
+        		
+        		Utils.showNewMoimNotification(context,
+        				context.getResources().getString(R.string.noti_newmoim_title),
+        				context.getResources().getString(R.string.noti_newmoim_body));
+        		
+        		release();
+        		
+        		return;
+        	}
+        	
         }
         
         Utils.sendBroadcastForGridRefresh(context);
@@ -156,5 +166,15 @@ message: '아직 회식이 진행중이신지요?\n건전한 회식문화를 위한 우리들의 약속!\n11
 	private void sendBroadcastForRefresh(Context context){
 		Intent i = new Intent(Constants.INNER_BROADCAST_RECEIVER);
         context.sendBroadcast(i);
+	}
+	
+	
+	private void release(){
+        hd.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+        		Utils.releaseCpuLock();
+            }
+        }, 3000);
 	}
 }

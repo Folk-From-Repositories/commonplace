@@ -46,13 +46,15 @@ public class Constants {
     public static String MSG_KEY_CATEGORY            = "category";
     public static String GCM_CATEGORY_GPS_LOCATION   = "GPS Push";
     public static String GCM_CATEGORY_CAMPAIGN_119   = "Campaign 119";
+    public static String GCM_CATEGORY_NEW_MOIM       = "invitation";
     public static String MSG_KEY_TITLE               = "title";
     public static String MSG_KEY_MESSAGE             = "message";
     
     public static String MSG_KEY_MEMBER          = "member";
     
-    public static int NOTIFICATION_ID_GPS = 9999;
-    public static int NOTIFICATION_ID_119 = 9991;
+    public static int NOTIFICATION_ID_GPS      = 9999;
+    public static int NOTIFICATION_ID_119      = 9991;
+    public static int NOTIFICATION_ID_NEW_MOIM = 9992;
     
     public static final int MENU_ID_1      = 100;
     

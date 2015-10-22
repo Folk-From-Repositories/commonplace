@@ -256,6 +256,11 @@ public class GroupGridActivity extends Activity implements AdapterView.OnItemCli
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.nextBtn1:
+			
+			if(!Utils.chkGpsService(GroupGridActivity.this)){
+				break;
+			}
+			
 			serviceIntent = new Intent(getApplication(), GPSService.class);
 	        if(isRunning()){
 	        	stopService(serviceIntent);

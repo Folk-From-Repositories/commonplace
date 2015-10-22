@@ -54,6 +54,7 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.location.LocationManager;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
@@ -643,14 +644,77 @@ String projectname = data.getString("name"); // get the name from data.
 		return mBuilder.build();
 	}
 	
-	public static void createDialog(Context context, String title, String body) {
+	
+	public static boolean chkGpsService(final Context context) {
+	    
+	    LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+	    boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	    boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+	    Logger.i("isGPSEnabled="+ isGPSEnabled);
+	    Logger.i("isNetworkEnabled="+ isNetworkEnabled);
+	    
+		if (!isGPSEnabled || !isNetworkEnabled) {
+
+			AlertDialog.Builder gsDialog = new AlertDialog.Builder(context);
+			gsDialog.setTitle(context.getResources().getString(R.string.dialog_gps_title));
+			gsDialog.setCancelable(false);
+			gsDialog.setMessage(context.getResources().getString(R.string.dialog_gps_body));
+			gsDialog.setPositiveButton("Go GPS settings", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					startSettingGPSActivity(context);
+					dialog.dismiss();
+				}
+			})/*.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}
+			})*/.create().show();
+			return false;
+
+		} else {
+			return true;
+		}
+	}
+	
+	public static void startSettingGPSActivity(Context context){
+		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		intent.addCategory(Intent.CATEGORY_DEFAULT);
+		context.startActivity(intent);
+	}
+	
+	public static void showNewMoimNotification(Context context, String title, String body){
+		Notification noti = createNewMoimNotification(context, title, body);
+		noti.defaults |= Notification.DEFAULT_SOUND;
 		
-    }
+		if(mNotificationManager == null){
+			mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		}
+		mNotificationManager.notify(Constants.NOTIFICATION_ID_NEW_MOIM, noti);
+	}
 	
-	
-	
-	
-	
+	public static Notification createNewMoimNotification(Context context, String title, String body){
+		mBuilder =
+		        new NotificationCompat.Builder(context)
+		        .setSmallIcon(R.drawable.icon)
+		        .setContentTitle(title)
+		        .setContentText(body)
+		        .setAutoCancel(true);
+		Intent resultIntent = new Intent(context, SplashActivity.class);
+		resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+		stackBuilder.addParentStack(SplashActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+		        stackBuilder.getPendingIntent(
+		            0,
+		            PendingIntent.FLAG_UPDATE_CURRENT
+		        );
+		mBuilder.setContentIntent(resultPendingIntent);
+		return mBuilder.build();
+	}
 	
 	
 	
