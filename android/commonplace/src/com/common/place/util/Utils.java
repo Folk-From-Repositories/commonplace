@@ -570,6 +570,7 @@ String projectname = data.getString("name"); // get the name from data.
 		        .setContentText(context.getResources().getText(R.string.noti_body))
 		        .setAutoCancel(false);
 		Intent resultIntent = new Intent(context, SplashActivity.class);
+		resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		stackBuilder.addParentStack(SplashActivity.class);
@@ -628,6 +629,7 @@ String projectname = data.getString("name"); // get the name from data.
 		        .setContentText(body)
 		        .setAutoCancel(true);
 		Intent resultIntent = new Intent(context, SplashActivity.class);
+		resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
 
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		stackBuilder.addParentStack(SplashActivity.class);
