@@ -28,6 +28,7 @@ import com.common.place.util.Utils;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -64,6 +65,7 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 	String dateString, timeString;
 	
 	EditText groupName;
+	ProgressDialog dialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +172,8 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 			break;
 		case R.id.btn_regist_group:
 			
+			dialog = ProgressDialog.show(GroupRegistActivity.this, "", GroupRegistActivity.this.getResources().getText(R.string.loading), true);
+			
 			String title = groupName.getText().toString();
 			String dateTime = dateString+" "+timeString;
 			String locationName = selectedRestaurant.getName();
@@ -225,6 +229,7 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
                 	HttpResponse response = sendReatuanrantDataToBackend(params[0]);
                 	nResponse = new NetworkResponse(response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity(), HTTP.UTF_8));
                 } catch (Exception e) {
+                	dialog.dismiss();
                 	e.printStackTrace();
                 }
 				return nResponse;
@@ -234,6 +239,7 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 			protected void onPostExecute(NetworkResponse response) {
 				super.onPostExecute(response);
 				if(response == null){
+					dialog.dismiss();
 					return;
 				}
 					
@@ -261,11 +267,13 @@ public class GroupRegistActivity extends Activity implements OnClickListener, Da
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					dialog.dismiss();
 					Utils.makeToast(GroupRegistActivity.this, getResources().getString(R.string.regist_success));
 					Utils.sendBroadcastForGridRefresh(GroupRegistActivity.this);
 					GroupRegistActivity.this.finish();
 					
 				}else{
+					dialog.dismiss();
 					Utils.makeToast(GroupRegistActivity.this, getResources().getString(R.string.regist_error));
 				}
 				

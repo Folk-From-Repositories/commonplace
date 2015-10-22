@@ -28,7 +28,7 @@
     <string name="grouplist_not_regist">등록된 모임 그룹이 없습니다.</string>
     <string name="regist_error">모임 등록에 실패하였습니다!</string>
     <string name="regist_success">모임 등록에 성공하였습니다!</string>
-    <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!!</string>
+    <string name="install">모두의 회식 어플을 설치하시고 기쁨을 누리세요!! http://54.64.165.15/commonplace.apk</string>
     <string name="fail_to_register">서버에 Push key 저장에 실패하였습니다! 어플리케이션을 종료합니다.</string>
     <string name="fail_to_google_play_service">Google Play Services 가 설치되어 있지 않습니다. 어플리케이션을 종료합니다.</string>
     <string name="txt_dialog_title">사용자 이름</string>

@@ -69,7 +69,8 @@ public class Utils {
 	private static PowerManager.WakeLock sCpuWakeLock;
 	
 	
-    public static void acquireCpuWakeLock(Context context) {        
+    @SuppressWarnings("deprecation")
+	public static void acquireCpuWakeLock(Context context) {        
         if (sCpuWakeLock != null) {            
             return;        
         }         
