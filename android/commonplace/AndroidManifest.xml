@@ -41,7 +41,8 @@
         <activity
             android:name=".SplashActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,25 +57,23 @@
         <activity
             android:name=".GroupGridActivity"
             android:label="@string/title_activity_group_main_view"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
-                <category android:name="com.common.place" />
-            </intent-filter>
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
         <activity
             android:name=".GroupRegistActivity"
             android:label="@string/title_activity_regist_group"
-            android:windowSoftInputMode="stateAlwaysHidden" >
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
         <activity
             android:name=".RestaurantListActivity"
-            android:label="@string/title_activity_restaurant_list_view" >
+            android:label="@string/title_activity_restaurant_list_view"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
         <activity
             android:name=".ContactsActivity"
-            android:label="@string/title_activity_contacts_list_view" >
+            android:label="@string/title_activity_contacts_list_view"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
 
         <meta-data
@@ -92,7 +91,6 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
                 <category android:name="com.common.place" />
             </intent-filter>
         </receiver>
@@ -113,7 +111,8 @@
         <activity
             android:name=".DialogActivity"
             android:label="@string/title_activity_dialog"
-            android:theme="@android:style/Theme.Dialog" >
+            android:theme="@android:style/Theme.Dialog"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
     </application>
 
